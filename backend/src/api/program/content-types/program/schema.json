@@ -1,0 +1,116 @@
+{
+  "kind": "collectionType",
+  "collectionName": "programs",
+  "info": {
+    "singularName": "program",
+    "pluralName": "programs",
+    "displayName": "Program",
+    "description": "Qualification and education programs"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "target_audience": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "duration_hours": {
+      "type": "integer"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "credits_ects": {
+      "type": "decimal"
+    },
+    "credits": {
+      "type": "decimal"
+    },
+    "format": {
+      "type": "enumeration",
+      "enum": ["online", "offline", "mixed"]
+    },
+    "price": {
+      "type": "string"
+    },
+    "start_date": {
+      "type": "date"
+    },
+    "is_certificate": {
+      "type": "boolean",
+      "default": true
+    },
+    "certificate": {
+      "type": "string"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["qualification", "master", "pre-university", "retraining"],
+      "required": true
+    },
+    "categoryRef": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "programs"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["active", "draft", "archived"],
+      "default": "active"
+    },
+    "group_size": {
+      "type": "integer"
+    },
+    "outcomes": {
+      "type": "json"
+    },
+    "modules": {
+      "type": "json"
+    },
+    "faq": {
+      "type": "json"
+    },
+    "cover_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

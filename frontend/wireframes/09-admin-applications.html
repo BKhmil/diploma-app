@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 09 — Адмін: Заявки</title>
+<link rel="stylesheet" href="_wireframe.css">
+<style>
+  .admin-layout { display:grid; grid-template-columns:220px 1fr; min-height:100vh; }
+  .admin-sidebar { background:#222; color:#fff; padding:0; }
+  .admin-sidebar-header { padding:20px 18px; border-bottom:1px solid #444; }
+  .admin-nav-item { display:flex; align-items:center; gap:10px; padding:12px 18px; font-size:13px; color:#ccc; cursor:pointer; text-decoration:none; }
+  .admin-nav-item:hover, .admin-nav-item.active { background:#333; color:#fff; }
+  .admin-nav-item.active { border-left:3px solid #fff; }
+  .admin-nav-section { font-size:10px; font-weight:700; letter-spacing:2px; color:#666; text-transform:uppercase; padding:16px 18px 6px; }
+  .admin-content { padding:28px; background:#f0f0f0; }
+  .badge { display:inline-block; background:#e74c3c; color:#fff; font-size:10px; font-weight:700; border-radius:10px; padding:2px 7px; margin-left:6px; }
+  .status { display:inline-block; font-size:10px; padding:3px 8px; border-radius:3px; font-weight:700; }
+  .status.new { background:#fff3cd; color:#856404; }
+  .status.ok { background:#d4edda; color:#155724; }
+  .status.wait { background:#cce5ff; color:#004085; }
+  .status.rejected { background:#f8d7da; color:#721c24; }
+  .data-table { width:100%; border-collapse:collapse; font-size:12px; background:#fff; border-radius:6px; overflow:hidden; border:1.5px solid #ddd; }
+  .data-table th { background:#333; color:#fff; padding:10px 14px; text-align:left; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; }
+  .data-table td { padding:12px 14px; border-bottom:1px solid #eee; vertical-align:middle; }
+  .data-table tr:hover td { background:#f9f9f9; }
+  .data-table tr.selected td { background:#fffbeb; }
+  .action-btn { padding:4px 10px; font-size:11px; border:1.5px solid #ccc; border-radius:3px; background:#fff; cursor:pointer; margin-right:4px; }
+  .action-btn:hover { border-color:#333; background:#f0f0f0; }
+
+  /* Drawer panel */
+  .drawer { width:380px; background:#fff; border-left:2px solid #333; padding:24px; overflow-y:auto; }
+  .drawer h2 { font-size:16px; font-weight:800; margin-bottom:16px; padding-bottom:10px; border-bottom:2px solid #333; }
+  .drawer-field { margin-bottom:12px; }
+  .drawer-field label { font-size:10px; font-weight:700; color:#aaa; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:3px; }
+  .drawer-field span { font-size:13px; color:#222; }
+</style>
+</head>
+<body style="margin:0;">
+<div class="wf-page" style="max-width:100%;">
+
+  <div class="wf-page-label">Wireframe 09 — Адмін: Управління заявками (Admin Applications)</div>
+
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <div style="font-size:14px;font-weight:700;">ЦНО ДНУ</div>
+        <div style="font-size:11px;color:#888;margin-top:2px;">Адмін-панель</div>
+      </div>
+      <div class="admin-nav-section">Головне</div>
+      <a class="admin-nav-item" href="08-admin-dashboard.html">📊 Панель управління</a>
+      <a class="admin-nav-item active" href="#">📋 Заявки <span class="badge">12</span></a>
+      <a class="admin-nav-item" href="#">👥 Слухачі</a>
+      <div class="admin-nav-section">Навчання</div>
+      <a class="admin-nav-item" href="#">🎓 Програми</a>
+      <a class="admin-nav-item" href="#">📅 Розклад</a>
+      <a class="admin-nav-item" href="#">📝 Групи</a>
+      <div class="admin-nav-section">Сайт</div>
+      <a class="admin-nav-item" href="#">📰 Новини</a>
+      <a class="admin-nav-item" href="#">📄 Сторінки</a>
+      <a class="admin-nav-item" href="#">📁 Документи</a>
+      <div class="admin-nav-section">Система</div>
+      <a class="admin-nav-item" href="#">⚙️ Налаштування</a>
+    </aside>
+
+    <!-- Main + Drawer -->
+    <div style="display:flex;flex:1;overflow:hidden;">
+      <main class="admin-content" style="flex:1;overflow-y:auto;">
+
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+          <div>
+            <h1 style="font-size:20px;font-weight:800;">Заявки на навчання</h1>
+            <div style="font-size:12px;color:#888;margin-top:2px;">Всього: 156 заявок · Нових: 12</div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="wf-btn-outline" style="font-size:12px;height:36px;">📤 Експорт CSV</button>
+            <button class="wf-btn" style="font-size:12px;height:36px;">+ Нова заявка</button>
+          </div>
+        </div>
+
+        <!-- Filters row -->
+        <div style="background:#fff;border:1.5px solid #ddd;border-radius:6px;padding:14px 16px;margin-bottom:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+          <input class="wf-input" placeholder="🔍 Пошук за ім'ям або email..." style="width:240px;height:36px;">
+          <select class="wf-select" style="width:150px;height:36px;font-size:12px;">
+            <option>Усі статуси</option>
+            <option>Нова</option>
+            <option>Обробка</option>
+            <option>Прийнята</option>
+            <option>Відмова</option>
+          </select>
+          <select class="wf-select" style="width:190px;height:36px;font-size:12px;">
+            <option>Всі програми</option>
+            <option>Педагог. майстерність</option>
+            <option>Психологія</option>
+            <option>НМТ Математика</option>
+          </select>
+          <select class="wf-select" style="width:130px;height:36px;font-size:12px;">
+            <option>Будь-яка дата</option>
+            <option>Сьогодні</option>
+            <option>Цей тиждень</option>
+            <option>Цей місяць</option>
+          </select>
+          <button class="wf-btn-outline" style="height:36px;font-size:12px;margin-left:auto;">Скинути</button>
+        </div>
+
+        <!-- Status tabs -->
+        <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid #ddd;">
+          <button style="padding:8px 16px;border:none;border-bottom:3px solid #333;background:transparent;font-size:12px;font-weight:700;cursor:pointer;margin-bottom:-2px;">Всі (156)</button>
+          <button style="padding:8px 16px;border:none;background:transparent;font-size:12px;color:#666;cursor:pointer;">Нові (12)</button>
+          <button style="padding:8px 16px;border:none;background:transparent;font-size:12px;color:#666;cursor:pointer;">В обробці (28)</button>
+          <button style="padding:8px 16px;border:none;background:transparent;font-size:12px;color:#666;cursor:pointer;">Прийняті (104)</button>
+          <button style="padding:8px 16px;border:none;background:transparent;font-size:12px;color:#666;cursor:pointer;">Відмови (12)</button>
+        </div>
+
+        <!-- Bulk actions -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;">
+          <div class="wf-checkbox" style="background:#333;"></div>
+          <span style="color:#666;">Вибрано: <strong>3</strong></span>
+          <button class="action-btn">✓ Прийняти</button>
+          <button class="action-btn">✗ Відхилити</button>
+          <button class="action-btn">✉️ Відправити email</button>
+          <button class="action-btn" style="color:#e74c3c;border-color:#e74c3c;">🗑 Видалити</button>
+        </div>
+
+        <!-- Table -->
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:36px;"><div class="wf-checkbox" style="background:#555;"></div></th>
+              <th>#</th>
+              <th>Заявник ↑↓</th>
+              <th>Програма</th>
+              <th>Категорія</th>
+              <th>Дата ↑↓</th>
+              <th>Фінансування</th>
+              <th>Статус</th>
+              <th>Дії</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td><div class="wf-checkbox" style="background:#333;"></div></td>
+              <td style="color:#aaa;">#1045</td>
+              <td><strong>Сидоренко О.В.</strong><br><span style="color:#aaa;font-size:10px;">sidorenko@gmail.com</span></td>
+              <td>Педагогічна майстерність</td>
+              <td><span class="status wait" style="font-size:10px;">ПК</span></td>
+              <td style="color:#888;">15 лют 2026</td>
+              <td>Контракт</td>
+              <td><span class="status new">Нова</span></td>
+              <td><button class="action-btn">👁 Перегляд</button></td>
+            </tr>
+            <tr class="selected">
+              <td><div class="wf-checkbox" style="background:#333;"></div></td>
+              <td style="color:#aaa;">#1044</td>
+              <td><strong>Ковальчук М.І.</strong><br><span style="color:#aaa;font-size:10px;">kovalchuk@ukr.net</span></td>
+              <td>Психологія</td>
+              <td><span class="status wait" style="font-size:10px;">Перепідг.</span></td>
+              <td style="color:#888;">14 лют 2026</td>
+              <td>Бюджет</td>
+              <td><span class="status wait">Обробка</span></td>
+              <td><button class="action-btn">👁 Перегляд</button></td>
+            </tr>
+            <tr class="selected">
+              <td><div class="wf-checkbox" style="background:#333;"></div></td>
+              <td style="color:#aaa;">#1043</td>
+              <td><strong>Петренко В.О.</strong><br><span style="color:#aaa;font-size:10px;">petrenko@gmail.com</span></td>
+              <td>НМТ Математика</td>
+              <td><span class="status wait" style="font-size:10px;">НМТ</span></td>
+              <td style="color:#888;">14 лют 2026</td>
+              <td>Контракт</td>
+              <td><span class="status ok">Прийнята</span></td>
+              <td><button class="action-btn">👁 Перегляд</button></td>
+            </tr>
+            <tr>
+              <td><div class="wf-checkbox"></div></td>
+              <td style="color:#aaa;">#1042</td>
+              <td><strong>Іщенко А.Р.</strong><br><span style="color:#aaa;font-size:10px;">ischenko@meta.ua</span></td>
+              <td>Охорона праці в освіті</td>
+              <td><span class="status wait" style="font-size:10px;">ПК</span></td>
+              <td style="color:#888;">13 лют 2026</td>
+              <td>Роботодавець</td>
+              <td><span class="status ok">Прийнята</span></td>
+              <td><button class="action-btn">👁 Перегляд</button></td>
+            </tr>
+            <tr>
+              <td><div class="wf-checkbox"></div></td>
+              <td style="color:#aaa;">#1041</td>
+              <td><strong>Бондаренко Р.С.</strong><br><span style="color:#aaa;font-size:10px;">bondarenko@dnu.dp.ua</span></td>
+              <td>Менеджмент організацій</td>
+              <td><span class="status wait" style="font-size:10px;">Перепідг.</span></td>
+              <td style="color:#888;">12 лют 2026</td>
+              <td>Контракт</td>
+              <td><span class="status rejected">Відмова</span></td>
+              <td><button class="action-btn">👁 Перегляд</button></td>
+            </tr>
+            <tr>
+              <td><div class="wf-checkbox"></div></td>
+              <td style="color:#aaa;">#1040</td>
+              <td><strong>Мороз Н.В.</strong><br><span style="color:#aaa;font-size:10px;">moroz@ukr.net</span></td>
+              <td>Інклюзивна освіта</td>
+              <td><span class="status wait" style="font-size:10px;">ПК</span></td>
+              <td style="color:#888;">11 лют 2026</td>
+              <td>Бюджет</td>
+              <td><span class="status new">Нова</span></td>
+              <td><button class="action-btn">👁 Перегляд</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:12px;color:#888;">
+          <span>Показано 1–20 з 156</span>
+          <div style="display:flex;gap:4px;">
+            <button style="width:32px;height:32px;border:1.5px solid #ccc;background:#fff;border-radius:3px;cursor:pointer;">‹</button>
+            <button style="width:32px;height:32px;border:1.5px solid #333;background:#333;color:#fff;border-radius:3px;cursor:pointer;font-weight:700;">1</button>
+            <button style="width:32px;height:32px;border:1.5px solid #ccc;background:#fff;border-radius:3px;cursor:pointer;">2</button>
+            <button style="width:32px;height:32px;border:1.5px solid #ccc;background:#fff;border-radius:3px;cursor:pointer;">3</button>
+            <span style="line-height:32px;padding:0 4px;">...</span>
+            <button style="width:32px;height:32px;border:1.5px solid #ccc;background:#fff;border-radius:3px;cursor:pointer;">8</button>
+            <button style="width:32px;height:32px;border:1.5px solid #ccc;background:#fff;border-radius:3px;cursor:pointer;">›</button>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Detail Drawer (відкривається при "Перегляд") -->
+      <div class="drawer">
+        <h2>Заявка #1045</h2>
+        <span class="status new" style="margin-bottom:16px;display:inline-block;font-size:12px;padding:4px 12px;">Нова заявка</span>
+
+        <div class="drawer-field"><label>Заявник</label><span>Сидоренко Ольга Василівна</span></div>
+        <div class="drawer-field"><label>Email</label><span>sidorenko@gmail.com</span></div>
+        <div class="drawer-field"><label>Телефон</label><span>+38 (067) 123-45-67</span></div>
+        <div class="drawer-field"><label>Програма</label><span>Педагогічна майстерність (120 год.)</span></div>
+        <div class="drawer-field"><label>Фінансування</label><span>Контракт (самостійна оплата)</span></div>
+        <div class="drawer-field"><label>Дата подачі</label><span>15 лютого 2026, 14:32</span></div>
+        <div class="drawer-field"><label>Освіта</label><span>Магістр, педагогіка</span></div>
+        <div class="drawer-field"><label>Місце роботи</label><span>Школа №15, вчитель</span></div>
+
+        <hr class="wf-divider" style="margin:16px 0;">
+
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Документи</div>
+        <div style="font-size:12px;display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;justify-content:space-between;padding:8px;background:#f9f9f9;border:1px solid #eee;border-radius:4px;">
+            📄 Диплом.pdf <button style="border:none;background:none;font-size:11px;color:#555;cursor:pointer;text-decoration:underline;">Завантажити</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px;background:#f9f9f9;border:1px solid #eee;border-radius:4px;">
+            🪪 Паспорт.jpg <button style="border:none;background:none;font-size:11px;color:#555;cursor:pointer;text-decoration:underline;">Завантажити</button>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:8px;background:#f9f9f9;border:1px solid #eee;border-radius:4px;">
+            🔢 ІПН.pdf <button style="border:none;background:none;font-size:11px;color:#555;cursor:pointer;text-decoration:underline;">Завантажити</button>
+          </div>
+        </div>
+
+        <hr class="wf-divider" style="margin:16px 0;">
+
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;color:#aaa;text-transform:uppercase;letter-spacing:1px;">Коментар менеджера</div>
+        <textarea class="wf-form-textarea" style="font-size:12px;height:60px;" placeholder="Залишити коментар..."></textarea>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+          <button class="wf-btn" style="width:100%;height:40px;font-size:13px;">✓ Прийняти заявку</button>
+          <button class="wf-btn-outline" style="width:100%;height:40px;font-size:13px;">✉️ Відповісти email</button>
+          <button style="width:100%;height:40px;border:2px solid #e74c3c;color:#e74c3c;background:#fff;border-radius:4px;font-size:13px;cursor:pointer;font-weight:700;">✗ Відхилити</button>
+        </div>
+        <div class="wf-annotation" style="margin-top:10px;">[ Drawer — бічна панель, відкривається при кліку на рядок ]</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

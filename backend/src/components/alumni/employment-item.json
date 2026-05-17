@@ -1,0 +1,50 @@
+{
+  "collectionName": "components_alumni_employment_items",
+  "info": {
+    "displayName": "employment_item",
+    "description": "Employment statistics card for alumni page"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "icon_key": {
+      "type": "enumeration",
+      "enum": ["education", "business", "government"],
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "sub": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

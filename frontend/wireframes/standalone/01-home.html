@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 01 — Головна сторінка</title>
+<style>
+/* ===== WIREFRAME BASE STYLES ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #222; }
+
+/* --- Layout --- */
+.wf-page { max-width: 1200px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.15); }
+
+/* --- Nav --- */
+.wf-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px; border-bottom: 2px solid #333; background: #fff;
+  position: sticky; top: 0; z-index: 100;
+}
+.wf-logo { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+.wf-logo-box { width: 40px; height: 40px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.wf-nav-links { display: flex; gap: 20px; }
+.wf-nav-links a { font-size: 13px; text-decoration: none; color: #333; padding-bottom: 2px; border-bottom: 2px solid transparent; }
+.wf-nav-links a.active { border-bottom-color: #333; font-weight: 700; }
+.wf-nav-btn { font-size: 13px; padding: 7px 18px; border: 2px solid #333; background: #333; color: #fff; cursor: pointer; font-weight: 600; border-radius: 4px; text-decoration: none; }
+
+/* --- Hero --- */
+.wf-hero { background: repeating-linear-gradient(45deg, #ccc 0px, #ccc 1px, #ddd 1px, #ddd 14px); padding: 80px 48px; text-align: center; border-bottom: 2px solid #333; }
+.wf-hero-badge { display: inline-block; border: 1.5px dashed #555; padding: 5px 16px; border-radius: 20px; font-size: 12px; color: #555; margin-bottom: 20px; }
+.wf-hero h1 { font-size: 42px; font-weight: 900; line-height: 1.2; margin-bottom: 16px; text-shadow: 0 0 0 #fff; }
+.wf-hero p { font-size: 16px; color: #444; max-width: 560px; margin: 0 auto 28px; line-height: 1.6; }
+
+/* --- Search Box --- */
+.wf-search-box { background: #fff; border: 2px solid #333; border-radius: 8px; padding: 24px 28px; max-width: 700px; margin: 0 auto; text-align: left; }
+.wf-search-box label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 10px; }
+.wf-search-row { display: flex; gap: 10px; }
+.wf-input { flex: 1; height: 44px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 14px; font-size: 14px; background: #f9f9f9; }
+.wf-select { width: 180px; height: 44px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 10px; font-size: 14px; background: #f9f9f9; }
+.wf-btn { height: 44px; padding: 0 22px; background: #333; color: #fff; border: none; border-radius: 4px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.wf-btn-outline { height: 44px; padding: 0 22px; background: #fff; color: #333; border: 2px solid #333; border-radius: 4px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+/* --- Section --- */
+.wf-section { padding: 48px 48px; border-bottom: 1px solid #ddd; }
+.wf-section-sm { padding: 32px 48px; border-bottom: 1px solid #ddd; }
+.wf-section-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.wf-section-sub { font-size: 14px; color: #666; margin-bottom: 24px; }
+
+/* --- Stats --- */
+.wf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.wf-stat { border: 2px solid #333; border-radius: 6px; padding: 20px; text-align: center; }
+.wf-stat-num { font-size: 32px; font-weight: 900; display: block; margin-bottom: 4px; }
+.wf-stat-label { font-size: 12px; color: #555; }
+
+/* --- Cards Grid --- */
+.wf-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.wf-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.wf-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.wf-card { border: 1.5px solid #bbb; border-radius: 6px; padding: 20px; }
+.wf-card-img { width: 100%; height: 120px; background: repeating-linear-gradient(135deg, #ccc 0px, #ccc 1px, #ddd 1px, #ddd 12px); border-radius: 4px; margin-bottom: 12px; border: 1px solid #aaa; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #888; }
+.wf-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.wf-card p { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 10px; }
+.wf-tag { display: inline-block; font-size: 10px; background: #eee; border: 1px solid #ccc; border-radius: 3px; padding: 2px 8px; margin-right: 4px; color: #555; }
+.wf-tag-dark { background: #333; color: #fff; border-color: #333; }
+
+/* --- Sidebar Layout --- */
+.wf-layout-sidebar { display: grid; grid-template-columns: 260px 1fr; gap: 32px; }
+.wf-sidebar { border: 1.5px solid #bbb; border-radius: 6px; padding: 20px; height: fit-content; }
+.wf-sidebar h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
+.wf-filter-group { margin-bottom: 16px; }
+.wf-filter-group label { font-size: 12px; color: #555; display: block; margin-bottom: 6px; font-weight: 600; }
+.wf-checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px; }
+.wf-checkbox { width: 14px; height: 14px; border: 1.5px solid #888; border-radius: 2px; flex-shrink: 0; }
+
+/* --- Form --- */
+.wf-form { max-width: 600px; }
+.wf-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.wf-form-group { margin-bottom: 16px; }
+.wf-form-group label { font-size: 12px; font-weight: 700; display: block; margin-bottom: 5px; color: #444; }
+.wf-form-input { width: 100%; height: 40px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 12px; font-size: 13px; background: #f9f9f9; }
+.wf-form-textarea { width: 100%; height: 80px; border: 1.5px solid #aaa; border-radius: 4px; padding: 10px 12px; font-size: 13px; background: #f9f9f9; resize: vertical; }
+.wf-upload-zone { border: 2px dashed #aaa; border-radius: 6px; padding: 24px; text-align: center; color: #888; font-size: 13px; }
+
+/* --- Footer --- */
+.wf-footer { background: #333; color: #fff; padding: 32px 48px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+.wf-footer h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+.wf-footer p, .wf-footer a { font-size: 12px; color: #bbb; display: block; text-decoration: none; margin-bottom: 5px; }
+.wf-footer-bottom { background: #222; color: #888; padding: 12px 48px; font-size: 12px; text-align: center; }
+
+/* --- Breadcrumb --- */
+.wf-breadcrumb { padding: 12px 48px; font-size: 12px; color: #888; border-bottom: 1px solid #eee; }
+.wf-breadcrumb span { margin: 0 6px; }
+
+/* --- Map placeholder --- */
+.wf-map { width: 100%; height: 280px; background: repeating-linear-gradient(0deg, #ddd 0px, #ddd 1px, #e8e8e8 1px, #e8e8e8 30px), repeating-linear-gradient(90deg, #ddd 0px, #ddd 1px, #e8e8e8 1px, #e8e8e8 30px); border: 1.5px solid #bbb; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 14px; font-weight: 700; }
+
+/* --- Annotation --- */
+.wf-annotation { font-size: 11px; color: #e74c3c; border: 1px dashed #e74c3c; border-radius: 3px; padding: 3px 8px; display: inline-block; margin-top: 6px; }
+.wf-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #999; display: block; margin-bottom: 4px; }
+
+/* --- Page label --- */
+.wf-page-label { background: #333; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 48px; text-align: right; }
+
+/* --- Progress steps --- */
+.wf-steps { display: flex; align-items: center; gap: 0; margin-bottom: 32px; }
+.wf-step { display: flex; align-items: center; }
+.wf-step-circle { width: 32px; height: 32px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; background: #fff; flex-shrink: 0; }
+.wf-step-circle.active { background: #333; color: #fff; }
+.wf-step-label { font-size: 11px; margin-left: 6px; color: #555; }
+.wf-step-line { flex: 1; height: 2px; background: #ccc; margin: 0 12px; min-width: 40px; }
+
+/* --- Accordion --- */
+.wf-accordion-item { border: 1.5px solid #ccc; border-radius: 4px; margin-bottom: 8px; }
+.wf-accordion-header { padding: 14px 16px; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.wf-accordion-header::after { content: '+'; font-size: 18px; color: #888; }
+.wf-accordion-body { padding: 14px 16px; font-size: 13px; color: #555; border-top: 1px solid #eee; line-height: 1.6; }
+
+/* --- Info row --- */
+.wf-info-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.wf-info-icon { width: 36px; height: 36px; border: 2px solid #333; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.wf-info-text label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #999; display: block; }
+.wf-info-text span { font-size: 14px; color: #222; }
+
+/* --- Divider --- */
+.wf-divider { border: none; border-top: 1px dashed #ccc; margin: 16px 0; }
+
+</style>
+</head>
+<body>
+<div class="wf-page">
+
+  <!-- Page Label -->
+  <div class="wf-page-label">Wireframe 01 — Головна сторінка (Home)</div>
+
+  <!-- Navigation -->
+  <nav class="wf-nav">
+    <div class="wf-logo">
+      <div class="wf-logo-box">ДНУ</div>
+      <div>
+        <div style="font-size:13px; font-weight:700;">ЦНО ДНУ</div>
+        <div style="font-size:11px; font-weight:400; color:#666;">Центр неперервної освіти</div>
+      </div>
+    </div>
+    <div class="wf-nav-links">
+      <a href="#" class="active">Головна</a>
+      <a href="#">Програми</a>
+      <a href="#">Підготовка до НМТ</a>
+      <a href="#">Про центр</a>
+      <a href="#">Контакти</a>
+    </div>
+    <a href="04-apply.html" class="wf-nav-btn">Подати заявку</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="wf-hero">
+    <div class="wf-hero-badge">Дніпровський національний університет ім. Олеся Гончара</div>
+    <h1>Ваш розвиток —<br>наша спеціальність</h1>
+    <p>Якісна після дипломна освіта, підвищення кваліфікації та підготовка до вступу. Станьте затребуваним фахівцем разом з лідером освіти регіону.</p>
+
+    <!-- Search Widget -->
+    <div class="wf-search-box">
+      <label>Знайдіть свою програму:</label>
+      <div class="wf-search-row">
+        <input class="wf-input" placeholder="🔍  Наприклад: Психологія, Менеджмент, НМТ...">
+        <select class="wf-select">
+          <option>Усім</option>
+          <option>Працівники освіти</option>
+          <option>Абітурієнти</option>
+          <option>Фахівці</option>
+        </select>
+        <button class="wf-btn">Знайти →</button>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+        <span class="wf-tag">Популярні:</span>
+        <span class="wf-tag">Менеджмент</span>
+        <span class="wf-tag">Психологія</span>
+        <span class="wf-tag">Математика (НМТ)</span>
+        <span class="wf-tag">Облік і аудит</span>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; display:flex; gap:16px; justify-content:center;">
+      <a href="02-programs.html" class="wf-btn" style="text-decoration:none; display:inline-block; line-height:44px;">Усі програми</a>
+      <button class="wf-btn-outline">Безкоштовна консультація</button>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="wf-section">
+    <div class="wf-stats">
+      <div class="wf-stat">
+        <span class="wf-stat-num">2 500+</span>
+        <div class="wf-stat-label">Випускників щорічно</div>
+      </div>
+      <div class="wf-stat">
+        <span class="wf-stat-num">120+</span>
+        <div class="wf-stat-label">Програм навчання</div>
+      </div>
+      <div class="wf-stat">
+        <span class="wf-stat-num">30+</span>
+        <div class="wf-stat-label">Років досвіду</div>
+      </div>
+      <div class="wf-stat">
+        <span class="wf-stat-num">98%</span>
+        <div class="wf-stat-label">Задоволені слухачі</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programs Directions -->
+  <section class="wf-section">
+    <div class="wf-section-title">Напрямки навчання</div>
+    <div class="wf-section-sub">Оберіть категорію, що відповідає вашим цілям</div>
+
+    <div class="wf-grid-4">
+      <a href="02-programs.html" class="wf-card" style="text-decoration:none; color:inherit; display:block;">
+        <div class="wf-card-img">[ Іконка 📋 ]</div>
+        <h3>Підвищення кваліфікації</h3>
+        <p>Для педагогічних та наукових працівників. Сертифікат державного зразка.</p>
+        <span class="wf-tag wf-tag-dark">45+ програм</span>
+      </a>
+      <a href="02-programs.html" class="wf-card" style="text-decoration:none; color:inherit; display:block;">
+        <div class="wf-card-img">[ Іконка 🎓 ]</div>
+        <h3>Перепідготовка</h3>
+        <p>Освіта рівня магістр за новою спеціальністю. Диплом ДНУ.</p>
+        <span class="wf-tag wf-tag-dark">30+ програм</span>
+      </a>
+      <a href="02-programs.html" class="wf-card" style="text-decoration:none; color:inherit; display:block;">
+        <div class="wf-card-img">[ Іконка 📝 ]</div>
+        <h3>Підготовка до НМТ</h3>
+        <p>Інтенсивна підготовка абітурієнтів до Національного мультипредметного тесту.</p>
+        <span class="wf-tag wf-tag-dark">8 предметів</span>
+      </a>
+      <a href="02-programs.html" class="wf-card" style="text-decoration:none; color:inherit; display:block;">
+        <div class="wf-card-img">[ Іконка 💼 ]</div>
+        <h3>Бізнес-курси</h3>
+        <p>Короткострокові програми для фахівців бізнесу та підприємців.</p>
+        <span class="wf-tag wf-tag-dark">Незабаром</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Featured Programs -->
+  <section class="wf-section" style="background:#f9f9f9;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px;">
+      <div>
+        <div class="wf-section-title">Популярні програми</div>
+        <div class="wf-section-sub">Найбільш обирані слухачами цього сезону</div>
+      </div>
+      <a href="02-programs.html" class="wf-btn-outline" style="text-decoration:none; display:inline-block; line-height:44px; padding: 0 22px;">Всі програми →</a>
+    </div>
+
+    <div class="wf-grid-3">
+      <div class="wf-card" style="background:#fff;">
+        <span class="wf-tag" style="margin-bottom:10px; display:inline-block;">Підвищення кваліфікації</span>
+        <h3>Педагогічна майстерність</h3>
+        <p>Сучасні методи навчання, цифрові інструменти, робота з різними категоріями учнів.</p>
+        <hr class="wf-divider">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#666;">
+          <span>⏱ 1 місяць</span>
+          <span>💻 Онлайн</span>
+          <span>📋 Сертифікат</span>
+        </div>
+        <button class="wf-btn" style="width:100%; margin-top:12px;">Детальніше →</button>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <span class="wf-tag" style="margin-bottom:10px; display:inline-block;">Перепідготовка</span>
+        <h3>Психологія</h3>
+        <p>Повноцінна програма рівня магістр для отримання другої вищої освіти зі спеціальності "Психологія".</p>
+        <hr class="wf-divider">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#666;">
+          <span>⏱ 1,5 роки</span>
+          <span>🏛 Змішана</span>
+          <span>🎓 Диплом</span>
+        </div>
+        <button class="wf-btn" style="width:100%; margin-top:12px;">Детальніше →</button>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <span class="wf-tag" style="margin-bottom:10px; display:inline-block;">НМТ-підготовка</span>
+        <h3>Математика + Українська</h3>
+        <p>Комплексна підготовка з двох ключових предметів НМТ. Інтенсивний формат, малі групи.</p>
+        <hr class="wf-divider">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#666;">
+          <span>⏱ 3 місяці</span>
+          <span>📍 Офлайн</span>
+          <span>📜 Довідка</span>
+        </div>
+        <button class="wf-btn" style="width:100%; margin-top:12px;">Детальніше →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why us -->
+  <section class="wf-section">
+    <div class="wf-section-title">Чому обирають нас</div>
+    <div class="wf-section-sub">Переваги навчання в ЦНО ДНУ</div>
+    <div class="wf-grid-3">
+      <div class="wf-info-row" style="display:block; padding:16px; border:1.5px solid #ccc; border-radius:6px;">
+        <div style="font-size:28px; margin-bottom:10px;">🏛</div>
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Державний університет</h4>
+        <p style="font-size:12px; color:#666; line-height:1.5;">Документи про освіту державного зразка, ліцензована діяльність.</p>
+      </div>
+      <div class="wf-info-row" style="display:block; padding:16px; border:1.5px solid #ccc; border-radius:6px;">
+        <div style="font-size:28px; margin-bottom:10px;">👨‍🏫</div>
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Досвідчені викладачі</h4>
+        <p style="font-size:12px; color:#666; line-height:1.5;">Кандидати та доктори наук, практикуючі фахівці галузей.</p>
+      </div>
+      <div class="wf-info-row" style="display:block; padding:16px; border:1.5px solid #ccc; border-radius:6px;">
+        <div style="font-size:28px; margin-bottom:10px;">💻</div>
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Онлайн та офлайн</h4>
+        <p style="font-size:12px; color:#666; line-height:1.5;">Гнучкий формат навчання для зручності слухачів.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- News -->
+  <section class="wf-section" style="background:#f9f9f9;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px;">
+      <div>
+        <div class="wf-section-title">Новини та оголошення</div>
+        <div class="wf-section-sub">Останні події Центру</div>
+      </div>
+      <button class="wf-btn-outline">Всі новини →</button>
+    </div>
+    <div class="wf-grid-3">
+      <div class="wf-card" style="background:#fff;">
+        <div class="wf-card-img">[ Зображення новини ]</div>
+        <span class="wf-tag" style="margin-bottom:6px; display:inline-block;">Оголошення</span>
+        <h3 style="font-size:14px;">Набір на весняний семестр 2026 відкрито</h3>
+        <p>15 лютого 2026</p>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <div class="wf-card-img">[ Зображення новини ]</div>
+        <span class="wf-tag" style="margin-bottom:6px; display:inline-block;">Подія</span>
+        <h3 style="font-size:14px;">Вебінар: Нові стандарти педагогічної освіти</h3>
+        <p>10 лютого 2026</p>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <div class="wf-card-img">[ Зображення новини ]</div>
+        <span class="wf-tag" style="margin-bottom:6px; display:inline-block;">Новина</span>
+        <h3 style="font-size:14px;">Наші випускники в топ-100 освітян України</h3>
+        <p>5 лютого 2026</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="wf-section" style="text-align:center; background:#333; color:#fff;">
+    <h2 style="font-size:28px; font-weight:800; margin-bottom:12px;">Готові розпочати навчання?</h2>
+    <p style="font-size:15px; color:#ccc; margin-bottom:24px;">Залиште заявку — наш менеджер зв'яжеться з вами протягом одного робочого дня.</p>
+    <div style="display:flex; gap:16px; justify-content:center;">
+      <a href="04-apply.html" style="background:#fff; color:#333; font-weight:700; padding:14px 32px; border-radius:4px; text-decoration:none; font-size:14px;">Подати заявку</a>
+      <a href="05-contacts.html" style="border:2px solid #fff; color:#fff; font-weight:700; padding:14px 32px; border-radius:4px; text-decoration:none; font-size:14px;">Зв'язатися з нами</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="wf-footer">
+    <div>
+      <h4>ЦНО ДНУ</h4>
+      <p>Центр неперервної освіти Дніпровського національного університету ім. Олеся Гончара</p>
+      <p style="margin-top:10px;">пр. Гагаріна, 72, м. Дніпро, 49010</p>
+    </div>
+    <div>
+      <h4>Програми</h4>
+      <a href="#">Підвищення кваліфікації</a>
+      <a href="#">Перепідготовка</a>
+      <a href="#">НМТ-підготовка</a>
+    </div>
+    <div>
+      <h4>Центр</h4>
+      <a href="#">Про нас</a>
+      <a href="#">Документи</a>
+      <a href="#">Персонал</a>
+      <a href="#">Партнери</a>
+    </div>
+    <div>
+      <h4>Контакти</h4>
+      <a href="#">+38 (056) 374-xx-xx</a>
+      <a href="#">cno@dnu.dp.ua</a>
+    </div>
+  </footer>
+  <div class="wf-footer-bottom">© 2026 Центр неперервної освіти ДНУ | Всі права захищено</div>
+
+</div>
+</body>
+</html>

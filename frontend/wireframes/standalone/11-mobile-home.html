@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 11 — Мобільна версія</title>
+<style>
+/* ===== WIREFRAME BASE STYLES ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #222; }
+
+/* --- Layout --- */
+.wf-page { max-width: 1200px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.15); }
+
+/* --- Nav --- */
+.wf-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px; border-bottom: 2px solid #333; background: #fff;
+  position: sticky; top: 0; z-index: 100;
+}
+.wf-logo { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+.wf-logo-box { width: 40px; height: 40px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.wf-nav-links { display: flex; gap: 20px; }
+.wf-nav-links a { font-size: 13px; text-decoration: none; color: #333; padding-bottom: 2px; border-bottom: 2px solid transparent; }
+.wf-nav-links a.active { border-bottom-color: #333; font-weight: 700; }
+.wf-nav-btn { font-size: 13px; padding: 7px 18px; border: 2px solid #333; background: #333; color: #fff; cursor: pointer; font-weight: 600; border-radius: 4px; text-decoration: none; }
+
+/* --- Hero --- */
+.wf-hero { background: repeating-linear-gradient(45deg, #ccc 0px, #ccc 1px, #ddd 1px, #ddd 14px); padding: 80px 48px; text-align: center; border-bottom: 2px solid #333; }
+.wf-hero-badge { display: inline-block; border: 1.5px dashed #555; padding: 5px 16px; border-radius: 20px; font-size: 12px; color: #555; margin-bottom: 20px; }
+.wf-hero h1 { font-size: 42px; font-weight: 900; line-height: 1.2; margin-bottom: 16px; text-shadow: 0 0 0 #fff; }
+.wf-hero p { font-size: 16px; color: #444; max-width: 560px; margin: 0 auto 28px; line-height: 1.6; }
+
+/* --- Search Box --- */
+.wf-search-box { background: #fff; border: 2px solid #333; border-radius: 8px; padding: 24px 28px; max-width: 700px; margin: 0 auto; text-align: left; }
+.wf-search-box label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 10px; }
+.wf-search-row { display: flex; gap: 10px; }
+.wf-input { flex: 1; height: 44px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 14px; font-size: 14px; background: #f9f9f9; }
+.wf-select { width: 180px; height: 44px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 10px; font-size: 14px; background: #f9f9f9; }
+.wf-btn { height: 44px; padding: 0 22px; background: #333; color: #fff; border: none; border-radius: 4px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.wf-btn-outline { height: 44px; padding: 0 22px; background: #fff; color: #333; border: 2px solid #333; border-radius: 4px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+/* --- Section --- */
+.wf-section { padding: 48px 48px; border-bottom: 1px solid #ddd; }
+.wf-section-sm { padding: 32px 48px; border-bottom: 1px solid #ddd; }
+.wf-section-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.wf-section-sub { font-size: 14px; color: #666; margin-bottom: 24px; }
+
+/* --- Stats --- */
+.wf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.wf-stat { border: 2px solid #333; border-radius: 6px; padding: 20px; text-align: center; }
+.wf-stat-num { font-size: 32px; font-weight: 900; display: block; margin-bottom: 4px; }
+.wf-stat-label { font-size: 12px; color: #555; }
+
+/* --- Cards Grid --- */
+.wf-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.wf-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.wf-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.wf-card { border: 1.5px solid #bbb; border-radius: 6px; padding: 20px; }
+.wf-card-img { width: 100%; height: 120px; background: repeating-linear-gradient(135deg, #ccc 0px, #ccc 1px, #ddd 1px, #ddd 12px); border-radius: 4px; margin-bottom: 12px; border: 1px solid #aaa; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #888; }
+.wf-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.wf-card p { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 10px; }
+.wf-tag { display: inline-block; font-size: 10px; background: #eee; border: 1px solid #ccc; border-radius: 3px; padding: 2px 8px; margin-right: 4px; color: #555; }
+.wf-tag-dark { background: #333; color: #fff; border-color: #333; }
+
+/* --- Sidebar Layout --- */
+.wf-layout-sidebar { display: grid; grid-template-columns: 260px 1fr; gap: 32px; }
+.wf-sidebar { border: 1.5px solid #bbb; border-radius: 6px; padding: 20px; height: fit-content; }
+.wf-sidebar h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
+.wf-filter-group { margin-bottom: 16px; }
+.wf-filter-group label { font-size: 12px; color: #555; display: block; margin-bottom: 6px; font-weight: 600; }
+.wf-checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px; }
+.wf-checkbox { width: 14px; height: 14px; border: 1.5px solid #888; border-radius: 2px; flex-shrink: 0; }
+
+/* --- Form --- */
+.wf-form { max-width: 600px; }
+.wf-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.wf-form-group { margin-bottom: 16px; }
+.wf-form-group label { font-size: 12px; font-weight: 700; display: block; margin-bottom: 5px; color: #444; }
+.wf-form-input { width: 100%; height: 40px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 12px; font-size: 13px; background: #f9f9f9; }
+.wf-form-textarea { width: 100%; height: 80px; border: 1.5px solid #aaa; border-radius: 4px; padding: 10px 12px; font-size: 13px; background: #f9f9f9; resize: vertical; }
+.wf-upload-zone { border: 2px dashed #aaa; border-radius: 6px; padding: 24px; text-align: center; color: #888; font-size: 13px; }
+
+/* --- Footer --- */
+.wf-footer { background: #333; color: #fff; padding: 32px 48px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+.wf-footer h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+.wf-footer p, .wf-footer a { font-size: 12px; color: #bbb; display: block; text-decoration: none; margin-bottom: 5px; }
+.wf-footer-bottom { background: #222; color: #888; padding: 12px 48px; font-size: 12px; text-align: center; }
+
+/* --- Breadcrumb --- */
+.wf-breadcrumb { padding: 12px 48px; font-size: 12px; color: #888; border-bottom: 1px solid #eee; }
+.wf-breadcrumb span { margin: 0 6px; }
+
+/* --- Map placeholder --- */
+.wf-map { width: 100%; height: 280px; background: repeating-linear-gradient(0deg, #ddd 0px, #ddd 1px, #e8e8e8 1px, #e8e8e8 30px), repeating-linear-gradient(90deg, #ddd 0px, #ddd 1px, #e8e8e8 1px, #e8e8e8 30px); border: 1.5px solid #bbb; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 14px; font-weight: 700; }
+
+/* --- Annotation --- */
+.wf-annotation { font-size: 11px; color: #e74c3c; border: 1px dashed #e74c3c; border-radius: 3px; padding: 3px 8px; display: inline-block; margin-top: 6px; }
+.wf-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #999; display: block; margin-bottom: 4px; }
+
+/* --- Page label --- */
+.wf-page-label { background: #333; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 48px; text-align: right; }
+
+/* --- Progress steps --- */
+.wf-steps { display: flex; align-items: center; gap: 0; margin-bottom: 32px; }
+.wf-step { display: flex; align-items: center; }
+.wf-step-circle { width: 32px; height: 32px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; background: #fff; flex-shrink: 0; }
+.wf-step-circle.active { background: #333; color: #fff; }
+.wf-step-label { font-size: 11px; margin-left: 6px; color: #555; }
+.wf-step-line { flex: 1; height: 2px; background: #ccc; margin: 0 12px; min-width: 40px; }
+
+/* --- Accordion --- */
+.wf-accordion-item { border: 1.5px solid #ccc; border-radius: 4px; margin-bottom: 8px; }
+.wf-accordion-header { padding: 14px 16px; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.wf-accordion-header::after { content: '+'; font-size: 18px; color: #888; }
+.wf-accordion-body { padding: 14px 16px; font-size: 13px; color: #555; border-top: 1px solid #eee; line-height: 1.6; }
+
+/* --- Info row --- */
+.wf-info-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.wf-info-icon { width: 36px; height: 36px; border: 2px solid #333; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.wf-info-text label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #999; display: block; }
+.wf-info-text span { font-size: 14px; color: #222; }
+
+/* --- Divider --- */
+.wf-divider { border: none; border-top: 1px dashed #ccc; margin: 16px 0; }
+
+</style>
+<style>
+  body { background:#888; padding:40px 20px; }
+  .device-frame {
+    width:375px; margin:0 auto; background:#fff;
+    border-radius:40px; border:8px solid #333;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    overflow:hidden; position:relative;
+  }
+  .device-notch {
+    width:120px; height:28px; background:#333;
+    border-radius:0 0 18px 18px; margin:0 auto;
+    position:relative; z-index:10;
+  }
+  .mobile-nav {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 16px; border-bottom:1.5px solid #333;
+    position:sticky; top:0; background:#fff; z-index:100;
+  }
+  .mobile-logo { font-size:14px; font-weight:800; }
+  .hamburger { width:32px; height:32px; border:1.5px solid #333; border-radius:4px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:6px; cursor:pointer; }
+  .hamburger span { display:block; width:16px; height:2px; background:#333; }
+  .mobile-section { padding:20px 16px; border-bottom:1px solid #eee; }
+  .mobile-hero { background:repeating-linear-gradient(45deg,#ccc 0,#ccc 1px,#ddd 1px,#ddd 12px); padding:32px 16px; text-align:center; }
+  .mobile-hero h1 { font-size:22px; font-weight:900; line-height:1.3; margin-bottom:10px; }
+  .mobile-hero p { font-size:13px; color:#444; line-height:1.5; margin-bottom:16px; }
+  .mobile-btn { width:100%; padding:14px; font-size:14px; font-weight:700; background:#333; color:#fff; border:none; border-radius:6px; cursor:pointer; margin-bottom:8px; }
+  .mobile-btn-outline { width:100%; padding:13px; font-size:14px; font-weight:700; background:#fff; color:#333; border:2px solid #333; border-radius:6px; cursor:pointer; }
+  .mobile-input { width:100%; padding:12px 14px; border:1.5px solid #ccc; border-radius:6px; font-size:14px; background:#f9f9f9; box-sizing:border-box; margin-bottom:10px; }
+  .mobile-card { border:1.5px solid #ddd; border-radius:6px; padding:14px; margin-bottom:12px; }
+  .mobile-card h3 { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .mobile-card p { font-size:12px; color:#666; }
+  .mobile-stat-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .mobile-stat { border:1.5px solid #333; border-radius:6px; padding:14px; text-align:center; }
+  .mobile-stat-num { font-size:22px; font-weight:900; }
+  .mobile-stat-label { font-size:10px; color:#666; margin-top:2px; }
+  .mobile-tab-row { display:flex; overflow-x:auto; gap:8px; padding-bottom:4px; }
+  .mobile-tab { white-space:nowrap; padding:8px 14px; border:1.5px solid #ccc; border-radius:20px; font-size:12px; font-weight:600; background:#fff; cursor:pointer; flex-shrink:0; }
+  .mobile-tab.active { background:#333; color:#fff; border-color:#333; }
+  .mobile-bottom-nav { display:flex; background:#fff; border-top:2px solid #333; position:sticky; bottom:0; }
+  .mobile-nav-tab { flex:1; padding:10px 4px; text-align:center; font-size:10px; color:#888; cursor:pointer; border:none; background:none; }
+  .mobile-nav-tab.active { color:#333; font-weight:700; }
+  .mobile-nav-tab .icon { font-size:18px; display:block; margin-bottom:2px; }
+  .wf-page-label-mobile { background:#333;color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;text-align:right; }
+
+  /* Drawer overlay */
+  .mobile-menu-overlay {
+    position:absolute; top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.5); z-index:200; display:flex;
+  }
+  .mobile-menu-panel {
+    width:260px; background:#fff; height:100%; padding:20px 16px;
+    display:flex; flex-direction:column; gap:2px;
+  }
+  .mobile-menu-item { padding:14px 10px; font-size:14px; border-bottom:1px solid #eee; display:block; text-decoration:none; color:#222; }
+  .mobile-menu-item.highlight { background:#333; color:#fff; border-radius:4px; text-align:center; font-weight:700; margin-top:10px; }
+</style>
+</head>
+<body>
+<div style="text-align:center;margin-bottom:20px;color:#fff;">
+  <h2 style="font-size:20px;font-weight:700;margin-bottom:8px;">Wireframe 11 — Мобільна версія (375px)</h2>
+  <p style="font-size:13px;opacity:0.7;">Відображення сайту на смартфоні</p>
+</div>
+
+<div style="display:flex;gap:40px;justify-content:center;align-items:flex-start;flex-wrap:wrap;">
+
+  <!-- Screen 1: Home -->
+  <div>
+    <div style="color:#fff;font-size:12px;text-align:center;margin-bottom:10px;font-weight:700;">Головна</div>
+    <div class="device-frame">
+      <div class="device-notch"></div>
+      <div class="wf-page-label-mobile">Home</div>
+
+      <nav class="mobile-nav">
+        <div class="mobile-logo">ЦНО ДНУ</div>
+        <div class="hamburger"><span></span><span></span><span></span></div>
+      </nav>
+
+      <div class="mobile-hero">
+        <div style="display:inline-block;border:1px dashed #666;border-radius:12px;padding:3px 10px;font-size:10px;color:#555;margin-bottom:10px;">ДНУ ім. Олеся Гончара</div>
+        <h1>Ваш розвиток — наша спеціальність</h1>
+        <p>Підвищення кваліфікації, перепідготовка, НМТ-підготовка.</p>
+        <button class="mobile-btn">Знайти програму →</button>
+        <button class="mobile-btn-outline">Безкоштовна консультація</button>
+      </div>
+
+      <div class="mobile-section">
+        <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Пошук програм</div>
+        <input class="mobile-input" placeholder="🔍 Назва або ключове слово...">
+        <button class="mobile-btn" style="margin-top:0;">Знайти</button>
+      </div>
+
+      <div class="mobile-section">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Ми в цифрах</div>
+        <div class="mobile-stat-row">
+          <div class="mobile-stat"><div class="mobile-stat-num">2500+</div><div class="mobile-stat-label">Випускників/рік</div></div>
+          <div class="mobile-stat"><div class="mobile-stat-num">120+</div><div class="mobile-stat-label">Програм</div></div>
+          <div class="mobile-stat"><div class="mobile-stat-num">30+</div><div class="mobile-stat-label">Років досвіду</div></div>
+          <div class="mobile-stat"><div class="mobile-stat-num">98%</div><div class="mobile-stat-label">Задоволені</div></div>
+        </div>
+      </div>
+
+      <div class="mobile-section">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Напрямки</div>
+        <div class="mobile-tab-row">
+          <button class="mobile-tab active">Підвищення кваліф.</button>
+          <button class="mobile-tab">Перепідготовка</button>
+          <button class="mobile-tab">НМТ</button>
+        </div>
+        <div class="mobile-card" style="margin-top:10px;">
+          <div style="font-size:10px;color:#888;margin-bottom:6px;">45+ програм</div>
+          <h3>Підвищення кваліфікації</h3>
+          <p>Для педагогічних та наукових працівників. Сертифікат державного зразка.</p>
+          <button style="width:100%;margin-top:10px;padding:10px;border:1.5px solid #333;background:#fff;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;">Переглянути →</button>
+        </div>
+      </div>
+
+      <div class="mobile-bottom-nav">
+        <button class="mobile-nav-tab active"><span class="icon">🏠</span>Головна</button>
+        <button class="mobile-nav-tab"><span class="icon">📋</span>Програми</button>
+        <button class="mobile-nav-tab"><span class="icon">📝</span>НМТ</button>
+        <button class="mobile-nav-tab"><span class="icon">👤</span>Заявка</button>
+        <button class="mobile-nav-tab"><span class="icon">☰</span>Меню</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Navigation Menu Open -->
+  <div>
+    <div style="color:#fff;font-size:12px;text-align:center;margin-bottom:10px;font-weight:700;">Меню (відкрите)</div>
+    <div class="device-frame">
+      <div class="device-notch"></div>
+      <div class="wf-page-label-mobile">Nav Menu</div>
+
+      <div class="mobile-menu-overlay">
+        <div class="mobile-menu-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333;">
+            <div style="font-size:15px;font-weight:800;">ЦНО ДНУ</div>
+            <button style="border:none;background:none;font-size:20px;cursor:pointer;">✕</button>
+          </div>
+          <a class="mobile-menu-item">🏠 Головна</a>
+          <a class="mobile-menu-item">📋 Програми</a>
+          <a class="mobile-menu-item">📝 Підготовка до НМТ</a>
+          <a class="mobile-menu-item">ℹ️ Про центр</a>
+          <a class="mobile-menu-item">📄 Документи</a>
+          <a class="mobile-menu-item">👥 Партнери</a>
+          <a class="mobile-menu-item">📞 Контакти</a>
+          <a class="mobile-menu-item highlight">Подати заявку →</a>
+        </div>
+        <div style="flex:1;" onclick=""></div>
+      </div>
+
+      <div class="mobile-bottom-nav" style="position:relative;">
+        <button class="mobile-nav-tab"><span class="icon">🏠</span>Головна</button>
+        <button class="mobile-nav-tab"><span class="icon">📋</span>Програми</button>
+        <button class="mobile-nav-tab"><span class="icon">📝</span>НМТ</button>
+        <button class="mobile-nav-tab"><span class="icon">👤</span>Заявка</button>
+        <button class="mobile-nav-tab active"><span class="icon">☰</span>Меню</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Program detail -->
+  <div>
+    <div style="color:#fff;font-size:12px;text-align:center;margin-bottom:10px;font-weight:700;">Деталі програми</div>
+    <div class="device-frame">
+      <div class="device-notch"></div>
+      <div class="wf-page-label-mobile">Program Detail</div>
+
+      <nav class="mobile-nav">
+        <button style="border:none;background:none;font-size:18px;cursor:pointer;">←</button>
+        <div style="font-size:13px;font-weight:700;">Програма</div>
+        <div style="width:32px;"></div>
+      </nav>
+
+      <div class="mobile-section">
+        <div style="display:flex;gap:6px;margin-bottom:8px;">
+          <span style="font-size:10px;padding:3px 8px;background:#eee;border-radius:3px;">Підвищення кваліф.</span>
+          <span style="font-size:10px;padding:3px 8px;background:#333;color:#fff;border-radius:3px;">Онлайн</span>
+        </div>
+        <h2 style="font-size:18px;font-weight:800;line-height:1.3;margin-bottom:12px;">Педагогічна майстерність</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+          <div style="padding:10px;background:#f9f9f9;border-radius:4px;text-align:center;font-size:11px;"><div style="font-weight:700;font-size:14px;">1 міс.</div>Тривалість</div>
+          <div style="padding:10px;background:#f9f9f9;border-radius:4px;text-align:center;font-size:11px;"><div style="font-weight:700;font-size:14px;">120 год</div>Обсяг</div>
+          <div style="padding:10px;background:#f9f9f9;border-radius:4px;text-align:center;font-size:11px;"><div style="font-weight:700;font-size:14px;">3 200 грн</div>Вартість</div>
+          <div style="padding:10px;background:#f9f9f9;border-radius:4px;text-align:center;font-size:11px;"><div style="font-weight:700;font-size:14px;">3 місця</div>Залишилось</div>
+        </div>
+        <p style="font-size:13px;color:#555;line-height:1.6;">Програма для вчителів та викладачів. Цифрові інструменти, інклюзія, сучасні методики. Посвідчення державного зразка.</p>
+      </div>
+
+      <div class="mobile-section" style="padding-top:0;">
+        <div style="font-size:12px;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;color:#aaa;">Модулі</div>
+        <div style="font-size:12px;display:flex;flex-direction:column;gap:0;">
+          <div style="padding:10px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;"><span>1. Сучасна парадигма освіти</span><span style="color:#888;">20 год</span></div>
+          <div style="padding:10px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;"><span>2. Цифрові технології</span><span style="color:#888;">30 год</span></div>
+          <div style="padding:10px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;"><span>3. Інклюзивне навчання</span><span style="color:#888;">30 год</span></div>
+          <div style="padding:10px 0;display:flex;justify-content:space-between;"><span>4. Психологічний супровід</span><span style="color:#888;">24 год</span></div>
+        </div>
+      </div>
+
+      <!-- Sticky bottom CTA -->
+      <div style="position:sticky;bottom:0;background:#fff;border-top:2px solid #333;padding:12px 16px;display:flex;gap:8px;">
+        <button class="mobile-btn" style="flex:1;margin-bottom:0;">Записатися →</button>
+        <button style="width:48px;height:48px;border:2px solid #333;background:#fff;border-radius:6px;font-size:16px;cursor:pointer;">💬</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:#ccc;font-size:12px;margin-top:30px;">Wireframe 11 · Мобільний вигляд · Ширина 375px (iPhone SE / Android)</p>
+</body>
+</html>

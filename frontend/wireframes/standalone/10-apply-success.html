@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 10 — Заявку прийнято</title>
+<style>
+/* ===== WIREFRAME BASE STYLES ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #e8e8e8; color: #222; }
+
+/* --- Layout --- */
+.wf-page { max-width: 1200px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.15); }
+
+/* --- Nav --- */
+.wf-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 32px; border-bottom: 2px solid #333; background: #fff;
+  position: sticky; top: 0; z-index: 100;
+}
+.wf-logo { font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+.wf-logo-box { width: 40px; height: 40px; border: 2px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+.wf-nav-links { display: flex; gap: 20px; }
+.wf-nav-links a { font-size: 13px; text-decoration: none; color: #333; padding-bottom: 2px; border-bottom: 2px solid transparent; }
+.wf-nav-links a.active { border-bottom-color: #333; font-weight: 700; }
+.wf-nav-btn { font-size: 13px; padding: 7px 18px; border: 2px solid #333; background: #333; color: #fff; cursor: pointer; font-weight: 600; border-radius: 4px; text-decoration: none; }
+
+/* --- Hero --- */
+.wf-hero { background: repeating-linear-gradient(45deg, #ccc 0px, #ccc 1px, #ddd 1px, #ddd 14px); padding: 80px 48px; text-align: center; border-bottom: 2px solid #333; }
+.wf-hero-badge { display: inline-block; border: 1.5px dashed #555; padding: 5px 16px; border-radius: 20px; font-size: 12px; color: #555; margin-bottom: 20px; }
+.wf-hero h1 { font-size: 42px; font-weight: 900; line-height: 1.2; margin-bottom: 16px; text-shadow: 0 0 0 #fff; }
+.wf-hero p { font-size: 16px; color: #444; max-width: 560px; margin: 0 auto 28px; line-height: 1.6; }
+
+/* --- Search Box --- */
+.wf-search-box { background: #fff; border: 2px solid #333; border-radius: 8px; padding: 24px 28px; max-width: 700px; margin: 0 auto; text-align: left; }
+.wf-search-box label { font-size: 13px; font-weight: 700; display: block; margin-bottom: 10px; }
+.wf-search-row { display: flex; gap: 10px; }
+.wf-input { flex: 1; height: 44px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 14px; font-size: 14px; background: #f9f9f9; }
+.wf-select { width: 180px; height: 44px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 10px; font-size: 14px; background: #f9f9f9; }
+.wf-btn { height: 44px; padding: 0 22px; background: #333; color: #fff; border: none; border-radius: 4px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.wf-btn-outline { height: 44px; padding: 0 22px; background: #fff; color: #333; border: 2px solid #333; border-radius: 4px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+/* --- Section --- */
+.wf-section { padding: 48px 48px; border-bottom: 1px solid #ddd; }
+.wf-section-sm { padding: 32px 48px; border-bottom: 1px solid #ddd; }
+.wf-section-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.wf-section-sub { font-size: 14px; color: #666; margin-bottom: 24px; }
+
+/* --- Stats --- */
+.wf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.wf-stat { border: 2px solid #333; border-radius: 6px; padding: 20px; text-align: center; }
+.wf-stat-num { font-size: 32px; font-weight: 900; display: block; margin-bottom: 4px; }
+.wf-stat-label { font-size: 12px; color: #555; }
+
+/* --- Cards Grid --- */
+.wf-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.wf-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.wf-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.wf-card { border: 1.5px solid #bbb; border-radius: 6px; padding: 20px; }
+.wf-card-img { width: 100%; height: 120px; background: repeating-linear-gradient(135deg, #ccc 0px, #ccc 1px, #ddd 1px, #ddd 12px); border-radius: 4px; margin-bottom: 12px; border: 1px solid #aaa; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #888; }
+.wf-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.wf-card p { font-size: 12px; color: #666; line-height: 1.5; margin-bottom: 10px; }
+.wf-tag { display: inline-block; font-size: 10px; background: #eee; border: 1px solid #ccc; border-radius: 3px; padding: 2px 8px; margin-right: 4px; color: #555; }
+.wf-tag-dark { background: #333; color: #fff; border-color: #333; }
+
+/* --- Sidebar Layout --- */
+.wf-layout-sidebar { display: grid; grid-template-columns: 260px 1fr; gap: 32px; }
+.wf-sidebar { border: 1.5px solid #bbb; border-radius: 6px; padding: 20px; height: fit-content; }
+.wf-sidebar h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #ddd; }
+.wf-filter-group { margin-bottom: 16px; }
+.wf-filter-group label { font-size: 12px; color: #555; display: block; margin-bottom: 6px; font-weight: 600; }
+.wf-checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 4px; }
+.wf-checkbox { width: 14px; height: 14px; border: 1.5px solid #888; border-radius: 2px; flex-shrink: 0; }
+
+/* --- Form --- */
+.wf-form { max-width: 600px; }
+.wf-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.wf-form-group { margin-bottom: 16px; }
+.wf-form-group label { font-size: 12px; font-weight: 700; display: block; margin-bottom: 5px; color: #444; }
+.wf-form-input { width: 100%; height: 40px; border: 1.5px solid #aaa; border-radius: 4px; padding: 0 12px; font-size: 13px; background: #f9f9f9; }
+.wf-form-textarea { width: 100%; height: 80px; border: 1.5px solid #aaa; border-radius: 4px; padding: 10px 12px; font-size: 13px; background: #f9f9f9; resize: vertical; }
+.wf-upload-zone { border: 2px dashed #aaa; border-radius: 6px; padding: 24px; text-align: center; color: #888; font-size: 13px; }
+
+/* --- Footer --- */
+.wf-footer { background: #333; color: #fff; padding: 32px 48px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+.wf-footer h4 { font-size: 13px; font-weight: 700; margin-bottom: 10px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+.wf-footer p, .wf-footer a { font-size: 12px; color: #bbb; display: block; text-decoration: none; margin-bottom: 5px; }
+.wf-footer-bottom { background: #222; color: #888; padding: 12px 48px; font-size: 12px; text-align: center; }
+
+/* --- Breadcrumb --- */
+.wf-breadcrumb { padding: 12px 48px; font-size: 12px; color: #888; border-bottom: 1px solid #eee; }
+.wf-breadcrumb span { margin: 0 6px; }
+
+/* --- Map placeholder --- */
+.wf-map { width: 100%; height: 280px; background: repeating-linear-gradient(0deg, #ddd 0px, #ddd 1px, #e8e8e8 1px, #e8e8e8 30px), repeating-linear-gradient(90deg, #ddd 0px, #ddd 1px, #e8e8e8 1px, #e8e8e8 30px); border: 1.5px solid #bbb; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 14px; font-weight: 700; }
+
+/* --- Annotation --- */
+.wf-annotation { font-size: 11px; color: #e74c3c; border: 1px dashed #e74c3c; border-radius: 3px; padding: 3px 8px; display: inline-block; margin-top: 6px; }
+.wf-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: #999; display: block; margin-bottom: 4px; }
+
+/* --- Page label --- */
+.wf-page-label { background: #333; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 8px 48px; text-align: right; }
+
+/* --- Progress steps --- */
+.wf-steps { display: flex; align-items: center; gap: 0; margin-bottom: 32px; }
+.wf-step { display: flex; align-items: center; }
+.wf-step-circle { width: 32px; height: 32px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; background: #fff; flex-shrink: 0; }
+.wf-step-circle.active { background: #333; color: #fff; }
+.wf-step-label { font-size: 11px; margin-left: 6px; color: #555; }
+.wf-step-line { flex: 1; height: 2px; background: #ccc; margin: 0 12px; min-width: 40px; }
+
+/* --- Accordion --- */
+.wf-accordion-item { border: 1.5px solid #ccc; border-radius: 4px; margin-bottom: 8px; }
+.wf-accordion-header { padding: 14px 16px; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.wf-accordion-header::after { content: '+'; font-size: 18px; color: #888; }
+.wf-accordion-body { padding: 14px 16px; font-size: 13px; color: #555; border-top: 1px solid #eee; line-height: 1.6; }
+
+/* --- Info row --- */
+.wf-info-row { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.wf-info-icon { width: 36px; height: 36px; border: 2px solid #333; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.wf-info-text label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #999; display: block; }
+.wf-info-text span { font-size: 14px; color: #222; }
+
+/* --- Divider --- */
+.wf-divider { border: none; border-top: 1px dashed #ccc; margin: 16px 0; }
+
+</style>
+</head>
+<body>
+<div class="wf-page">
+
+  <div class="wf-page-label">Wireframe 10 — Сторінка підтвердження заявки (Application Success)</div>
+
+  <nav class="wf-nav">
+    <div class="wf-logo">
+      <div class="wf-logo-box">ДНУ</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">ЦНО ДНУ</div>
+        <div style="font-size:11px;font-weight:400;color:#666;">Центр неперервної освіти</div>
+      </div>
+    </div>
+    <div class="wf-nav-links">
+      <a href="01-home.html">Головна</a>
+      <a href="02-programs.html">Програми</a>
+      <a href="07-pre-university.html">Підготовка до НМТ</a>
+      <a href="06-about.html">Про центр</a>
+      <a href="05-contacts.html">Контакти</a>
+    </div>
+    <a href="04-apply.html" class="wf-nav-btn">Подати заявку</a>
+  </nav>
+
+  <!-- Success hero -->
+  <section style="padding:80px 48px;text-align:center;border-bottom:1px solid #ddd;">
+    <div style="width:80px;height:80px;border:3px solid #333;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 24px;">✓</div>
+    <h1 style="font-size:32px;font-weight:900;margin-bottom:12px;">Заявку успішно надіслано!</h1>
+    <p style="font-size:16px;color:#555;max-width:500px;margin:0 auto 8px;line-height:1.7;">Ми отримали вашу заявку і розглянемо її протягом <strong>1 робочого дня</strong>.</p>
+    <p style="font-size:14px;color:#888;margin-bottom:32px;">Підтвердження надіслано на: <strong>example@gmail.com</strong></p>
+    <div style="display:inline-block;background:#f9f9f9;border:1.5px solid #ddd;border-radius:6px;padding:10px 24px;font-size:13px;color:#555;">
+      Номер заявки: <strong>#1046</strong>
+    </div>
+  </section>
+
+  <!-- What's next -->
+  <section class="wf-section">
+    <div class="wf-section-title" style="text-align:center;margin-bottom:8px;">Що відбудеться далі?</div>
+    <div class="wf-section-sub" style="text-align:center;margin-bottom:32px;">Кроки до початку вашого навчання</div>
+    <div style="display:flex;align-items:flex-start;gap:0;max-width:800px;margin:0 auto;">
+      <div style="flex:1;text-align:center;padding:0 16px;">
+        <div style="width:48px;height:48px;border:2px solid #333;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;margin:0 auto 12px;">1</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;">Перевірка заявки</h4>
+        <p style="font-size:12px;color:#666;line-height:1.6;">Наш менеджер розгляне вашу заявку та перевірить документи</p>
+        <div style="font-size:11px;color:#888;margin-top:6px;">До 1 робочого дня</div>
+      </div>
+      <div style="width:40px;border-top:2px dashed #ccc;margin-top:24px;flex-shrink:0;"></div>
+      <div style="flex:1;text-align:center;padding:0 16px;">
+        <div style="width:48px;height:48px;border:2px solid #333;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;margin:0 auto 12px;">2</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;">Дзвінок менеджера</h4>
+        <p style="font-size:12px;color:#666;line-height:1.6;">Вам зателефонують для підтвердження деталей і відповідей на запитання</p>
+        <div style="font-size:11px;color:#888;margin-top:6px;">Протягом 1–2 днів</div>
+      </div>
+      <div style="width:40px;border-top:2px dashed #ccc;margin-top:24px;flex-shrink:0;"></div>
+      <div style="flex:1;text-align:center;padding:0 16px;">
+        <div style="width:48px;height:48px;border:2px solid #333;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;margin:0 auto 12px;">3</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;">Підписання договору</h4>
+        <p style="font-size:12px;color:#666;line-height:1.6;">Підпишете договір про навчання (особисто або електронно)</p>
+        <div style="font-size:11px;color:#888;margin-top:6px;">Після підтвердження</div>
+      </div>
+      <div style="width:40px;border-top:2px dashed #ccc;margin-top:24px;flex-shrink:0;"></div>
+      <div style="flex:1;text-align:center;padding:0 16px;">
+        <div style="width:48px;height:48px;border:2px solid #333;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;margin:0 auto 12px;">4</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;">Початок навчання</h4>
+        <p style="font-size:12px;color:#666;line-height:1.6;">Отримаєте доступ до платформи та розклад занять</p>
+        <div style="font-size:11px;color:#888;margin-top:6px;">На дату початку</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Summary card -->
+  <section class="wf-section" style="background:#f9f9f9;border-top:1px solid #ddd;">
+    <div class="wf-section-title">Ваша заявка</div>
+    <div style="max-width:500px;border:1.5px solid #bbb;border-radius:6px;background:#fff;padding:20px;">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:13px;"><span style="color:#888;">Заявник:</span><strong>Сидоренко Ольга Василівна</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:13px;"><span style="color:#888;">Програма:</span><strong>Педагогічна майстерність</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:13px;"><span style="color:#888;">Категорія:</span><strong>Підвищення кваліфікації</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:13px;"><span style="color:#888;">Фінансування:</span><strong>Контракт</strong></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:13px;"><span style="color:#888;">Номер заявки:</span><strong>#1046</strong></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="wf-section" style="text-align:center;border-top:1px solid #ddd;">
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;">Поки очікуєте відповіді...</h3>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+      <a href="02-programs.html" class="wf-btn-outline" style="text-decoration:none;display:inline-block;line-height:44px;padding:0 22px;">Переглянути інші програми</a>
+      <a href="07-pre-university.html" class="wf-btn-outline" style="text-decoration:none;display:inline-block;line-height:44px;padding:0 22px;">НМТ-підготовка</a>
+      <a href="01-home.html" class="wf-btn" style="text-decoration:none;display:inline-block;line-height:44px;padding:0 22px;">На головну</a>
+    </div>
+  </section>
+
+  <footer class="wf-footer">
+    <div><h4>ЦНО ДНУ</h4><p>Центр неперервної освіти</p></div>
+    <div><h4>Програми</h4><a href="#">Підвищення кваліфікації</a><a href="#">Перепідготовка</a><a href="#">НМТ</a></div>
+    <div><h4>Центр</h4><a href="#">Про нас</a><a href="#">Документи</a></div>
+    <div><h4>Контакти</h4><a href="#">+38 (056) 374-xx-xx</a></div>
+  </footer>
+  <div class="wf-footer-bottom">© 2026 Центр неперервної освіти ДНУ</div>
+</div>
+</body>
+</html>

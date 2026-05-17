@@ -1,0 +1,66 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pre_university_groups",
+  "info": {
+    "singularName": "pre-university-group",
+    "pluralName": "pre-university-groups",
+    "displayName": "PreUniversityGroup",
+    "description": "Pre-university preparation groups"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "subject": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "schedule": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "format": {
+      "type": "enumeration",
+      "enum": ["onsite", "online"],
+      "default": "onsite"
+    },
+    "teacher": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}

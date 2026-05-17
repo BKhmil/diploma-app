@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "internships",
+  "info": {
+    "singularName": "internship",
+    "pluralName": "internships",
+    "displayName": "Internship",
+    "description": "Internship opportunities"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "partner": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::partner.partner"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "format": {
+      "type": "enumeration",
+      "enum": ["onsite", "remote", "mixed"],
+      "default": "onsite"
+    },
+    "requirements": {
+      "type": "richtext"
+    }
+  }
+}

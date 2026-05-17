@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 02 — Каталог програм</title>
+<link rel="stylesheet" href="_wireframe.css">
+</head>
+<body>
+<div class="wf-page">
+
+  <div class="wf-page-label">Wireframe 02 — Каталог програм (Programs Catalog)</div>
+
+  <!-- Nav -->
+  <nav class="wf-nav">
+    <div class="wf-logo">
+      <div class="wf-logo-box">ДНУ</div>
+      <div>
+        <div style="font-size:13px; font-weight:700;">ЦНО ДНУ</div>
+        <div style="font-size:11px; font-weight:400; color:#666;">Центр неперервної освіти</div>
+      </div>
+    </div>
+    <div class="wf-nav-links">
+      <a href="01-home.html">Головна</a>
+      <a href="#" class="active">Програми</a>
+      <a href="#">Підготовка до НМТ</a>
+      <a href="#">Про центр</a>
+      <a href="#">Контакти</a>
+    </div>
+    <a href="04-apply.html" class="wf-nav-btn">Подати заявку</a>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="wf-breadcrumb">
+    <a href="01-home.html" style="color:#555; text-decoration:none;">Головна</a>
+    <span>›</span>
+    <strong>Каталог програм</strong>
+  </div>
+
+  <!-- Page Header -->
+  <div class="wf-section-sm" style="background:#f4f4f4; border-bottom:2px solid #333;">
+    <div class="wf-section-title">Каталог програм</div>
+    <div class="wf-section-sub">Оберіть програму навчання, що відповідає вашим цілям та можливостям</div>
+
+    <!-- Search Bar -->
+    <div class="wf-search-row" style="max-width:700px; margin-top:16px;">
+      <input class="wf-input" placeholder="🔍  Пошук за назвою або ключовим словом...">
+      <button class="wf-btn">Знайти</button>
+    </div>
+
+    <!-- Tab Filters -->
+    <div style="display:flex; gap:0; margin-top:20px; border-bottom:2px solid #ccc;">
+      <button style="padding:10px 20px; border:none; border-bottom:3px solid #333; background:transparent; font-size:13px; font-weight:700; cursor:pointer; margin-bottom:-2px;">Усі (120)</button>
+      <button style="padding:10px 20px; border:none; background:transparent; font-size:13px; color:#666; cursor:pointer;">Підвищення кваліф. (45)</button>
+      <button style="padding:10px 20px; border:none; background:transparent; font-size:13px; color:#666; cursor:pointer;">Перепідготовка (30)</button>
+      <button style="padding:10px 20px; border:none; background:transparent; font-size:13px; color:#666; cursor:pointer;">НМТ-підготовка (8)</button>
+    </div>
+  </div>
+
+  <!-- Content: Sidebar + Grid -->
+  <div class="wf-section">
+    <div class="wf-layout-sidebar">
+
+      <!-- Sidebar Filters -->
+      <aside class="wf-sidebar">
+        <h4>Фільтри</h4>
+
+        <div class="wf-filter-group">
+          <label>Формат навчання</label>
+          <div class="wf-checkbox-row"><div class="wf-checkbox" style="background:#333;"></div> Онлайн (58)</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Офлайн (30)</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Змішаний (32)</div>
+        </div>
+
+        <hr class="wf-divider">
+
+        <div class="wf-filter-group">
+          <label>Тривалість</label>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> До 1 місяця</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox" style="background:#333;"></div> 1–3 місяці (41)</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> 3–12 місяців</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Понад рік</div>
+        </div>
+
+        <hr class="wf-divider">
+
+        <div class="wf-filter-group">
+          <label>Галузь знань</label>
+          <div class="wf-checkbox-row"><div class="wf-checkbox" style="background:#333;"></div> Освіта (32)</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Право (14)</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Економіка (18)</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Психологія (12)</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> IT та технології (9)</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Медицина (7)</div>
+          <button style="background:none; border:none; font-size:12px; color:#555; cursor:pointer; padding:0; margin-top:4px; text-decoration:underline;">Показати ще...</button>
+        </div>
+
+        <hr class="wf-divider">
+
+        <div class="wf-filter-group">
+          <label>Документ після навчання</label>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Сертифікат</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Посвідчення</div>
+          <div class="wf-checkbox-row"><div class="wf-checkbox"></div> Диплом магістра</div>
+        </div>
+
+        <button class="wf-btn" style="width:100%; margin-top:8px;">Застосувати</button>
+        <button style="width:100%; margin-top:8px; background:none; border:none; font-size:12px; color:#888; cursor:pointer; text-decoration:underline;">Скинути фільтри</button>
+      </aside>
+
+      <!-- Programs Grid -->
+      <div>
+        <!-- Sort / Count row -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <span style="font-size:13px; color:#666;">Знайдено: <strong>120 програм</strong></span>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:12px; color:#888;">Сортувати:</span>
+            <select class="wf-select" style="width:auto; font-size:12px; height:34px;">
+              <option>Популярністю</option>
+              <option>За назвою А–Я</option>
+              <option>За тривалістю</option>
+            </select>
+            <div style="display:flex; gap:4px;">
+              <button style="border:1.5px solid #333; width:32px; height:32px; background:#333; color:#fff; cursor:pointer; border-radius:3px;" title="Сітка">⊞</button>
+              <button style="border:1.5px solid #ccc; width:32px; height:32px; background:#fff; cursor:pointer; border-radius:3px;" title="Список">≡</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cards -->
+        <div class="wf-grid-3" style="margin-bottom:28px;">
+
+          <a href="03-program-detail.html" class="wf-card" style="display:block; text-decoration:none; color:inherit; background:#fff;">
+            <div class="wf-card-img">[ Зображення ]</div>
+            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+              <span class="wf-tag">Підвищення кваліф.</span>
+              <span class="wf-tag wf-tag-dark">Онлайн</span>
+            </div>
+            <h3>Педагогічна майстерність</h3>
+            <p>Сучасні методи та технології навчання. Для вчителів і викладачів.</p>
+            <hr class="wf-divider">
+            <div style="font-size:11px; color:#777;">⏱ 1 місяць &nbsp; 📋 Посвідчення</div>
+            <button class="wf-btn" style="width:100%; margin-top:10px; font-size:12px; height:36px;">Детальніше</button>
+          </a>
+
+          <a href="03-program-detail.html" class="wf-card" style="display:block; text-decoration:none; color:inherit; background:#fff;">
+            <div class="wf-card-img">[ Зображення ]</div>
+            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+              <span class="wf-tag">Перепідготовка</span>
+              <span class="wf-tag wf-tag-dark">Змішана</span>
+            </div>
+            <h3>Психологія</h3>
+            <p>Програма рівня магістр. Друга вища освіта зі спеціальності 053.</p>
+            <hr class="wf-divider">
+            <div style="font-size:11px; color:#777;">⏱ 1,5 роки &nbsp; 🎓 Диплом</div>
+            <button class="wf-btn" style="width:100%; margin-top:10px; font-size:12px; height:36px;">Детальніше</button>
+          </a>
+
+          <a href="03-program-detail.html" class="wf-card" style="display:block; text-decoration:none; color:inherit; background:#fff;">
+            <div class="wf-card-img">[ Зображення ]</div>
+            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+              <span class="wf-tag">Підвищення кваліф.</span>
+              <span class="wf-tag wf-tag-dark">Офлайн</span>
+            </div>
+            <h3>Охорона праці в освіті</h3>
+            <p>Обов'язкова програма для керівників навчальних закладів.</p>
+            <hr class="wf-divider">
+            <div style="font-size:11px; color:#777;">⏱ 2 тижні &nbsp; 📋 Посвідчення</div>
+            <button class="wf-btn" style="width:100%; margin-top:10px; font-size:12px; height:36px;">Детальніше</button>
+          </a>
+
+          <div class="wf-card">
+            <div class="wf-card-img">[ Зображення ]</div>
+            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+              <span class="wf-tag">НМТ-підготовка</span>
+              <span class="wf-tag wf-tag-dark">Офлайн</span>
+            </div>
+            <h3>Математика (НМТ)</h3>
+            <p>Підготовка до тестування з математики. Малі групи до 8 осіб.</p>
+            <hr class="wf-divider">
+            <div style="font-size:11px; color:#777;">⏱ 3 місяці &nbsp; 📜 Довідка</div>
+            <button class="wf-btn" style="width:100%; margin-top:10px; font-size:12px; height:36px;">Детальніше</button>
+          </div>
+
+          <div class="wf-card">
+            <div class="wf-card-img">[ Зображення ]</div>
+            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+              <span class="wf-tag">Перепідготовка</span>
+              <span class="wf-tag wf-tag-dark">Онлайн</span>
+            </div>
+            <h3>Менеджмент організацій</h3>
+            <p>Другий рівень вищої освіти зі спеціальності 073 Менеджмент.</p>
+            <hr class="wf-divider">
+            <div style="font-size:11px; color:#777;">⏱ 1 рік &nbsp; 🎓 Диплом</div>
+            <button class="wf-btn" style="width:100%; margin-top:10px; font-size:12px; height:36px;">Детальніше</button>
+          </div>
+
+          <div class="wf-card">
+            <div class="wf-card-img">[ Зображення ]</div>
+            <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:8px;">
+              <span class="wf-tag">Підвищення кваліф.</span>
+              <span class="wf-tag wf-tag-dark">Онлайн</span>
+            </div>
+            <h3>Інклюзивна освіта</h3>
+            <p>Навчання педагогів роботі з дітьми з особливими потребами.</p>
+            <hr class="wf-divider">
+            <div style="font-size:11px; color:#777;">⏱ 3 тижні &nbsp; 📋 Посвідчення</div>
+            <button class="wf-btn" style="width:100%; margin-top:10px; font-size:12px; height:36px;">Детальніше</button>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div style="display:flex; justify-content:center; gap:4px; align-items:center;">
+          <button style="width:36px; height:36px; border:1.5px solid #ccc; background:#fff; border-radius:4px; cursor:pointer;">‹</button>
+          <button style="width:36px; height:36px; border:1.5px solid #333; background:#333; color:#fff; border-radius:4px; cursor:pointer; font-weight:700;">1</button>
+          <button style="width:36px; height:36px; border:1.5px solid #ccc; background:#fff; border-radius:4px; cursor:pointer;">2</button>
+          <button style="width:36px; height:36px; border:1.5px solid #ccc; background:#fff; border-radius:4px; cursor:pointer;">3</button>
+          <span style="padding:0 8px; color:#888;">...</span>
+          <button style="width:36px; height:36px; border:1.5px solid #ccc; background:#fff; border-radius:4px; cursor:pointer;">20</button>
+          <button style="width:36px; height:36px; border:1.5px solid #ccc; background:#fff; border-radius:4px; cursor:pointer;">›</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="wf-footer">
+    <div><h4>ЦНО ДНУ</h4><p>Центр неперервної освіти</p><p style="margin-top:10px;">пр. Гагаріна, 72, м. Дніпро, 49010</p></div>
+    <div><h4>Програми</h4><a href="#">Підвищення кваліфікації</a><a href="#">Перепідготовка</a><a href="#">НМТ-підготовка</a></div>
+    <div><h4>Центр</h4><a href="#">Про нас</a><a href="#">Документи</a><a href="#">Персонал</a></div>
+    <div><h4>Контакти</h4><a href="#">+38 (056) 374-xx-xx</a><a href="#">cno@dnu.dp.ua</a></div>
+  </footer>
+  <div class="wf-footer-bottom">© 2026 Центр неперервної освіти ДНУ</div>
+
+</div>
+</body>
+</html>

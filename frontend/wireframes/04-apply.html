@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 04 — Подати заявку</title>
+<link rel="stylesheet" href="_wireframe.css">
+</head>
+<body>
+<div class="wf-page">
+
+  <div class="wf-page-label">Wireframe 04 — Подати заявку (Application Form)</div>
+
+  <!-- Nav -->
+  <nav class="wf-nav">
+    <div class="wf-logo">
+      <div class="wf-logo-box">ДНУ</div>
+      <div>
+        <div style="font-size:13px; font-weight:700;">ЦНО ДНУ</div>
+        <div style="font-size:11px; font-weight:400; color:#666;">Центр неперервної освіти</div>
+      </div>
+    </div>
+    <div class="wf-nav-links">
+      <a href="01-home.html">Головна</a>
+      <a href="02-programs.html">Програми</a>
+      <a href="#">Підготовка до НМТ</a>
+      <a href="#">Про центр</a>
+      <a href="#">Контакти</a>
+    </div>
+    <a href="#" class="wf-nav-btn" style="background:#fff; color:#333; border-color:#333;">Подати заявку</a>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="wf-breadcrumb">
+    <a href="01-home.html" style="color:#555; text-decoration:none;">Головна</a>
+    <span>›</span>
+    <strong>Подати заявку</strong>
+  </div>
+
+  <!-- Page header -->
+  <div class="wf-section-sm" style="background:#f4f4f4; border-bottom:2px solid #333;">
+    <div class="wf-section-title">Подати заявку на навчання</div>
+    <div class="wf-section-sub">Заповніть форму нижче — наш менеджер зв'яжеться з вами протягом 1 робочого дня</div>
+
+    <!-- Progress Steps -->
+    <div class="wf-steps" style="max-width:600px; margin-top:20px;">
+      <div class="wf-step">
+        <div class="wf-step-circle active">1</div>
+        <span class="wf-step-label">Особисті<br>дані</span>
+      </div>
+      <div class="wf-step-line"></div>
+      <div class="wf-step">
+        <div class="wf-step-circle">2</div>
+        <span class="wf-step-label">Освіта та<br>досвід</span>
+      </div>
+      <div class="wf-step-line"></div>
+      <div class="wf-step">
+        <div class="wf-step-circle">3</div>
+        <span class="wf-step-label">Вибір<br>програми</span>
+      </div>
+      <div class="wf-step-line"></div>
+      <div class="wf-step">
+        <div class="wf-step-circle">4</div>
+        <span class="wf-step-label">Документи</span>
+      </div>
+      <div class="wf-step-line"></div>
+      <div class="wf-step">
+        <div class="wf-step-circle">5</div>
+        <span class="wf-step-label">Підтвер-<br>дження</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Content -->
+  <div class="wf-section">
+    <div style="display:grid; grid-template-columns:1fr 300px; gap:40px; align-items:start;">
+
+      <!-- Form -->
+      <div>
+        <h2 style="font-size:18px; font-weight:800; margin-bottom:20px; padding-bottom:10px; border-bottom:2px solid #333;">Крок 1. Особисті дані</h2>
+
+        <div class="wf-form-row">
+          <div class="wf-form-group">
+            <label>Прізвище <span style="color:#e74c3c;">*</span></label>
+            <input class="wf-form-input" placeholder="Іванченко">
+          </div>
+          <div class="wf-form-group">
+            <label>Ім'я <span style="color:#e74c3c;">*</span></label>
+            <input class="wf-form-input" placeholder="Олена">
+          </div>
+        </div>
+
+        <div class="wf-form-row">
+          <div class="wf-form-group">
+            <label>По батькові</label>
+            <input class="wf-form-input" placeholder="Василівна">
+          </div>
+          <div class="wf-form-group">
+            <label>Дата народження <span style="color:#e74c3c;">*</span></label>
+            <input class="wf-form-input" placeholder="дд.мм.рррр" type="text">
+          </div>
+        </div>
+
+        <div class="wf-form-row">
+          <div class="wf-form-group">
+            <label>Телефон <span style="color:#e74c3c;">*</span></label>
+            <input class="wf-form-input" placeholder="+38 (0XX) XXX-XX-XX">
+          </div>
+          <div class="wf-form-group">
+            <label>Email <span style="color:#e74c3c;">*</span></label>
+            <input class="wf-form-input" placeholder="example@email.com">
+          </div>
+        </div>
+
+        <div class="wf-form-group">
+          <label>Місто проживання <span style="color:#e74c3c;">*</span></label>
+          <input class="wf-form-input" placeholder="Дніпро" style="max-width:300px;">
+        </div>
+
+        <hr class="wf-divider" style="margin:28px 0;">
+
+        <h2 style="font-size:18px; font-weight:800; margin-bottom:20px; padding-bottom:10px; border-bottom:2px solid #333;">Крок 2. Освіта та досвід</h2>
+
+        <div class="wf-form-row">
+          <div class="wf-form-group">
+            <label>Рівень освіти <span style="color:#e74c3c;">*</span></label>
+            <select class="wf-form-input" style="height:40px;">
+              <option value="">— Оберіть —</option>
+              <option>Повна загальна середня</option>
+              <option>Бакалавр</option>
+              <option>Магістр / Спеціаліст</option>
+              <option>Аспірант / Доктор</option>
+            </select>
+          </div>
+          <div class="wf-form-group">
+            <label>Спеціальність за дипломом</label>
+            <input class="wf-form-input" placeholder="Математика">
+          </div>
+        </div>
+
+        <div class="wf-form-group">
+          <label>Місце роботи та посада</label>
+          <input class="wf-form-input" placeholder="Школа №15, вчитель математики">
+        </div>
+
+        <hr class="wf-divider" style="margin:28px 0;">
+
+        <h2 style="font-size:18px; font-weight:800; margin-bottom:20px; padding-bottom:10px; border-bottom:2px solid #333;">Крок 3. Вибір програми</h2>
+
+        <div class="wf-form-group">
+          <label>Категорія програми <span style="color:#e74c3c;">*</span></label>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer; padding:8px 14px; border:1.5px solid #333; border-radius:4px; background:#333; color:#fff; font-weight:700;">
+              <input type="radio" name="category" checked style="accent-color:#fff;"> Підвищення кваліфікації
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer; padding:8px 14px; border:1.5px solid #ccc; border-radius:4px;">
+              <input type="radio" name="category"> Перепідготовка
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer; padding:8px 14px; border:1.5px solid #ccc; border-radius:4px;">
+              <input type="radio" name="category"> НМТ-підготовка
+            </label>
+          </div>
+        </div>
+
+        <div class="wf-form-group">
+          <label>Оберіть програму <span style="color:#e74c3c;">*</span></label>
+          <select class="wf-form-input" style="height:40px;">
+            <option value="">— Оберіть зі списку —</option>
+            <option>Педагогічна майстерність (120 год.)</option>
+            <option>Інклюзивна освіта (72 год.)</option>
+            <option>НУШ: практичні інструменти (48 год.)</option>
+            <option>Охорона праці в освіті (30 год.)</option>
+          </select>
+        </div>
+
+        <div class="wf-form-group">
+          <label>Форма фінансування <span style="color:#e74c3c;">*</span></label>
+          <div style="display:flex; gap:12px; margin-top:8px;">
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+              <input type="radio" name="finance"> Бюджет (безкоштовно)
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+              <input type="radio" name="finance" checked> Контракт (самостійна оплата)
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px; cursor:pointer;">
+              <input type="radio" name="finance"> Від роботодавця
+            </label>
+          </div>
+        </div>
+
+        <div class="wf-form-group">
+          <label>Додаткові побажання</label>
+          <textarea class="wf-form-textarea" placeholder="Наприклад: зручний час занять, особливі умови навчання, запитання тощо..."></textarea>
+        </div>
+
+        <hr class="wf-divider" style="margin:28px 0;">
+
+        <h2 style="font-size:18px; font-weight:800; margin-bottom:20px; padding-bottom:10px; border-bottom:2px solid #333;">Крок 4. Завантаження документів</h2>
+
+        <p style="font-size:13px; color:#666; margin-bottom:16px; line-height:1.6;">Завантажте скан-копії необхідних документів. Формати: PDF, JPG, PNG. Максимальний розмір файлу: 5 МБ.</p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px;">
+          <div>
+            <div class="wf-label">Диплом про вищу освіту *</div>
+            <div class="wf-upload-zone">
+              📎 Перетягніть файл<br>або <u>оберіть на комп'ютері</u>
+            </div>
+          </div>
+          <div>
+            <div class="wf-label">Паспорт (1 та 2 сторінки) *</div>
+            <div class="wf-upload-zone">
+              📎 Перетягніть файл<br>або <u>оберіть на комп'ютері</u>
+            </div>
+          </div>
+          <div>
+            <div class="wf-label">РНОКПП (ІПН)</div>
+            <div class="wf-upload-zone">
+              📎 Перетягніть файл<br>або <u>оберіть на комп'ютері</u>
+            </div>
+          </div>
+          <div>
+            <div class="wf-label">Фото 3×4</div>
+            <div class="wf-upload-zone">
+              📎 Перетягніть файл<br>або <u>оберіть на комп'ютері</u>
+            </div>
+          </div>
+        </div>
+
+        <!-- Consent -->
+        <div style="background:#f9f9f9; border:1.5px solid #ddd; border-radius:6px; padding:16px; margin-bottom:24px;">
+          <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:10px;">
+            <div class="wf-checkbox" style="margin-top:2px; background:#333;"></div>
+            <p style="font-size:12px; color:#555; line-height:1.6;">Я погоджуюся з <u>обробкою персональних даних</u> відповідно до Закону України "Про захист персональних даних" і підтверджую достовірність наданої інформації.</p>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:10px;">
+            <div class="wf-checkbox" style="margin-top:2px;"></div>
+            <p style="font-size:12px; color:#555; line-height:1.6;">Я хочу отримувати новини та повідомлення про нові програми на вказаний email.</p>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display:flex; gap:14px; align-items:center;">
+          <button class="wf-btn" style="padding:0 40px; height:50px; font-size:15px;">Надіслати заявку →</button>
+          <button class="wf-btn-outline" style="height:50px;">Зберегти чернетку</button>
+          <a href="02-programs.html" style="font-size:13px; color:#888; text-decoration:none;">← Назад до програм</a>
+        </div>
+
+      </div>
+
+      <!-- Sidebar info -->
+      <div>
+        <div class="wf-sidebar" style="position:sticky; top:80px; background:#fff;">
+          <h4 style="font-size:14px; font-weight:800; margin-bottom:14px;">Необхідні документи</h4>
+          <div style="font-size:12px; color:#444; line-height:1.8;">
+            <div>📄 Диплом про вищу освіту (скан)</div>
+            <div>🪪 Паспорт (стор. 1 і 2)</div>
+            <div>🔢 РНОКПП (ІПН)</div>
+            <div>📸 Фото 3×4 (jpg або png)</div>
+            <div style="margin-top:10px; color:#888; font-size:11px;">* Для НМТ-підготовки: замість диплома — атестат</div>
+          </div>
+
+          <hr class="wf-divider">
+
+          <h4 style="font-size:14px; font-weight:800; margin-bottom:14px;">Що далі?</h4>
+          <div style="font-size:12px; color:#444; line-height:1.9;">
+            <div>1️⃣ Заповніть форму</div>
+            <div>2️⃣ Менеджер зв'яжеться з вами</div>
+            <div>3️⃣ Підпишете договір</div>
+            <div>4️⃣ Отримаєте доступ до навчання</div>
+          </div>
+
+          <hr class="wf-divider">
+
+          <h4 style="font-size:14px; font-weight:800; margin-bottom:12px;">Маєте запитання?</h4>
+          <div style="font-size:13px; color:#444;">
+            <div>📞 +38 (056) 374-XX-XX</div>
+            <div>✉️ cno@dnu.dp.ua</div>
+            <div style="margin-top:8px; font-size:11px; color:#888;">Пн–Пт: 9:00–17:00</div>
+          </div>
+          <button class="wf-btn-outline" style="width:100%; margin-top:14px;">Написати в чат</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="wf-footer">
+    <div><h4>ЦНО ДНУ</h4><p>Центр неперервної освіти</p></div>
+    <div><h4>Програми</h4><a href="#">Підвищення кваліфікації</a><a href="#">Перепідготовка</a><a href="#">НМТ</a></div>
+    <div><h4>Центр</h4><a href="#">Про нас</a><a href="#">Документи</a><a href="#">Персонал</a></div>
+    <div><h4>Контакти</h4><a href="#">+38 (056) 374-xx-xx</a></div>
+  </footer>
+  <div class="wf-footer-bottom">© 2026 Центр неперервної освіти ДНУ</div>
+
+</div>
+</body>
+</html>

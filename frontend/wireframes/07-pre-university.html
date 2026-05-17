@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 07 — Підготовка до НМТ</title>
+<link rel="stylesheet" href="_wireframe.css">
+</head>
+<body>
+<div class="wf-page">
+
+  <div class="wf-page-label">Wireframe 07 — Підготовка до НМТ (Pre-University)</div>
+
+  <nav class="wf-nav">
+    <div class="wf-logo">
+      <div class="wf-logo-box">ДНУ</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;">ЦНО ДНУ</div>
+        <div style="font-size:11px;font-weight:400;color:#666;">Центр неперервної освіти</div>
+      </div>
+    </div>
+    <div class="wf-nav-links">
+      <a href="01-home.html">Головна</a>
+      <a href="02-programs.html">Програми</a>
+      <a href="#" class="active">Підготовка до НМТ</a>
+      <a href="06-about.html">Про центр</a>
+      <a href="05-contacts.html">Контакти</a>
+    </div>
+    <a href="04-apply.html" class="wf-nav-btn">Подати заявку</a>
+  </nav>
+
+  <!-- Hero — орієнтований на абітурієнтів -->
+  <section class="wf-hero" style="padding: 60px 48px 48px;">
+    <div class="wf-hero-badge">Підготовчі курси ДНУ • Набір відкрито</div>
+    <h1 style="font-size:36px;">Підготовка до НМТ 2026<br>разом з ДНУ</h1>
+    <p>Досвідчені викладачі університету. Малі групи. Гарантований результат.</p>
+    <div style="display:flex;gap:14px;justify-content:center;margin-top:20px;">
+      <button class="wf-btn">Записатися зараз →</button>
+      <button class="wf-btn-outline">Розклад занять</button>
+    </div>
+    <!-- Countdown placeholder -->
+    <div style="margin-top:28px;display:inline-flex;gap:16px;background:#fff;border:2px solid #333;border-radius:8px;padding:14px 24px;">
+      <div style="text-align:center;">
+        <div style="font-size:28px;font-weight:900;">47</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;">Днів</div>
+      </div>
+      <div style="font-size:28px;font-weight:900;color:#bbb;line-height:1.6;">:</div>
+      <div style="text-align:center;">
+        <div style="font-size:28px;font-weight:900;">12</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;">Год</div>
+      </div>
+      <div style="font-size:28px;font-weight:900;color:#bbb;line-height:1.6;">:</div>
+      <div style="text-align:center;">
+        <div style="font-size:28px;font-weight:900;">38</div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;">Хв</div>
+      </div>
+      <div style="margin-left:12px;font-size:12px;color:#666;max-width:120px;line-height:1.5;display:flex;align-items:center;">до початку НМТ 2026</div>
+    </div>
+    <div class="wf-annotation" style="margin-top:8px;">[ Зворотний відлік — динамічний JS компонент ]</div>
+  </section>
+
+  <!-- Subjects grid -->
+  <section class="wf-section">
+    <div class="wf-section-title">Предмети підготовки</div>
+    <div class="wf-section-sub">Обирайте один або кілька предметів одночасно — діє знижка на комплект</div>
+    <div class="wf-grid-4">
+      <div class="wf-card" style="cursor:pointer; border:2px solid #333; background:#f4f4f4;">
+        <div style="font-size:32px;margin-bottom:10px;">📐</div>
+        <h3>Математика</h3>
+        <p>Алгебра, геометрія, елементи аналізу. Поглиблений курс.</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px;color:#555;">⏱ 3 міс. &nbsp; 👥 до 8 осіб</div>
+        <div style="font-size:13px;font-weight:700;margin-top:8px;">від 2 800 грн</div>
+        <button class="wf-btn" style="width:100%;margin-top:10px;font-size:12px;height:36px;">Записатися</button>
+      </div>
+      <div class="wf-card" style="cursor:pointer;">
+        <div style="font-size:32px;margin-bottom:10px;">📖</div>
+        <h3>Українська мова</h3>
+        <p>Орфографія, синтаксис, текст. Підготовка до завдань тесту.</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px;color:#555;">⏱ 3 міс. &nbsp; 👥 до 8 осіб</div>
+        <div style="font-size:13px;font-weight:700;margin-top:8px;">від 2 500 грн</div>
+        <button class="wf-btn" style="width:100%;margin-top:10px;font-size:12px;height:36px;">Записатися</button>
+      </div>
+      <div class="wf-card" style="cursor:pointer;">
+        <div style="font-size:32px;margin-bottom:10px;">🧪</div>
+        <h3>Хімія</h3>
+        <p>Неорганічна та органічна хімія. Задачі та теорія.</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px;color:#555;">⏱ 3 міс. &nbsp; 👥 до 8 осіб</div>
+        <div style="font-size:13px;font-weight:700;margin-top:8px;">від 2 500 грн</div>
+        <button class="wf-btn" style="width:100%;margin-top:10px;font-size:12px;height:36px;">Записатися</button>
+      </div>
+      <div class="wf-card" style="cursor:pointer;">
+        <div style="font-size:32px;margin-bottom:10px;">🔬</div>
+        <h3>Біологія</h3>
+        <p>Ботаніка, зоологія, анатомія людини, генетика.</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px;color:#555;">⏱ 3 міс. &nbsp; 👥 до 8 осіб</div>
+        <div style="font-size:13px;font-weight:700;margin-top:8px;">від 2 500 грн</div>
+        <button class="wf-btn" style="width:100%;margin-top:10px;font-size:12px;height:36px;">Записатися</button>
+      </div>
+      <div class="wf-card">
+        <div style="font-size:32px;margin-bottom:10px;">⚛️</div>
+        <h3>Фізика</h3>
+        <p>Механіка, електрика, термодинаміка, оптика.</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px;color:#555;">⏱ 3 міс. &nbsp; 👥 до 8 осіб</div>
+        <div style="font-size:13px;font-weight:700;margin-top:8px;">від 2 500 грн</div>
+        <button class="wf-btn" style="width:100%;margin-top:10px;font-size:12px;height:36px;">Записатися</button>
+      </div>
+      <div class="wf-card">
+        <div style="font-size:32px;margin-bottom:10px;">🌍</div>
+        <h3>Географія</h3>
+        <p>Фізична і соціальна географія України та світу.</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px;color:#555;">⏱ 3 міс. &nbsp; 👥 до 8 осіб</div>
+        <div style="font-size:13px;font-weight:700;margin-top:8px;">від 2 200 грн</div>
+        <button class="wf-btn" style="width:100%;margin-top:10px;font-size:12px;height:36px;">Записатися</button>
+      </div>
+      <div class="wf-card">
+        <div style="font-size:32px;margin-bottom:10px;">🏛</div>
+        <h3>Історія України</h3>
+        <p>Від давніх часів до сьогодення. Аналіз документів.</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px;color:#555;">⏱ 3 міс. &nbsp; 👥 до 8 осіб</div>
+        <div style="font-size:13px;font-weight:700;margin-top:8px;">від 2 200 грн</div>
+        <button class="wf-btn" style="width:100%;margin-top:10px;font-size:12px;height:36px;">Записатися</button>
+      </div>
+      <div class="wf-card">
+        <div style="font-size:32px;margin-bottom:10px;">🌐</div>
+        <h3>Англійська мова</h3>
+        <p>Граматика, читання, говоріння. Рівень B1–B2.</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px;color:#555;">⏱ 3 міс. &nbsp; 👥 до 8 осіб</div>
+        <div style="font-size:13px;font-weight:700;margin-top:8px;">від 3 000 грн</div>
+        <button class="wf-btn" style="width:100%;margin-top:10px;font-size:12px;height:36px;">Записатися</button>
+      </div>
+    </div>
+
+    <!-- Bundle promo -->
+    <div style="margin-top:28px;padding:20px 24px;border:2px dashed #333;border-radius:8px;background:#f9f9f9;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-size:13px;font-weight:700;">🎯 Комплект «Математика + Українська мова»</div>
+        <div style="font-size:12px;color:#666;margin-top:4px;">Найпопулярніша комбінація. Економія 800 грн при записі разом.</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:11px;color:#aaa;text-decoration:line-through;">5 300 грн</div>
+        <div style="font-size:20px;font-weight:900;">4 500 грн</div>
+        <button class="wf-btn" style="margin-top:8px;font-size:12px;height:36px;padding:0 18px;">Обрати комплект</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Schedule -->
+  <section class="wf-section" style="background:#f9f9f9;border-top:1px solid #ddd;">
+    <div class="wf-section-title">Розклад занять — весняний семестр</div>
+    <div class="wf-section-sub">Заняття проводяться в корпусі ДНУ та онлайн</div>
+    <div style="border:1.5px solid #bbb;border-radius:6px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns:120px repeat(5,1fr);background:#333;color:#fff;font-size:12px;font-weight:700;">
+        <div style="padding:10px 14px;">Час</div>
+        <div style="padding:10px 14px;">Пн</div>
+        <div style="padding:10px 14px;">Вт</div>
+        <div style="padding:10px 14px;">Ср</div>
+        <div style="padding:10px 14px;">Чт</div>
+        <div style="padding:10px 14px;">Пт</div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px repeat(5,1fr);border-top:1px solid #eee;font-size:12px;">
+        <div style="padding:10px 14px;font-weight:700;color:#888;">09:00–11:00</div>
+        <div style="padding:10px 14px;background:#f0f0f0;border-radius:3px;">Математика</div>
+        <div style="padding:10px 14px;"></div>
+        <div style="padding:10px 14px;background:#f0f0f0;border-radius:3px;">Математика</div>
+        <div style="padding:10px 14px;"></div>
+        <div style="padding:10px 14px;background:#f0f0f0;border-radius:3px;">Математика</div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px repeat(5,1fr);border-top:1px solid #eee;font-size:12px;">
+        <div style="padding:10px 14px;font-weight:700;color:#888;">11:00–13:00</div>
+        <div style="padding:10px 14px;"></div>
+        <div style="padding:10px 14px;background:#e8e8e8;border-radius:3px;">Укр. мова</div>
+        <div style="padding:10px 14px;"></div>
+        <div style="padding:10px 14px;background:#e8e8e8;border-radius:3px;">Укр. мова</div>
+        <div style="padding:10px 14px;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px repeat(5,1fr);border-top:1px solid #eee;font-size:12px;">
+        <div style="padding:10px 14px;font-weight:700;color:#888;">15:00–17:00</div>
+        <div style="padding:10px 14px;background:#f0f0f0;border-radius:3px;">Фізика</div>
+        <div style="padding:10px 14px;background:#e8e8e8;border-radius:3px;">Хімія</div>
+        <div style="padding:10px 14px;"></div>
+        <div style="padding:10px 14px;background:#f0f0f0;border-radius:3px;">Фізика</div>
+        <div style="padding:10px 14px;background:#e8e8e8;border-radius:3px;">Хімія</div>
+      </div>
+      <div style="display:grid;grid-template-columns:120px repeat(5,1fr);border-top:1px solid #eee;font-size:12px;">
+        <div style="padding:10px 14px;font-weight:700;color:#888;">18:00–20:00</div>
+        <div style="padding:10px 14px;background:#f0f0f0;border-radius:3px;">Англ. мова</div>
+        <div style="padding:10px 14px;"></div>
+        <div style="padding:10px 14px;background:#f0f0f0;border-radius:3px;">Англ. мова</div>
+        <div style="padding:10px 14px;"></div>
+        <div style="padding:10px 14px;"></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:#aaa;">* Розклад може змінюватись. Актуальний розклад надається після запису.</div>
+  </section>
+
+  <!-- FAQ / How it works -->
+  <section class="wf-section" style="border-top:1px solid #ddd;">
+    <div class="wf-section-title">Як проходить навчання</div>
+    <div class="wf-grid-3" style="margin-bottom:32px;">
+      <div style="text-align:center;padding:20px;border:1.5px solid #ddd;border-radius:6px;">
+        <div style="font-size:36px;font-weight:900;color:#ccc;margin-bottom:10px;">1</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;">Записуєтесь</h4>
+        <p style="font-size:12px;color:#666;line-height:1.5;">Заповнюєте заявку на сайті або телефонуєте до центру</p>
+      </div>
+      <div style="text-align:center;padding:20px;border:1.5px solid #ddd;border-radius:6px;">
+        <div style="font-size:36px;font-weight:900;color:#ccc;margin-bottom:10px;">2</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;">Відвідуєте пробне заняття</h4>
+        <p style="font-size:12px;color:#666;line-height:1.5;">Перше заняття безкоштовне — переконайтесь особисто</p>
+      </div>
+      <div style="text-align:center;padding:20px;border:1.5px solid #ddd;border-radius:6px;">
+        <div style="font-size:36px;font-weight:900;color:#ccc;margin-bottom:10px;">3</div>
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:6px;">Складаєте НМТ</h4>
+        <p style="font-size:12px;color:#666;line-height:1.5;">Маєте знання та впевненість для успішного проходження</p>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <a href="04-apply.html" class="wf-btn" style="text-decoration:none;display:inline-block;line-height:50px;padding:0 40px;font-size:15px;">Записатися безкоштовно →</a>
+      <div style="font-size:12px;color:#aaa;margin-top:8px;">Перше заняття — пробне, без оплати</div>
+    </div>
+  </section>
+
+  <footer class="wf-footer">
+    <div><h4>ЦНО ДНУ</h4><p>Центр неперервної освіти</p></div>
+    <div><h4>Програми</h4><a href="#">Підвищення кваліфікації</a><a href="#">Перепідготовка</a><a href="#">НМТ-підготовка</a></div>
+    <div><h4>Центр</h4><a href="#">Про нас</a><a href="#">Документи</a></div>
+    <div><h4>Контакти</h4><a href="#">+38 (056) 374-xx-xx</a></div>
+  </footer>
+  <div class="wf-footer-bottom">© 2026 Центр неперервної освіти ДНУ</div>
+</div>
+</body>
+</html>

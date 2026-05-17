@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 05 — Контакти</title>
+<link rel="stylesheet" href="_wireframe.css">
+</head>
+<body>
+<div class="wf-page">
+
+  <div class="wf-page-label">Wireframe 05 — Контакти (Contacts)</div>
+
+  <!-- Nav -->
+  <nav class="wf-nav">
+    <div class="wf-logo">
+      <div class="wf-logo-box">ДНУ</div>
+      <div>
+        <div style="font-size:13px; font-weight:700;">ЦНО ДНУ</div>
+        <div style="font-size:11px; font-weight:400; color:#666;">Центр неперервної освіти</div>
+      </div>
+    </div>
+    <div class="wf-nav-links">
+      <a href="01-home.html">Головна</a>
+      <a href="02-programs.html">Програми</a>
+      <a href="#">Підготовка до НМТ</a>
+      <a href="#">Про центр</a>
+      <a href="#" class="active">Контакти</a>
+    </div>
+    <a href="04-apply.html" class="wf-nav-btn">Подати заявку</a>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="wf-breadcrumb">
+    <a href="01-home.html" style="color:#555; text-decoration:none;">Головна</a>
+    <span>›</span>
+    <strong>Контакти</strong>
+  </div>
+
+  <!-- Page Header -->
+  <div class="wf-section-sm" style="background:#f4f4f4; border-bottom:2px solid #333;">
+    <div class="wf-section-title">Контакти</div>
+    <div class="wf-section-sub">Зв'яжіться з нами зручним для вас способом</div>
+  </div>
+
+  <!-- Content -->
+  <div class="wf-section">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:48px;">
+
+      <!-- Left: Map + Address -->
+      <div>
+        <h2 style="font-size:16px; font-weight:800; margin-bottom:16px;">Як нас знайти</h2>
+
+        <!-- Map placeholder -->
+        <div class="wf-map">[ Карта — Google Maps або OpenStreetMap ]</div>
+
+        <div style="margin-top:24px;">
+          <div class="wf-info-row" style="margin-bottom:20px;">
+            <div class="wf-info-icon" style="font-size:20px;">📍</div>
+            <div class="wf-info-text">
+              <label>Адреса</label>
+              <span>пр. Гагаріна, 72, корп. 1, каб. 104<br>м. Дніпро, 49010</span>
+            </div>
+          </div>
+
+          <div class="wf-info-row" style="margin-bottom:20px;">
+            <div class="wf-info-icon" style="font-size:20px;">📞</div>
+            <div class="wf-info-text">
+              <label>Телефони</label>
+              <span>+38 (056) 374-98-XX (приймальна)<br>+38 (067) XXX-XX-XX (відділ навчання)</span>
+            </div>
+          </div>
+
+          <div class="wf-info-row" style="margin-bottom:20px;">
+            <div class="wf-info-icon" style="font-size:20px;">✉️</div>
+            <div class="wf-info-text">
+              <label>Email</label>
+              <span>cno@dnu.dp.ua<br>vstup.cno@dnu.dp.ua (вступ)</span>
+            </div>
+          </div>
+
+          <div class="wf-info-row" style="margin-bottom:20px;">
+            <div class="wf-info-icon" style="font-size:20px;">🕐</div>
+            <div class="wf-info-text">
+              <label>Години роботи</label>
+              <span>Понеділок – П'ятниця: 9:00 – 17:00<br>Субота – Неділя: вихідний</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social links -->
+        <h3 style="font-size:14px; font-weight:700; margin-bottom:12px;">Ми в соціальних мережах</h3>
+        <div style="display:flex; gap:10px;">
+          <button style="padding:8px 16px; border:1.5px solid #ccc; background:#fff; border-radius:4px; font-size:12px; cursor:pointer;">Facebook</button>
+          <button style="padding:8px 16px; border:1.5px solid #ccc; background:#fff; border-radius:4px; font-size:12px; cursor:pointer;">Telegram</button>
+          <button style="padding:8px 16px; border:1.5px solid #ccc; background:#fff; border-radius:4px; font-size:12px; cursor:pointer;">Instagram</button>
+          <button style="padding:8px 16px; border:1.5px solid #ccc; background:#fff; border-radius:4px; font-size:12px; cursor:pointer;">YouTube</button>
+        </div>
+
+        <!-- Directions note -->
+        <div style="margin-top:24px; padding:14px; background:#f9f9f9; border:1.5px dashed #ccc; border-radius:6px; font-size:12px; color:#555; line-height:1.7;">
+          <strong>Як дістатись:</strong><br>
+          Тролейбус №1, 7, 9 — зупинка «Університет»<br>
+          Маршрутне таксі №132, 155 — зупинка «ДНУ»<br>
+          Парковка: на внутрішній території університету
+        </div>
+      </div>
+
+      <!-- Right: Feedback Form -->
+      <div>
+        <h2 style="font-size:16px; font-weight:800; margin-bottom:16px;">Форма зворотного зв'язку</h2>
+        <p style="font-size:13px; color:#666; margin-bottom:20px; line-height:1.6;">Маєте запитання? Заповніть форму — ми відповімо протягом одного робочого дня.</p>
+
+        <div class="wf-form-row">
+          <div class="wf-form-group">
+            <label>Ваше ім'я <span style="color:#e74c3c;">*</span></label>
+            <input class="wf-form-input" placeholder="Олена Петрівна">
+          </div>
+          <div class="wf-form-group">
+            <label>Телефон</label>
+            <input class="wf-form-input" placeholder="+38 (0XX) XXX-XX-XX">
+          </div>
+        </div>
+
+        <div class="wf-form-group">
+          <label>Email <span style="color:#e74c3c;">*</span></label>
+          <input class="wf-form-input" placeholder="example@email.com">
+        </div>
+
+        <div class="wf-form-group">
+          <label>Тема звернення <span style="color:#e74c3c;">*</span></label>
+          <select class="wf-form-input" style="height:40px;">
+            <option value="">— Оберіть тему —</option>
+            <option>Запис на програму</option>
+            <option>Інформація про програми</option>
+            <option>Документи та ліцензії</option>
+            <option>Технічна підтримка</option>
+            <option>Інше</option>
+          </select>
+        </div>
+
+        <div class="wf-form-group">
+          <label>Повідомлення <span style="color:#e74c3c;">*</span></label>
+          <textarea class="wf-form-textarea" style="height:120px;" placeholder="Опишіть ваше запитання або побажання..."></textarea>
+        </div>
+
+        <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:20px;">
+          <div class="wf-checkbox" style="margin-top:3px; background:#333; flex-shrink:0;"></div>
+          <p style="font-size:12px; color:#666; line-height:1.6;">Я погоджуюся з <u>обробкою персональних даних</u> для відповіді на моє звернення.</p>
+        </div>
+
+        <button class="wf-btn" style="width:100%; height:50px; font-size:15px;">Надіслати повідомлення →</button>
+
+        <!-- Success state annotation -->
+        <div style="margin-top:16px; padding:14px; border:1.5px dashed #27ae60; border-radius:6px; background:#f0fff4; display:none;" id="successMsg">
+          <div style="font-size:13px; color:#27ae60; font-weight:700;">✓ Повідомлення надіслано!</div>
+          <div style="font-size:12px; color:#555; margin-top:4px;">Ми зв'яжемося з вами протягом 1 робочого дня.</div>
+        </div>
+        <div class="wf-annotation" style="margin-top:10px;">[ Стан після відправки: показати підтвердження ]</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Department contacts -->
+  <section class="wf-section" style="background:#f9f9f9; border-top:1px solid #ddd;">
+    <div class="wf-section-title">Контакти підрозділів</div>
+    <div class="wf-section-sub">Зверніться безпосередньо до потрібного відділу</div>
+    <div class="wf-grid-3">
+      <div class="wf-card" style="background:#fff;">
+        <h3 style="font-size:15px; margin-bottom:8px;">Відділ підвищення кваліфікації</h3>
+        <p style="font-size:12px; color:#666;">Запис та інформація про програми ПК</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px; color:#444; line-height:1.8;">📞 +38 (056) 374-XX-XX<br>✉️ pk@dnu.dp.ua</div>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <h3 style="font-size:15px; margin-bottom:8px;">Відділ перепідготовки</h3>
+        <p style="font-size:12px; color:#666;">Вступ та навчання за другою вищою освітою</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px; color:#444; line-height:1.8;">📞 +38 (056) 374-XX-XX<br>✉️ mags@dnu.dp.ua</div>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <h3 style="font-size:15px; margin-bottom:8px;">Підготовчі курси (НМТ)</h3>
+        <p style="font-size:12px; color:#666;">Запис та розклад занять для абітурієнтів</p>
+        <hr class="wf-divider">
+        <div style="font-size:12px; color:#444; line-height:1.8;">📞 +38 (067) XXX-XX-XX<br>✉️ nmt@dnu.dp.ua</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="wf-footer">
+    <div><h4>ЦНО ДНУ</h4><p>Центр неперервної освіти</p><p style="margin-top:10px;">пр. Гагаріна, 72, м. Дніпро, 49010</p></div>
+    <div><h4>Програми</h4><a href="#">Підвищення кваліфікації</a><a href="#">Перепідготовка</a><a href="#">НМТ</a></div>
+    <div><h4>Центр</h4><a href="#">Про нас</a><a href="#">Документи</a><a href="#">Персонал</a></div>
+    <div><h4>Контакти</h4><a href="#">+38 (056) 374-xx-xx</a><a href="#">cno@dnu.dp.ua</a></div>
+  </footer>
+  <div class="wf-footer-bottom">© 2026 Центр неперервної освіти ДНУ</div>
+
+</div>
+</body>
+</html>

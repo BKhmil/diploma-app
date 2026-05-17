@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ескізи інтерфейсів — ЦНО ДНУ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f0f0; padding: 40px; }
+  h1 { font-size: 28px; margin-bottom: 8px; color: #111; }
+  p.subtitle { color: #555; margin-bottom: 32px; font-size: 15px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .card {
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 24px;
+    text-decoration: none;
+    color: #111;
+    display: block;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { border-color: #555; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+  .card-num { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #999; text-transform: uppercase; margin-bottom: 8px; }
+  .card-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: #666; line-height: 1.5; }
+  .tag { display: inline-block; margin-top: 12px; font-size: 11px; background: #eee; border-radius: 3px; padding: 2px 8px; color: #666; }
+</style>
+</head>
+<body>
+<h1>Ескізи інтерфейсів — ЦНО ДНУ</h1>
+<p class="subtitle">Перші wireframe-макети основних сторінок сайту Центру неперервної освіти ДНУ ім. Олеся Гончара</p>
+
+<div class="grid">
+  <a class="card" href="01-home.html">
+    <div class="card-num">Сторінка 01</div>
+    <div class="card-title">Головна сторінка</div>
+    <div class="card-desc">Героя-банер, пошук програм, статистика, блоки напрямків, останні новини.</div>
+    <span class="tag">Home</span>
+  </a>
+  <a class="card" href="02-programs.html">
+    <div class="card-num">Сторінка 02</div>
+    <div class="card-title">Каталог програм</div>
+    <div class="card-desc">Фільтрація, сітка карток програм, пагінація.</div>
+    <span class="tag">Qualification / Retraining</span>
+  </a>
+  <a class="card" href="03-program-detail.html">
+    <div class="card-num">Сторінка 03</div>
+    <div class="card-title">Деталі програми</div>
+    <div class="card-desc">Опис, тривалість, формат, розклад, кнопка запису, акордеон FAQ.</div>
+    <span class="tag">Program Detail</span>
+  </a>
+  <a class="card" href="04-apply.html">
+    <div class="card-num">Сторінка 04</div>
+    <div class="card-title">Подати заявку</div>
+    <div class="card-desc">Форма вступу з полями особистих даних, вибором програми та завантаженням документів.</div>
+    <span class="tag">Apply</span>
+  </a>
+  <a class="card" href="05-contacts.html">
+    <div class="card-num">Сторінка 05</div>
+    <div class="card-title">Контакти</div>
+    <div class="card-desc">Адреса, телефони, email, карта, форма зворотного зв'язку.</div>
+    <span class="tag">Contacts</span>
+  </a>
+  <a class="card" href="06-about.html">
+    <div class="card-num">Сторінка 06</div>
+    <div class="card-title">Про центр</div>
+    <div class="card-desc">Місія, таймлайн, команда, документи, партнери.</div>
+    <span class="tag">About</span>
+  </a>
+  <a class="card" href="07-pre-university.html">
+    <div class="card-num">Сторінка 07</div>
+    <div class="card-title">Підготовка до НМТ</div>
+    <div class="card-desc">8 предметів, розклад занять у вигляді таблиці, зворотний відлік, пакетні пропозиції.</div>
+    <span class="tag">Pre-University</span>
+  </a>
+  <a class="card" href="08-admin-dashboard.html">
+    <div class="card-num">Сторінка 08</div>
+    <div class="card-title">Адмін: Панель управління</div>
+    <div class="card-desc">KPI-картки, таблиця заявок, графік популярності програм, швидкі дії.</div>
+    <span class="tag">Admin Dashboard</span>
+  </a>
+  <a class="card" href="09-admin-applications.html">
+    <div class="card-num">Сторінка 09</div>
+    <div class="card-title">Адмін: Управління заявками</div>
+    <div class="card-desc">Таблиця з фільтрами, масові дії, бічна панель деталей заявки.</div>
+    <span class="tag">Admin Applications</span>
+  </a>
+  <a class="card" href="10-apply-success.html">
+    <div class="card-num">Сторінка 10</div>
+    <div class="card-title">Підтвердження заявки</div>
+    <div class="card-desc">Сторінка успішної подачі: кроки, підсумок заявки, номер звернення.</div>
+    <span class="tag">Apply Success</span>
+  </a>
+  <a class="card" href="11-mobile-home.html">
+    <div class="card-num">Сторінка 11</div>
+    <div class="card-title">Мобільна версія</div>
+    <div class="card-desc">Три екрани на 375px: головна, навігаційне меню, деталі програми.</div>
+    <span class="tag">Mobile / Responsive</span>
+  </a>
+</div>
+
+  <a class="card" href="12-retraining.html">
+    <div class="card-num">Сторінка 12</div>
+    <div class="card-title">Перепідготовка</div>
+    <div class="card-desc">Порівняння з ПК, 30+ програм магістра з фільтром, умови вступу, покроковий процес.</div>
+    <span class="tag">Retraining</span>
+  </a>
+  <a class="card" href="13-documents.html">
+    <div class="card-num">Сторінка 13</div>
+    <div class="card-title">Документи</div>
+    <div class="card-desc">Ліцензії, положення, навч. програми, зразки документів для завантаження.</div>
+    <span class="tag">Documents</span>
+  </a>
+  <a class="card" href="14-staff.html">
+    <div class="card-num">Сторінка 14</div>
+    <div class="card-title">Персонал</div>
+    <div class="card-desc">Керівництво (картки), викладацький склад у вигляді списку з пошуком.</div>
+    <span class="tag">Staff</span>
+  </a>
+  <a class="card" href="15-partners.html">
+    <div class="card-num">Сторінка 15</div>
+    <div class="card-title">Партнери</div>
+    <div class="card-desc">Освітні заклади, підприємства, блок «Стати партнером».</div>
+    <span class="tag">Partners</span>
+  </a>
+  <a class="card" href="16-alumni.html">
+    <div class="card-num">Сторінка 16</div>
+    <div class="card-title">Випускники</div>
+    <div class="card-desc">Відгуки, featured testimonial, статистика працевлаштування.</div>
+    <span class="tag">Alumni</span>
+  </a>
+  <a class="card" href="17-404.html">
+    <div class="card-num">Сторінка 17</div>
+    <div class="card-title">404 — Не знайдено</div>
+    <div class="card-desc">Велике "404", пошук, швидкі посилання на ключові сторінки.</div>
+    <span class="tag">Not Found</span>
+  </a>
+</div>
+
+<p style="margin-top:40px; font-size:13px; color:#999;">Виконано як частина дипломного проєкту. Wireframes показують структуру без фінального дизайну.<br>Всього: <strong>17 сторінок</strong> · Покривають усі src/pages/ проєкту.</p>
+</body>
+</html>

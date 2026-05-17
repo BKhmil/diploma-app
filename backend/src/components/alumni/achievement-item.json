@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_alumni_achievement_items",
+  "info": {
+    "displayName": "achievement_item",
+    "description": "Achievement card for alumni page"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "icon_key": {
+      "type": "enumeration",
+      "enum": ["programs", "budget", "partners"],
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

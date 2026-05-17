@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wireframe 01 — Головна сторінка</title>
+<link rel="stylesheet" href="_wireframe.css">
+</head>
+<body>
+<div class="wf-page">
+
+  <!-- Page Label -->
+  <div class="wf-page-label">Wireframe 01 — Головна сторінка (Home)</div>
+
+  <!-- Navigation -->
+  <nav class="wf-nav">
+    <div class="wf-logo">
+      <div class="wf-logo-box">ДНУ</div>
+      <div>
+        <div style="font-size:13px; font-weight:700;">ЦНО ДНУ</div>
+        <div style="font-size:11px; font-weight:400; color:#666;">Центр неперервної освіти</div>
+      </div>
+    </div>
+    <div class="wf-nav-links">
+      <a href="#" class="active">Головна</a>
+      <a href="#">Програми</a>
+      <a href="#">Підготовка до НМТ</a>
+      <a href="#">Про центр</a>
+      <a href="#">Контакти</a>
+    </div>
+    <a href="04-apply.html" class="wf-nav-btn">Подати заявку</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="wf-hero">
+    <div class="wf-hero-badge">Дніпровський національний університет ім. Олеся Гончара</div>
+    <h1>Ваш розвиток —<br>наша спеціальність</h1>
+    <p>Якісна після дипломна освіта, підвищення кваліфікації та підготовка до вступу. Станьте затребуваним фахівцем разом з лідером освіти регіону.</p>
+
+    <!-- Search Widget -->
+    <div class="wf-search-box">
+      <label>Знайдіть свою програму:</label>
+      <div class="wf-search-row">
+        <input class="wf-input" placeholder="🔍  Наприклад: Психологія, Менеджмент, НМТ...">
+        <select class="wf-select">
+          <option>Усім</option>
+          <option>Працівники освіти</option>
+          <option>Абітурієнти</option>
+          <option>Фахівці</option>
+        </select>
+        <button class="wf-btn">Знайти →</button>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+        <span class="wf-tag">Популярні:</span>
+        <span class="wf-tag">Менеджмент</span>
+        <span class="wf-tag">Психологія</span>
+        <span class="wf-tag">Математика (НМТ)</span>
+        <span class="wf-tag">Облік і аудит</span>
+      </div>
+    </div>
+
+    <div style="margin-top:20px; display:flex; gap:16px; justify-content:center;">
+      <a href="02-programs.html" class="wf-btn" style="text-decoration:none; display:inline-block; line-height:44px;">Усі програми</a>
+      <button class="wf-btn-outline">Безкоштовна консультація</button>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="wf-section">
+    <div class="wf-stats">
+      <div class="wf-stat">
+        <span class="wf-stat-num">2 500+</span>
+        <div class="wf-stat-label">Випускників щорічно</div>
+      </div>
+      <div class="wf-stat">
+        <span class="wf-stat-num">120+</span>
+        <div class="wf-stat-label">Програм навчання</div>
+      </div>
+      <div class="wf-stat">
+        <span class="wf-stat-num">30+</span>
+        <div class="wf-stat-label">Років досвіду</div>
+      </div>
+      <div class="wf-stat">
+        <span class="wf-stat-num">98%</span>
+        <div class="wf-stat-label">Задоволені слухачі</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programs Directions -->
+  <section class="wf-section">
+    <div class="wf-section-title">Напрямки навчання</div>
+    <div class="wf-section-sub">Оберіть категорію, що відповідає вашим цілям</div>
+
+    <div class="wf-grid-4">
+      <a href="02-programs.html" class="wf-card" style="text-decoration:none; color:inherit; display:block;">
+        <div class="wf-card-img">[ Іконка 📋 ]</div>
+        <h3>Підвищення кваліфікації</h3>
+        <p>Для педагогічних та наукових працівників. Сертифікат державного зразка.</p>
+        <span class="wf-tag wf-tag-dark">45+ програм</span>
+      </a>
+      <a href="02-programs.html" class="wf-card" style="text-decoration:none; color:inherit; display:block;">
+        <div class="wf-card-img">[ Іконка 🎓 ]</div>
+        <h3>Перепідготовка</h3>
+        <p>Освіта рівня магістр за новою спеціальністю. Диплом ДНУ.</p>
+        <span class="wf-tag wf-tag-dark">30+ програм</span>
+      </a>
+      <a href="02-programs.html" class="wf-card" style="text-decoration:none; color:inherit; display:block;">
+        <div class="wf-card-img">[ Іконка 📝 ]</div>
+        <h3>Підготовка до НМТ</h3>
+        <p>Інтенсивна підготовка абітурієнтів до Національного мультипредметного тесту.</p>
+        <span class="wf-tag wf-tag-dark">8 предметів</span>
+      </a>
+      <a href="02-programs.html" class="wf-card" style="text-decoration:none; color:inherit; display:block;">
+        <div class="wf-card-img">[ Іконка 💼 ]</div>
+        <h3>Бізнес-курси</h3>
+        <p>Короткострокові програми для фахівців бізнесу та підприємців.</p>
+        <span class="wf-tag wf-tag-dark">Незабаром</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Featured Programs -->
+  <section class="wf-section" style="background:#f9f9f9;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px;">
+      <div>
+        <div class="wf-section-title">Популярні програми</div>
+        <div class="wf-section-sub">Найбільш обирані слухачами цього сезону</div>
+      </div>
+      <a href="02-programs.html" class="wf-btn-outline" style="text-decoration:none; display:inline-block; line-height:44px; padding: 0 22px;">Всі програми →</a>
+    </div>
+
+    <div class="wf-grid-3">
+      <div class="wf-card" style="background:#fff;">
+        <span class="wf-tag" style="margin-bottom:10px; display:inline-block;">Підвищення кваліфікації</span>
+        <h3>Педагогічна майстерність</h3>
+        <p>Сучасні методи навчання, цифрові інструменти, робота з різними категоріями учнів.</p>
+        <hr class="wf-divider">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#666;">
+          <span>⏱ 1 місяць</span>
+          <span>💻 Онлайн</span>
+          <span>📋 Сертифікат</span>
+        </div>
+        <button class="wf-btn" style="width:100%; margin-top:12px;">Детальніше →</button>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <span class="wf-tag" style="margin-bottom:10px; display:inline-block;">Перепідготовка</span>
+        <h3>Психологія</h3>
+        <p>Повноцінна програма рівня магістр для отримання другої вищої освіти зі спеціальності "Психологія".</p>
+        <hr class="wf-divider">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#666;">
+          <span>⏱ 1,5 роки</span>
+          <span>🏛 Змішана</span>
+          <span>🎓 Диплом</span>
+        </div>
+        <button class="wf-btn" style="width:100%; margin-top:12px;">Детальніше →</button>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <span class="wf-tag" style="margin-bottom:10px; display:inline-block;">НМТ-підготовка</span>
+        <h3>Математика + Українська</h3>
+        <p>Комплексна підготовка з двох ключових предметів НМТ. Інтенсивний формат, малі групи.</p>
+        <hr class="wf-divider">
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#666;">
+          <span>⏱ 3 місяці</span>
+          <span>📍 Офлайн</span>
+          <span>📜 Довідка</span>
+        </div>
+        <button class="wf-btn" style="width:100%; margin-top:12px;">Детальніше →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why us -->
+  <section class="wf-section">
+    <div class="wf-section-title">Чому обирають нас</div>
+    <div class="wf-section-sub">Переваги навчання в ЦНО ДНУ</div>
+    <div class="wf-grid-3">
+      <div class="wf-info-row" style="display:block; padding:16px; border:1.5px solid #ccc; border-radius:6px;">
+        <div style="font-size:28px; margin-bottom:10px;">🏛</div>
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Державний університет</h4>
+        <p style="font-size:12px; color:#666; line-height:1.5;">Документи про освіту державного зразка, ліцензована діяльність.</p>
+      </div>
+      <div class="wf-info-row" style="display:block; padding:16px; border:1.5px solid #ccc; border-radius:6px;">
+        <div style="font-size:28px; margin-bottom:10px;">👨‍🏫</div>
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Досвідчені викладачі</h4>
+        <p style="font-size:12px; color:#666; line-height:1.5;">Кандидати та доктори наук, практикуючі фахівці галузей.</p>
+      </div>
+      <div class="wf-info-row" style="display:block; padding:16px; border:1.5px solid #ccc; border-radius:6px;">
+        <div style="font-size:28px; margin-bottom:10px;">💻</div>
+        <h4 style="font-size:14px; font-weight:700; margin-bottom:6px;">Онлайн та офлайн</h4>
+        <p style="font-size:12px; color:#666; line-height:1.5;">Гнучкий формат навчання для зручності слухачів.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- News -->
+  <section class="wf-section" style="background:#f9f9f9;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:24px;">
+      <div>
+        <div class="wf-section-title">Новини та оголошення</div>
+        <div class="wf-section-sub">Останні події Центру</div>
+      </div>
+      <button class="wf-btn-outline">Всі новини →</button>
+    </div>
+    <div class="wf-grid-3">
+      <div class="wf-card" style="background:#fff;">
+        <div class="wf-card-img">[ Зображення новини ]</div>
+        <span class="wf-tag" style="margin-bottom:6px; display:inline-block;">Оголошення</span>
+        <h3 style="font-size:14px;">Набір на весняний семестр 2026 відкрито</h3>
+        <p>15 лютого 2026</p>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <div class="wf-card-img">[ Зображення новини ]</div>
+        <span class="wf-tag" style="margin-bottom:6px; display:inline-block;">Подія</span>
+        <h3 style="font-size:14px;">Вебінар: Нові стандарти педагогічної освіти</h3>
+        <p>10 лютого 2026</p>
+      </div>
+      <div class="wf-card" style="background:#fff;">
+        <div class="wf-card-img">[ Зображення новини ]</div>
+        <span class="wf-tag" style="margin-bottom:6px; display:inline-block;">Новина</span>
+        <h3 style="font-size:14px;">Наші випускники в топ-100 освітян України</h3>
+        <p>5 лютого 2026</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="wf-section" style="text-align:center; background:#333; color:#fff;">
+    <h2 style="font-size:28px; font-weight:800; margin-bottom:12px;">Готові розпочати навчання?</h2>
+    <p style="font-size:15px; color:#ccc; margin-bottom:24px;">Залиште заявку — наш менеджер зв'яжеться з вами протягом одного робочого дня.</p>
+    <div style="display:flex; gap:16px; justify-content:center;">
+      <a href="04-apply.html" style="background:#fff; color:#333; font-weight:700; padding:14px 32px; border-radius:4px; text-decoration:none; font-size:14px;">Подати заявку</a>
+      <a href="05-contacts.html" style="border:2px solid #fff; color:#fff; font-weight:700; padding:14px 32px; border-radius:4px; text-decoration:none; font-size:14px;">Зв'язатися з нами</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="wf-footer">
+    <div>
+      <h4>ЦНО ДНУ</h4>
+      <p>Центр неперервної освіти Дніпровського національного університету ім. Олеся Гончара</p>
+      <p style="margin-top:10px;">пр. Гагаріна, 72, м. Дніпро, 49010</p>
+    </div>
+    <div>
+      <h4>Програми</h4>
+      <a href="#">Підвищення кваліфікації</a>
+      <a href="#">Перепідготовка</a>
+      <a href="#">НМТ-підготовка</a>
+    </div>
+    <div>
+      <h4>Центр</h4>
+      <a href="#">Про нас</a>
+      <a href="#">Документи</a>
+      <a href="#">Персонал</a>
+      <a href="#">Партнери</a>
+    </div>
+    <div>
+      <h4>Контакти</h4>
+      <a href="#">+38 (056) 374-xx-xx</a>
+      <a href="#">cno@dnu.dp.ua</a>
+    </div>
+  </footer>
+  <div class="wf-footer-bottom">© 2026 Центр неперервної освіти ДНУ | Всі права захищено</div>
+
+</div>
+</body>
+</html>
