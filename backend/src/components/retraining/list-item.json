@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_retraining_list_items",
+  "info": {
+    "displayName": "ListItem",
+    "description": "A list item for admission documents"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -16,6 +16,10 @@
     }
   },
   "attributes": {
+    "document_code": {
+      "type": "string",
+      "unique": true
+    },
     "title": {
       "type": "string",
       "required": true,
@@ -33,7 +37,7 @@
     "file": {
       "type": "media",
       "multiple": false,
-      "required": true,
+      "required": false,
       "allowedTypes": ["files"],
       "pluginOptions": {
         "i18n": {

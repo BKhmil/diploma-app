@@ -1,0 +1,66 @@
+{
+  "kind": "singleType",
+  "collectionName": "retraining_pages",
+  "info": {
+    "singularName": "retraining-page",
+    "pluralName": "retraining-pages",
+    "displayName": "RetrainingPage",
+    "description": "Retraining and masters page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "page_title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "page_intro": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "admission_docs_retraining": {
+      "type": "component",
+      "repeatable": true,
+      "component": "retraining.list-item",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "admission_docs_master": {
+      "type": "component",
+      "repeatable": true,
+      "component": "retraining.list-item",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "important_dates": {
+      "type": "component",
+      "repeatable": true,
+      "component": "retraining.date-item",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}

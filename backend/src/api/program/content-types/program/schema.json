@@ -16,6 +16,11 @@
     }
   },
   "attributes": {
+    "program_code": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
     "title": {
       "type": "string",
       "required": true,

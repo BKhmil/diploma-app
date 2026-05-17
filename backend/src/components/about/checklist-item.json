@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_about_checklist_items",
+  "info": {
+    "displayName": "ChecklistItem",
+    "description": "A checklist item for mission section"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

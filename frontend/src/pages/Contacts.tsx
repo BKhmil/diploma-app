@@ -19,9 +19,14 @@ export default function Contacts() {
   const [contactInfo, setContactInfo] = React.useState<null | {
     address?: string;
     phone?: string;
+    secondary_phone?: string;
     email?: string;
     working_hours?: string;
+    weekend_hours_note?: string;
+    room_note?: string;
     map_embed_url?: string;
+    contacts_page_title?: string;
+    contacts_page_subtitle?: string;
   }>(null);
 
   React.useEffect(() => {
@@ -44,9 +49,9 @@ export default function Contacts() {
     <div className="bg-white min-h-screen py-12">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Контакти</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{contactInfo?.contacts_page_title || 'Контакти'}</h1>
           <p className="text-lg text-gray-600">
-            Маєте запитання? Зв'яжіться з нами будь-яким зручним способом або заповніть форму зворотного зв'язку.
+            {contactInfo?.contacts_page_subtitle || "Маєте запитання? Зв'яжіться з нами будь-яким зручним способом або заповніть форму зворотного зв'язку."}
           </p>
         </div>
 
@@ -63,7 +68,7 @@ export default function Contacts() {
                   <div>
                     <h3 className="font-semibold text-gray-900">Адреса</h3>
                     <p className="text-gray-600">{contactInfo?.address || 'пр. Науки, 72, м. Дніпро, 49010'}</p>
-                    <p className="text-sm text-gray-500 mt-1">Корпус 1, кімната 101</p>
+                    {contactInfo?.room_note && <p className="text-sm text-gray-500 mt-1">{contactInfo.room_note}</p>}
                   </div>
                 </div>
 
@@ -74,7 +79,7 @@ export default function Contacts() {
                   <div>
                     <h3 className="font-semibold text-gray-900">Телефони</h3>
                     <p className="text-gray-600">{contactInfo?.phone || '+38 (056) 123-45-67'}</p>
-                    <p className="text-gray-600">+38 (097) 123-45-67</p>
+                    {contactInfo?.secondary_phone && <p className="text-gray-600">{contactInfo.secondary_phone}</p>}
                   </div>
                 </div>
 
@@ -95,7 +100,7 @@ export default function Contacts() {
                   <div>
                     <h3 className="font-semibold text-gray-900">Графік роботи</h3>
                     <p className="text-gray-600">{contactInfo?.working_hours || 'Пн-Пт: 9:00 - 17:00'}</p>
-                    <p className="text-gray-600">Сб-Нд: Вихідний</p>
+                    <p className="text-gray-600">{contactInfo?.weekend_hours_note || 'Сб-Нд: Вихідний'}</p>
                   </div>
                 </div>
               </div>

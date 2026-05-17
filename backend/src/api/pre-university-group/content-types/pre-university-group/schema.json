@@ -16,6 +16,25 @@
     }
   },
   "attributes": {
+    "subject_key": {
+      "type": "string",
+      "unique": true
+    },
+    "icon_emoji": {
+      "type": "string"
+    },
+    "price_hint": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "is_popular": {
+      "type": "boolean",
+      "default": false
+    },
     "name": {
       "type": "string",
       "required": true,

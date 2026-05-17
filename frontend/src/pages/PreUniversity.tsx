@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CheckCircle2, Calendar, Clock, Users, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getPreUniversityGroups } from '../services/strapi';
+import { getPreUniversityGroups, getPreUniversityPage } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
 const subjects = [
@@ -53,8 +53,21 @@ function useCountdown(target: Date) {
 
 export default function PreUniversity() {
   const { locale } = useLanguage();
-  const { days, hours, minutes } = useCountdown(NMT_DATE);
+  const [pageData, setPageData] = useState<null | {
+    hero_title?: string;
+    hero_subtitle?: string;
+    nmt_exam_date?: string;
+    bundle_title?: string;
+    bundle_description?: string;
+    steps?: { n: number; title: string; description: string; order: number }[];
+  }>(null);
+  const nmtDate = pageData?.nmt_exam_date ? new Date(pageData.nmt_exam_date + 'T09:00:00') : NMT_DATE;
+  const { days, hours, minutes } = useCountdown(nmtDate);
   const [subjectsList, setSubjectsList] = useState(subjects);
+
+  useEffect(() => {
+    getPreUniversityPage(locale).then(setPageData).catch(() => undefined);
+  }, [locale]);
 
   useEffect(() => {
     getPreUniversityGroups(locale)
@@ -62,12 +75,12 @@ export default function PreUniversity() {
         if (!items.length) return;
         setSubjectsList(
           items.map((item, idx) => ({
-            id: String(item.id ?? idx + 1),
-            icon: '📘',
+            id: String(item.subject_key ?? item.id ?? idx + 1),
+            icon: item.icon_emoji || '📘',
             title: item.name || item.subject || 'Підготовча група',
             desc: item.description || item.schedule || 'Підготовча програма до НМТ.',
-            price: 'за запитом',
-            popular: idx < 2,
+            price: item.price_hint || 'за запитом',
+            popular: item.is_popular ?? idx < 2,
           }))
         );
       })
@@ -83,10 +96,10 @@ export default function PreUniversity() {
             Підготовчі курси ДНУ · Набір відкрито
           </span>
           <h1 className="text-4xl md:text-5xl font-extrabold mb-5 leading-tight">
-            Підготовка до НМТ 2026<br />разом з ДНУ
+            {pageData?.hero_title || (<>Підготовка до НМТ 2026<br />разом з ДНУ</>)}
           </h1>
           <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
-            Досвідчені викладачі університету. Малі групи. Гарантований результат.
+            {pageData?.hero_subtitle || 'Досвідчені викладачі університету. Малі групи. Гарантований результат.'}
           </p>
           <div className="flex gap-4 justify-center flex-wrap mb-10">
             <Link
@@ -235,11 +248,14 @@ export default function PreUniversity() {
           <div>
             <h2 className="text-3xl font-bold mb-6 text-gray-900">Як проходить навчання</h2>
             <div className="grid grid-cols-3 gap-4">
-              {STEPS.map(({ n, title, desc }) => (
+              {(pageData?.steps?.length
+                ? [...pageData.steps].sort((a, b) => a.order - b.order)
+                : STEPS.map((s) => ({ n: s.n, title: s.title, description: s.desc, order: s.n }))
+              ).map(({ n, title, description }) => (
                 <div key={n} className="text-center p-5 border border-gray-200 rounded-2xl">
                   <div className="text-4xl font-black text-gray-200 mb-3">{n}</div>
                   <h4 className="font-bold text-gray-900 text-sm mb-2">{title}</h4>
-                  <p className="text-xs text-gray-600 leading-relaxed">{desc}</p>
+                  <p className="text-xs text-gray-600 leading-relaxed">{description}</p>
                 </div>
               ))}
             </div>

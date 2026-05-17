@@ -13,11 +13,19 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [audience, setAudience] = useState('all');
   const [homeData, setHomeData] = useState<null | {
+    hero_badge_text?: string;
     hero_title?: string;
     hero_subtitle?: string;
     stats_graduates?: number;
     stats_years?: number;
     stats_programs?: number;
+    quality_section_title?: string;
+    quality_section_description?: string;
+    bottom_cta_title?: string;
+    bottom_cta_description?: string;
+    quality_bullets?: { text: string }[];
+    direction_cards?: { title: string; description: string; link_path: string; icon_key: string; order: number }[];
+    admissions_cards?: { title: string; description: string; date_label: string; order: number }[];
   }>(null);
   const navigate = useNavigate();
 
@@ -57,7 +65,7 @@ export default function HomePage() {
         <div className="container mx-auto px-4 md:px-6 relative z-10">
           <div className="max-w-3xl space-y-6 mb-12">
             <div className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm font-medium tracking-wide">
-              Дніпровський національний університет імені Олеся Гончара
+              {homeData?.hero_badge_text || 'Дніпровський національний університет імені Олеся Гончара'}
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
               {homeData?.hero_title || (
@@ -206,18 +214,21 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
-                Якісна освіта <br />з гарантією результату
+                {homeData?.quality_section_title || (<>Якісна освіта <br />з гарантією результату</>)}
               </h2>
               <p className="text-lg text-gray-600">
-                Центр є офіційним структурним підрозділом Дніпровського національного університету імені Олеся Гончара. Ми забезпечуємо високі стандарти навчання та надаємо документи державного зразка.
+                {homeData?.quality_section_description || 'Центр є офіційним структурним підрозділом Дніпровського національного університету імені Олеся Гончара. Ми забезпечуємо високі стандарти навчання та надаємо документи державного зразка.'}
               </p>
               <ul className="space-y-3 pt-4">
-                {[
-                  'Понад 50 активних програм щорічно',
-                  'Документи про освіту державного зразка',
-                  'Гнучкий графік навчання (онлайн/офлайн)',
-                  'Викладачі-практики та професори ДНУ'
-                ].map((item, i) => (
+                {(homeData?.quality_bullets?.length
+                  ? homeData.quality_bullets.map((b) => b.text)
+                  : [
+                      'Понад 50 активних програм щорічно',
+                      'Документи про освіту державного зразка',
+                      'Гнучкий графік навчання (онлайн/офлайн)',
+                      'Викладачі-практики та професори ДНУ',
+                    ]
+                ).map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <CheckCircle2 className="h-6 w-6 text-green-500 shrink-0" />
                     <span className="text-gray-800 font-medium">{item}</span>
@@ -381,9 +392,11 @@ export default function HomePage() {
       {/* CTA Banner */}
       <section className="bg-[#003366] text-white py-16 text-center">
         <div className="container mx-auto px-4 md:px-6 max-w-2xl">
-          <h2 className="text-3xl font-extrabold mb-4">Готові розпочати навчання?</h2>
+          <h2 className="text-3xl font-extrabold mb-4">
+            {homeData?.bottom_cta_title || 'Готові розпочати навчання?'}
+          </h2>
           <p className="text-gray-300 mb-8 text-lg">
-            Залиште заявку — наш менеджер зв'яжеться з вами протягом одного робочого дня.
+            {homeData?.bottom_cta_description || "Залиште заявку — наш менеджер зв'яжеться з вами протягом одного робочого дня."}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

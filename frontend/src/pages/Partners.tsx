@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Building2, GraduationCap, School, Handshake, Download, ArrowRight, ExternalLink } from 'lucide-react';
-import { getPartners } from '../services/strapi';
+import { getPartners, getPartnersPage } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
 interface Partner {
@@ -44,6 +44,18 @@ export default function Partners() {
   const { locale } = useLanguage();
   const [eduPartners, setEduPartners] = React.useState<Partner[]>(educationalPartners);
   const [businessPartners, setBusinessPartners] = React.useState(enterprisePartners);
+  const [pageData, setPageData] = React.useState<null | {
+    page_title?: string;
+    page_intro?: string;
+    cta_title?: string;
+    cta_text?: string;
+    stats?: { value: string; label: string; icon_key: string; order: number }[];
+    benefits?: { title: string; description: string; order: number }[];
+  }>(null);
+
+  React.useEffect(() => {
+    getPartnersPage(locale).then(setPageData).catch(() => undefined);
+  }, [locale]);
 
   React.useEffect(() => {
     getPartners(locale)
@@ -79,9 +91,9 @@ export default function Partners() {
             <span className="mx-2">›</span>
             <span className="text-gray-800 font-medium">Партнери</span>
           </nav>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Партнери та співробітники</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{pageData?.page_title || 'Партнери та співробітники'}</h1>
           <p className="text-gray-600 max-w-2xl">
-            Організації та установи, з якими ЦНО ДНУ здійснює спільну освітню та наукову діяльність
+            {pageData?.page_intro || 'Організації та установи, з якими ЦНО ДНУ здійснює спільну освітню та наукову діяльність'}
           </p>
         </div>
       </div>
@@ -90,9 +102,12 @@ export default function Partners() {
       <section className="border-b border-gray-100 py-12">
         <div className="container mx-auto px-4 md:px-6">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map(({ value, label, icon: Icon }) => (
+            {(pageData?.stats?.length
+              ? [...pageData.stats].sort((a, b) => a.order - b.order)
+              : stats.map((s) => ({ value: s.value, label: s.label, icon_key: '', order: 0 }))
+            ).map(({ value, label }) => (
               <div key={label} className="text-center p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                <Icon className="w-8 h-8 text-dnu-blue mx-auto mb-3" />
+                <Handshake className="w-8 h-8 text-dnu-blue mx-auto mb-3" />
                 <div className="text-3xl font-extrabold text-dnu-dark mb-1">{value}</div>
                 <div className="text-sm text-gray-600 font-medium">{label}</div>
               </div>

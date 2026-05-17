@@ -40,14 +40,28 @@ const partnerNames = [
 export default function About() {
   const { locale } = useLanguage();
   const [aboutData, setAboutData] = React.useState<null | {
+    page_title?: string;
+    page_subtitle?: string;
+    mission_heading?: string;
     history?: string;
     structure_description?: string;
     team_description?: string;
+    mission_checklist?: { text: string }[];
+    timeline_items?: { year: string; title: string; description: string; order: number }[];
+    leadership_items?: { name: string; role: string; degree: string; photo_url: string; order: number }[];
   }>(null);
 
   React.useEffect(() => {
     getAboutPage(locale).then(setAboutData).catch(() => undefined);
   }, [locale]);
+
+  const activeTimeline = aboutData?.timeline_items?.length
+    ? [...aboutData.timeline_items].sort((a, b) => a.order - b.order)
+    : timeline.map((t) => ({ year: t.year, title: t.title, description: t.desc, order: 0 }));
+
+  const activeLeadership = aboutData?.leadership_items?.length
+    ? [...aboutData.leadership_items].sort((a, b) => a.order - b.order)
+    : leadership.map((l) => ({ name: l.name, role: l.role, degree: l.degree, photo_url: l.photo, order: 0 }));
 
   return (
     <div className="bg-white min-h-screen">
@@ -59,8 +73,8 @@ export default function About() {
             <span className="mx-2">›</span>
             <span className="text-gray-800 font-medium">Про центр</span>
           </nav>
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">Про Центр неперервної освіти</h1>
-          <p className="text-gray-600">Дніпровський національний університет ім. Олеся Гончара</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">{aboutData?.page_title || 'Про Центр неперервної освіти'}</h1>
+          <p className="text-gray-600">{aboutData?.page_subtitle || 'Дніпровський національний університет ім. Олеся Гончара'}</p>
           {/* Sub-nav tabs */}
           <div className="flex gap-1 mt-6 overflow-x-auto pb-1">
             {[
@@ -92,7 +106,7 @@ export default function About() {
         <section>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-sm font-bold text-dnu-blue uppercase tracking-wider mb-3">Наша місія</p>
+              <p className="text-sm font-bold text-dnu-blue uppercase tracking-wider mb-3">{aboutData?.mission_heading || 'Наша місія'}</p>
               <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-5 leading-tight">
                 Якісна неперервна освіта протягом усього професійного шляху
               </h2>
@@ -105,12 +119,15 @@ export default function About() {
                   'Заснований у 1995 році, центр щорічно здійснює підготовку понад 2 500 слухачів за 120+ програмами. Усі документи — державного зразка.'}
               </p>
               <ul className="space-y-3 mb-8">
-                {[
-                  'Ліцензована освітня діяльність МОН України',
-                  'Документи про освіту державного зразка',
-                  'Більше 30 досвідчених викладачів та науковців',
-                  'Гнучкий графік: онлайн, офлайн, змішаний',
-                ].map((item) => (
+                {(aboutData?.mission_checklist?.length
+                  ? aboutData.mission_checklist.map((c) => c.text)
+                  : [
+                      'Ліцензована освітня діяльність МОН України',
+                      'Документи про освіту державного зразка',
+                      'Більше 30 досвідчених викладачів та науковців',
+                      'Гнучкий графік: онлайн, офлайн, змішаний',
+                    ]
+                ).map((item) => (
                   <li key={item} className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
                     <span className="text-gray-700">{item}</span>
@@ -158,18 +175,18 @@ export default function About() {
             {/* Vertical line */}
             <div className="absolute left-30 top-0 bottom-0 w-0.5 bg-gray-200 hidden md:block" />
             <div className="space-y-8">
-              {timeline.map(({ year, title, desc }, i) => (
+              {activeTimeline.map(({ year, title, description }, i) => (
                 <div key={year} className="flex gap-6 items-start">
                   <div className="hidden md:flex items-center justify-end w-27.5 shrink-0">
                     <span className="text-sm font-bold text-dnu-dark">{year}</span>
                   </div>
                   <div className="hidden md:flex items-center justify-center w-10 shrink-0 relative z-10">
-                    <div className={`w-4 h-4 rounded-full border-2 border-dnu-blue ${i === timeline.length - 1 ? 'bg-dnu-blue' : 'bg-white'}`} />
+                    <div className={`w-4 h-4 rounded-full border-2 border-dnu-blue ${i === activeTimeline.length - 1 ? 'bg-dnu-blue' : 'bg-white'}`} />
                   </div>
                   <div className="bg-gray-50 rounded-xl p-5 border border-gray-100 flex-1 hover:border-dnu-blue/30 transition-colors">
                     <div className="md:hidden text-xs font-bold text-dnu-blue mb-1">{year}</div>
                     <h3 className="font-bold text-gray-900 mb-1">{title}</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
                   </div>
                 </div>
               ))}
@@ -189,10 +206,10 @@ export default function About() {
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {leadership.map((person) => (
+            {activeLeadership.map((person) => (
               <div key={person.name} className="bg-gray-50 border border-gray-100 rounded-2xl p-6 text-center hover:shadow-md transition-all">
                 <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4 border-4 border-white shadow-sm">
-                  <img src={person.photo} alt={person.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  <img src={person.photo_url} alt={person.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 </div>
                 <h3 className="font-bold text-gray-900 text-sm leading-tight mb-1">{person.name}</h3>
                 <p className="text-dnu-blue text-xs font-semibold mb-1">{person.role}</p>

@@ -44,6 +44,60 @@
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"]
+    },
+    "page_title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "page_subtitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "mission_heading": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "mission_checklist": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.checklist-item",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "timeline_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.timeline-item",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "leadership_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.leadership-item",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

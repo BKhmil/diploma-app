@@ -100,7 +100,7 @@ export const getPrograms = async (locale?: AppLocale): Promise<Program[]> => {
   return response.data.map((item) => {
     const entry = normalizeEntity(item);
     return {
-      id: entry.id,
+      id: entry.program_code || entry.id,
       title: entry.title,
       category: entry.category,
       duration: entry.duration || (entry.duration_hours ? `${entry.duration_hours} годин` : ''),
@@ -186,14 +186,18 @@ export const getPreUniversityGroups = async (locale?: AppLocale) => {
 };
 
 export const getHomePage = async (locale?: AppLocale) => {
-  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>('/home-page', locale, true);
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/home-page?populate[quality_bullets]=*&populate[direction_cards]=*&populate[admissions_cards]=*',
+    locale,
+    true
+  );
   if (!response.data) return null;
   return normalizeEntity(response.data);
 };
 
 export const getAboutPage = async (locale?: AppLocale) => {
   const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
-    '/about-page?populate=*',
+    '/about-page?populate[mission_checklist]=*&populate[timeline_items]=*&populate[leadership_items]=*',
     locale,
     true
   );
@@ -204,6 +208,46 @@ export const getAboutPage = async (locale?: AppLocale) => {
 export const getAlumniPage = async (locale?: AppLocale) => {
   const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
     '/alumni-page?populate[hero_stats]=*&populate[employment_items]=*&populate[achievement_items]=*',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getQualificationPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/qualification-page',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getRetrainingPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/retraining-page?populate[admission_docs_retraining]=*&populate[admission_docs_master]=*&populate[important_dates]=*',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getPartnersPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/partners-page?populate[stats]=*&populate[benefits]=*',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getPreUniversityPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/pre-university-page?populate[steps]=*',
     locale,
     true
   );

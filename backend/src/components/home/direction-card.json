@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_home_direction_cards",
+  "info": {
+    "displayName": "DirectionCard",
+    "description": "A key direction / audience card on the home page"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "link_path": {
+      "type": "string"
+    },
+    "icon_key": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}
