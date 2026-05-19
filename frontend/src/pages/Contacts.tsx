@@ -40,6 +40,7 @@ export default function Contacts() {
       phone: data.phone,
       message: data.message,
       program_name: data.program,
+      app_type: 'contact',
     });
     alert('Дякуємо! Ваше повідомлення надіслано.');
     reset();

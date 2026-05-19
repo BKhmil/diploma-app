@@ -127,11 +127,148 @@ export const createApplication = async (payload: {
   city?: string;
   program_name?: string;
   message?: string;
+  financing?: string;
+  birth_date?: string;
+  education_level?: string;
+  diploma_specialty?: string;
+  app_type?: 'application' | 'contact';
 }) => {
   return request('/applications', {
     method: 'POST',
     body: JSON.stringify({ data: payload }),
   });
+};
+
+// ── Admin: Applications ────────────────────────────────────────────────────
+
+export type AppStatus = 'new' | 'processing' | 'accepted' | 'rejected';
+
+export interface StrapiApplication {
+  id: number;
+  num: number;
+  full_name: string;
+  email: string;
+  phone?: string;
+  program_name?: string;
+  organization?: string;
+  city?: string;
+  category?: string;
+  financing?: string;
+  status: AppStatus;
+  manager_comment?: string;
+  app_type: 'application' | 'contact';
+  createdAt: string;
+}
+
+export const getApplications = async (params?: {
+  status?: AppStatus | 'all';
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<{ data: StrapiApplication[]; total: number }> => {
+  const qs = new URLSearchParams();
+  qs.set('pagination[pageSize]', String(params?.pageSize ?? 50));
+  qs.set('pagination[page]', String(params?.page ?? 1));
+  qs.set('sort', 'num:desc');
+  if (params?.status && params.status !== 'all') {
+    qs.set('filters[status][$eq]', params.status);
+  }
+  if (params?.search) {
+    qs.set('filters[$or][0][full_name][$containsi]', params.search);
+    qs.set('filters[$or][1][email][$containsi]', params.search);
+  }
+  const response = await request<any>(`/applications?${qs.toString()}`);
+  const items: StrapiApplication[] = (response.data || []).map((item: any) => {
+    const e = normalizeEntity(item);
+    return { ...e, id: Number(e.id) } as StrapiApplication;
+  });
+  return { data: items, total: response.meta?.pagination?.total ?? items.length };
+};
+
+export const updateApplication = async (
+  id: number,
+  data: Partial<Pick<StrapiApplication, 'status' | 'manager_comment' | 'category' | 'financing'>>
+): Promise<StrapiApplication> => {
+  const response = await request<any>(`/applications/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ data }),
+  });
+  return normalizeEntity(response.data) as StrapiApplication;
+};
+
+export const deleteApplication = async (id: number): Promise<void> => {
+  await request(`/applications/${id}`, { method: 'DELETE' });
+};
+
+export const getApplicationsStats = async (): Promise<Record<AppStatus | 'total', number>> => {
+  const [all, newA, proc, acc, rej] = await Promise.all([
+    request<any>('/applications?pagination[pageSize]=1'),
+    request<any>('/applications?pagination[pageSize]=1&filters[status][$eq]=new'),
+    request<any>('/applications?pagination[pageSize]=1&filters[status][$eq]=processing'),
+    request<any>('/applications?pagination[pageSize]=1&filters[status][$eq]=accepted'),
+    request<any>('/applications?pagination[pageSize]=1&filters[status][$eq]=rejected'),
+  ]);
+  return {
+    total: all.meta?.pagination?.total ?? 0,
+    new: newA.meta?.pagination?.total ?? 0,
+    processing: proc.meta?.pagination?.total ?? 0,
+    accepted: acc.meta?.pagination?.total ?? 0,
+    rejected: rej.meta?.pagination?.total ?? 0,
+  };
+};
+
+// ── Admin: Students ────────────────────────────────────────────────────────
+
+export type StudentStatus = 'active' | 'completed' | 'paused';
+
+export interface StrapiStudent {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  program_name?: string;
+  enrolled?: string;
+  status: StudentStatus;
+}
+
+export const getStudents = async (search?: string): Promise<StrapiStudent[]> => {
+  const qs = new URLSearchParams();
+  qs.set('pagination[pageSize]', '200');
+  qs.set('sort', 'createdAt:desc');
+  if (search) {
+    qs.set('filters[$or][0][name][$containsi]', search);
+    qs.set('filters[$or][1][email][$containsi]', search);
+  }
+  const response = await request<any>(`/students?${qs.toString()}`);
+  return (response.data || []).map((item: any) => {
+    const e = normalizeEntity(item);
+    return { ...e, id: Number(e.id) } as StrapiStudent;
+  });
+};
+
+export const createStudent = async (
+  data: Omit<StrapiStudent, 'id'>
+): Promise<StrapiStudent> => {
+  const response = await request<any>('/students', {
+    method: 'POST',
+    body: JSON.stringify({ data }),
+  });
+  return normalizeEntity(response.data) as StrapiStudent;
+};
+
+export const updateStudent = async (
+  id: number,
+  data: Partial<Omit<StrapiStudent, 'id'>>
+): Promise<StrapiStudent> => {
+  const response = await request<any>(`/students/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ data }),
+  });
+  return normalizeEntity(response.data) as StrapiStudent;
+};
+
+export const deleteStudent = async (id: number): Promise<void> => {
+  await request(`/students/${id}`, { method: 'DELETE' });
 };
 
 export const getContactInfo = async (locale?: AppLocale) => {

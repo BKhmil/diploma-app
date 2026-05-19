@@ -156,6 +156,9 @@ export function Apply() {
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setFormState(data);
     try {
+      const financingMap: Record<string, string> = {
+        budget: 'Бюджет', contract: 'Контракт', employer: 'Роботодавець',
+      };
       await createApplication({
         full_name: `${data.lastName} ${data.firstName} ${data.patronymic || ''}`.trim(),
         email: data.email,
@@ -164,6 +167,11 @@ export function Apply() {
         organization: data.workplace,
         program_name: data.program,
         message: data.wishes,
+        financing: financingMap[data.financing] ?? data.financing,
+        birth_date: data.birthDate,
+        education_level: data.educationLevel,
+        diploma_specialty: data.diplomaSpecialty,
+        app_type: 'application',
       });
     } catch {
       alert('Не вдалося надіслати заявку. Спробуйте пізніше.');

@@ -41,8 +41,38 @@
     },
     "status": {
       "type": "enumeration",
-      "enum": ["new", "processing", "approved", "rejected"],
+      "enum": ["new", "processing", "accepted", "rejected"],
       "default": "new"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": ["ПК", "Перепідг.", "НМТ", "Магістр", "Інше"],
+      "default": "Інше"
+    },
+    "manager_comment": {
+      "type": "text"
+    },
+    "app_type": {
+      "type": "enumeration",
+      "enum": ["application", "contact"],
+      "default": "application"
+    },
+    "financing": {
+      "type": "enumeration",
+      "enum": ["Контракт", "Бюджет", "Роботодавець"],
+      "default": "Контракт"
+    },
+    "num": {
+      "type": "integer"
+    },
+    "birth_date": {
+      "type": "string"
+    },
+    "education_level": {
+      "type": "string"
+    },
+    "diploma_specialty": {
+      "type": "string"
     }
   }
 }
