@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Download, Search, X, Check, Mail, Trash2, Eye, RefreshCw } from 'lucide-react';
+import { Download, Search, X, Check, Mail, Trash2, Eye, RefreshCw, FileText, ExternalLink } from 'lucide-react';
+import type { StrapiMediaFile } from '../../services/strapi';
 import { clsx } from 'clsx';
 import {
   getApplications,
@@ -85,13 +86,13 @@ export default function AdminApplications() {
 
   useEffect(() => { load(); }, [load]);
 
-  const updateStatus = async (ids: number[], status: AppStatus) => {
+  const updateStatus = async (documentIds: string[], status: AppStatus) => {
     try {
-      await Promise.all(ids.map(id => updateApplication(id, { status })));
-      setApps(prev => prev.map(a => ids.includes(a.id) ? { ...a, status } : a));
-      if (drawerApp && ids.includes(drawerApp.id)) setDrawerApp(prev => prev ? { ...prev, status } : null);
+      await Promise.all(documentIds.map(docId => updateApplication(docId, { status })));
+      setApps(prev => prev.map(a => documentIds.includes(a.documentId) ? { ...a, status } : a));
+      if (drawerApp && documentIds.includes(drawerApp.documentId)) setDrawerApp(prev => prev ? { ...prev, status } : null);
       setSelected(new Set());
-      notify(status === 'accepted' ? `✅ Прийнято: ${ids.length}` : `❌ Відхилено: ${ids.length}`);
+      notify(status === 'accepted' ? `✅ Прийнято: ${documentIds.length}` : status === 'rejected' ? `❌ Відхилено: ${documentIds.length}` : `🔄 Оновлено: ${documentIds.length}`);
     } catch {
       notify('❌ Помилка оновлення статусу');
     }
@@ -101,7 +102,7 @@ export default function AdminApplications() {
     if (!drawerApp) return;
     setSavingComment(true);
     try {
-      await updateApplication(drawerApp.id, { manager_comment: comment });
+      await updateApplication(drawerApp.documentId, { manager_comment: comment });
       setApps(prev => prev.map(a => a.id === drawerApp.id ? { ...a, manager_comment: comment } : a));
       setDrawerApp(prev => prev ? { ...prev, manager_comment: comment } : null);
       notify('✅ Коментар збережено');
@@ -114,8 +115,9 @@ export default function AdminApplications() {
 
   const handleDeleteSelected = async () => {
     const ids = [...selected];
+    const docIds = apps.filter(a => ids.includes(a.id)).map(a => a.documentId);
     try {
-      await Promise.all(ids.map(id => deleteApplication(id)));
+      await Promise.all(docIds.map(docId => deleteApplication(docId)));
       setApps(prev => prev.filter(a => !ids.includes(a.id)));
       if (drawerApp && ids.includes(drawerApp.id)) setDrawerApp(null);
       setSelected(new Set());
@@ -204,10 +206,10 @@ export default function AdminApplications() {
         {selected.size > 0 && (
           <div className="flex items-center gap-2 mb-3 text-xs bg-yellow-50 border border-yellow-100 rounded-lg px-3 py-2">
             <span className="text-gray-600">Вибрано: <strong>{selected.size}</strong></span>
-            <button onClick={() => updateStatus([...selected], 'accepted')} className="flex items-center gap-1 px-2.5 py-1 border border-gray-300 bg-white rounded hover:bg-green-50 hover:border-green-300">
+            <button onClick={() => updateStatus(apps.filter(a => selected.has(a.id)).map(a => a.documentId), 'accepted')} className="flex items-center gap-1 px-2.5 py-1 border border-gray-300 bg-white rounded hover:bg-green-50 hover:border-green-300">
               <Check className="w-3 h-3 text-green-600" /> Прийняти
             </button>
-            <button onClick={() => updateStatus([...selected], 'rejected')} className="flex items-center gap-1 px-2.5 py-1 border border-gray-300 bg-white rounded hover:bg-red-50 hover:border-red-300">
+            <button onClick={() => updateStatus(apps.filter(a => selected.has(a.id)).map(a => a.documentId), 'rejected')} className="flex items-center gap-1 px-2.5 py-1 border border-gray-300 bg-white rounded hover:bg-red-50 hover:border-red-300">
               <X className="w-3 h-3 text-red-500" /> Відхилити
             </button>
             <button onClick={() => {
@@ -310,6 +312,34 @@ export default function AdminApplications() {
                 <div className="text-gray-900">{value}</div>
               </div>
             ))}
+            {(drawerApp.doc_diploma || drawerApp.doc_passport || drawerApp.doc_ipn || drawerApp.doc_photo) && (
+              <>
+                <hr className="border-gray-100" />
+                <div>
+                  <div className="text-gray-400 uppercase tracking-wider font-bold text-[10px] mb-2">Документи</div>
+                  <div className="space-y-1.5">
+                    {([
+                      { label: 'Диплом',   file: drawerApp.doc_diploma },
+                      { label: 'Паспорт',  file: drawerApp.doc_passport },
+                      { label: 'ІПН',      file: drawerApp.doc_ipn },
+                      { label: 'Фото 3×4', file: drawerApp.doc_photo },
+                    ] as { label: string; file?: StrapiMediaFile }[]).filter(d => d.file).map(({ label, file }) => (
+                      <a
+                        key={label}
+                        href={`${(import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '')}${file!.url}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 px-2.5 py-1.5 border border-gray-200 rounded-lg hover:border-dnu-blue hover:text-dnu-blue transition-colors text-xs text-gray-700 group"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-gray-400 group-hover:text-dnu-blue shrink-0" />
+                        <span className="flex-1 truncate">{label}</span>
+                        <ExternalLink className="w-3 h-3 text-gray-300 group-hover:text-dnu-blue shrink-0" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
             <hr className="border-gray-100" />
             <div>
               <div className="text-gray-400 uppercase tracking-wider font-bold text-[10px] mb-2">Коментар менеджера</div>
@@ -321,12 +351,12 @@ export default function AdminApplications() {
               </button>
             </div>
             <div className="space-y-2 pt-1">
-              <button onClick={() => updateStatus([drawerApp.id], 'processing')}
+              <button onClick={() => updateStatus([drawerApp.documentId], 'processing')}
                 disabled={drawerApp.status === 'processing' || drawerApp.status === 'accepted'}
                 className="w-full py-2.5 bg-blue-500 text-white text-xs font-bold rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
                 В обробку
               </button>
-              <button onClick={() => updateStatus([drawerApp.id], 'accepted')}
+              <button onClick={() => updateStatus([drawerApp.documentId], 'accepted')}
                 disabled={drawerApp.status === 'accepted'}
                 className="w-full py-2.5 bg-dnu-blue text-white text-xs font-bold rounded-lg hover:bg-dnu-dark transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
                 <Check className="w-3.5 h-3.5" /> Прийняти заявку
@@ -335,7 +365,7 @@ export default function AdminApplications() {
                 className="w-full py-2.5 border border-gray-300 text-gray-700 text-xs font-medium rounded-lg hover:border-dnu-blue hover:text-dnu-blue transition-colors flex items-center justify-center gap-1.5">
                 <Mail className="w-3.5 h-3.5" /> Відповісти email
               </button>
-              <button onClick={() => updateStatus([drawerApp.id], 'rejected')}
+              <button onClick={() => updateStatus([drawerApp.documentId], 'rejected')}
                 disabled={drawerApp.status === 'rejected'}
                 className="w-full py-2.5 border-2 border-red-300 text-red-600 text-xs font-bold rounded-lg hover:bg-red-50 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed">
                 <X className="w-3.5 h-3.5" /> Відхилити

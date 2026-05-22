@@ -38,7 +38,11 @@ const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   });
 
   if (!res.ok) {
-    throw new Error(`Strapi request failed: ${res.status}`);
+    throw new Error(`${res.status}`);
+  }
+
+  if (res.status === 204 || res.headers.get('content-length') === '0') {
+    return undefined as unknown as T;
   }
 
   return res.json();
@@ -91,7 +95,11 @@ const requestWithLocaleFallback = async <T>(
   }
 };
 
-export const getPrograms = async (locale?: AppLocale): Promise<Program[]> => {
+export interface StrapiProgram extends Program {
+  documentId: string;
+}
+
+export const getPrograms = async (locale?: AppLocale): Promise<StrapiProgram[]> => {
   const response = await requestWithLocaleFallback<StrapiListResponse<any>>(
     '/programs?pagination[pageSize]=100&sort=createdAt:desc',
     locale,
@@ -101,50 +109,141 @@ export const getPrograms = async (locale?: AppLocale): Promise<Program[]> => {
     const entry = normalizeEntity(item);
     return {
       id: entry.program_code || entry.id,
+      documentId: item.documentId as string,
       title: entry.title,
       category: entry.category,
-      duration: entry.duration || (entry.duration_hours ? `${entry.duration_hours} годин` : ''),
+      duration: entry.duration != null ? Number(entry.duration) : (entry.duration_hours ? Math.round(entry.duration_hours / 4) : 1),
+      duration_unit: entry.duration_unit ?? 'months',
       format: entry.format,
       credits: entry.credits ?? entry.credits_ects,
       description: entry.description || '',
       targetAudience: entry.target_audience,
       startDate: entry.start_date,
-      price: entry.price,
+      price: entry.price != null ? Number(entry.price) : undefined,
       certificate: entry.certificate,
       groupSize: entry.group_size,
       outcomes: Array.isArray(entry.outcomes) ? entry.outcomes : [],
       modules: Array.isArray(entry.modules) ? entry.modules : [],
       faq: Array.isArray(entry.faq) ? entry.faq : [],
-    } as Program;
+    } as StrapiProgram;
   });
 };
 
-export const createApplication = async (payload: {
-  full_name: string;
-  email: string;
-  phone?: string;
-  organization?: string;
-  city?: string;
-  program_name?: string;
-  message?: string;
-  financing?: string;
-  birth_date?: string;
-  education_level?: string;
-  diploma_specialty?: string;
-  app_type?: 'application' | 'contact';
-}) => {
-  return request('/applications', {
+export const createProgram = async (
+  data: Omit<Program, 'id'>
+): Promise<StrapiProgram> => {
+  const response = await request<any>('/programs', {
     method: 'POST',
+    body: JSON.stringify({
+      data: {
+        program_code: `custom-${Date.now()}`,
+        title: data.title,
+        category: data.category,
+        format: data.format,
+        duration: data.duration,
+        duration_unit: data.duration_unit ?? 'months',
+        price: data.price || null,
+        description: data.description || '',
+        target_audience: data.targetAudience || '',
+      },
+    }),
+  });
+  const e = normalizeEntity(response.data);
+  return {
+    ...e,
+    id: e.program_code || String(e.id),
+    documentId: response.data?.documentId as string,
+  } as StrapiProgram;
+};
+
+export const updateProgram = async (
+  documentId: string,
+  data: Partial<Omit<Program, 'id'>>
+): Promise<StrapiProgram> => {
+  const payload: Record<string, unknown> = {};
+  if (data.title     !== undefined) payload.title          = data.title;
+  if (data.category  !== undefined) payload.category       = data.category;
+  if (data.format    !== undefined) payload.format         = data.format;
+  if (data.duration      !== undefined) payload.duration      = data.duration;
+  if (data.duration_unit !== undefined) payload.duration_unit = data.duration_unit;
+  if (data.price         !== undefined) payload.price         = data.price ?? null;
+  if (data.description !== undefined) payload.description  = data.description;
+  if (data.targetAudience !== undefined) payload.target_audience = data.targetAudience;
+  const response = await request<any>(`/programs/${documentId}`, {
+    method: 'PUT',
     body: JSON.stringify({ data: payload }),
   });
+  const e = normalizeEntity(response.data);
+  return {
+    ...e,
+    id: e.program_code || String(e.id),
+    documentId: response.data?.documentId as string ?? documentId,
+  } as StrapiProgram;
+};
+
+export const deleteProgram = async (documentId: string): Promise<void> => {
+  await request(`/programs/${documentId}`, { method: 'DELETE' });
+};
+
+export const createApplication = async (
+  payload: {
+    full_name: string;
+    email: string;
+    phone?: string;
+    organization?: string;
+    city?: string;
+    program_name?: string;
+    message?: string;
+    financing?: string;
+    birth_date?: string;
+    education_level?: string;
+    diploma_specialty?: string;
+    app_type?: 'application' | 'contact';
+  },
+  files?: {
+    diploma?: File;
+    passport?: File;
+    ipn?: File;
+    photo?: File;
+  }
+) => {
+  if (!files || (!files.diploma && !files.passport && !files.ipn && !files.photo)) {
+    return request('/applications', {
+      method: 'POST',
+      body: JSON.stringify({ data: payload }),
+    });
+  }
+
+  const formData = new FormData();
+  formData.append('data', JSON.stringify(payload));
+  if (files.diploma)  formData.append('files.doc_diploma',  files.diploma,  files.diploma.name);
+  if (files.passport) formData.append('files.doc_passport', files.passport, files.passport.name);
+  if (files.ipn)      formData.append('files.doc_ipn',      files.ipn,      files.ipn.name);
+  if (files.photo)    formData.append('files.doc_photo',    files.photo,    files.photo.name);
+
+  const res = await fetch(`${STRAPI_BASE_URL}/api/applications`, {
+    method: 'POST',
+    body: formData,
+  });
+  if (!res.ok) throw new Error(`${res.status}`);
+  return res.json();
 };
 
 // ── Admin: Applications ────────────────────────────────────────────────────
 
 export type AppStatus = 'new' | 'processing' | 'accepted' | 'rejected';
 
+export interface StrapiMediaFile {
+  id: number;
+  name: string;
+  url: string;
+  mime: string;
+  size: number;
+}
+
 export interface StrapiApplication {
   id: number;
+  documentId: string;
   num: number;
   full_name: string;
   email: string;
@@ -158,6 +257,10 @@ export interface StrapiApplication {
   manager_comment?: string;
   app_type: 'application' | 'contact';
   createdAt: string;
+  doc_diploma?: StrapiMediaFile;
+  doc_passport?: StrapiMediaFile;
+  doc_ipn?: StrapiMediaFile;
+  doc_photo?: StrapiMediaFile;
 }
 
 export const getApplications = async (params?: {
@@ -170,6 +273,10 @@ export const getApplications = async (params?: {
   qs.set('pagination[pageSize]', String(params?.pageSize ?? 50));
   qs.set('pagination[page]', String(params?.page ?? 1));
   qs.set('sort', 'num:desc');
+  qs.set('populate[doc_diploma]', 'true');
+  qs.set('populate[doc_passport]', 'true');
+  qs.set('populate[doc_ipn]', 'true');
+  qs.set('populate[doc_photo]', 'true');
   if (params?.status && params.status !== 'all') {
     qs.set('filters[status][$eq]', params.status);
   }
@@ -186,18 +293,18 @@ export const getApplications = async (params?: {
 };
 
 export const updateApplication = async (
-  id: number,
+  documentId: string,
   data: Partial<Pick<StrapiApplication, 'status' | 'manager_comment' | 'category' | 'financing'>>
 ): Promise<StrapiApplication> => {
-  const response = await request<any>(`/applications/${id}`, {
+  const response = await request<any>(`/applications/${documentId}`, {
     method: 'PUT',
     body: JSON.stringify({ data }),
   });
   return normalizeEntity(response.data) as StrapiApplication;
 };
 
-export const deleteApplication = async (id: number): Promise<void> => {
-  await request(`/applications/${id}`, { method: 'DELETE' });
+export const deleteApplication = async (documentId: string): Promise<void> => {
+  await request(`/applications/${documentId}`, { method: 'DELETE' });
 };
 
 export const getApplicationsStats = async (): Promise<Record<AppStatus | 'total', number>> => {
@@ -217,27 +324,84 @@ export const getApplicationsStats = async (): Promise<Record<AppStatus | 'total'
   };
 };
 
-// ── Admin: Students ────────────────────────────────────────────────────────
+// ── Admin: Students (types declared early for Enrollment reference) ────────
 
 export type StudentStatus = 'active' | 'completed' | 'paused';
 
 export interface StrapiStudent {
   id: number;
-  name: string;
+  documentId: string;
+  last_name: string;
+  first_name: string;
+  middle_name?: string;
   email: string;
   phone?: string;
   program_name?: string;
-  enrolled?: string;
+  enrolled?: string;  // ISO date string yyyy-mm-dd
   status: StudentStatus;
 }
+
+export const studentFullName = (s: Pick<StrapiStudent, 'last_name' | 'first_name' | 'middle_name'>): string =>
+  [s.last_name, s.first_name, s.middle_name].filter(Boolean).join(' ');
+
+// ── Admin: Enrollments ─────────────────────────────────────────────────────
+
+export type EnrollmentStatus = 'active' | 'completed' | 'cancelled';
+
+export interface StrapiEnrollment {
+  id: number;
+  documentId: string;
+  student: Pick<StrapiStudent, 'id' | 'documentId' | 'last_name' | 'first_name' | 'middle_name' | 'email' | 'phone'>;
+  program_name?: string;
+  enrolled_at?: string;
+  status: EnrollmentStatus;
+}
+
+export const getEnrollments = async (): Promise<StrapiEnrollment[]> => {
+  const qs = new URLSearchParams();
+  qs.set('pagination[pageSize]', '200');
+  qs.set('sort', 'enrolled_at:desc');
+  qs.set('populate[student]', 'true');
+  qs.set('populate[program]', 'true');
+  const response = await request<any>(`/enrollments?${qs.toString()}`);
+  return (response.data || []).map((item: any) => {
+    const e = normalizeEntity(item);
+    const program = item.program ? normalizeEntity(item.program) : null;
+    return {
+      ...e,
+      id: Number(e.id),
+      program_name: program?.title ?? e.program_name ?? undefined,
+      student: e.student ? { ...normalizeEntity(item.student ?? {}), id: Number(e.student?.id ?? 0) } : null,
+    } as StrapiEnrollment;
+  });
+};
+
+export const updateEnrollment = async (
+  documentId: string,
+  data: Partial<Pick<StrapiEnrollment, 'status'>>
+): Promise<StrapiEnrollment> => {
+  const response = await request<any>(`/enrollments/${documentId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ data }),
+  });
+  return normalizeEntity(response.data) as StrapiEnrollment;
+};
+
+export const deleteEnrollment = async (documentId: string): Promise<void> => {
+  await request(`/enrollments/${documentId}`, { method: 'DELETE' });
+};
+
+// ── Admin: Students (functions) ────────────────────────────────────────────
 
 export const getStudents = async (search?: string): Promise<StrapiStudent[]> => {
   const qs = new URLSearchParams();
   qs.set('pagination[pageSize]', '200');
   qs.set('sort', 'createdAt:desc');
   if (search) {
-    qs.set('filters[$or][0][name][$containsi]', search);
-    qs.set('filters[$or][1][email][$containsi]', search);
+    qs.set('filters[$or][0][last_name][$containsi]', search);
+    qs.set('filters[$or][1][first_name][$containsi]', search);
+    qs.set('filters[$or][2][middle_name][$containsi]', search);
+    qs.set('filters[$or][3][email][$containsi]', search);
   }
   const response = await request<any>(`/students?${qs.toString()}`);
   return (response.data || []).map((item: any) => {
@@ -247,7 +411,7 @@ export const getStudents = async (search?: string): Promise<StrapiStudent[]> => 
 };
 
 export const createStudent = async (
-  data: Omit<StrapiStudent, 'id'>
+  data: Omit<StrapiStudent, 'id' | 'documentId'>
 ): Promise<StrapiStudent> => {
   const response = await request<any>('/students', {
     method: 'POST',
@@ -257,18 +421,18 @@ export const createStudent = async (
 };
 
 export const updateStudent = async (
-  id: number,
-  data: Partial<Omit<StrapiStudent, 'id'>>
+  documentId: string,
+  data: Partial<Omit<StrapiStudent, 'id' | 'documentId'>>
 ): Promise<StrapiStudent> => {
-  const response = await request<any>(`/students/${id}`, {
+  const response = await request<any>(`/students/${documentId}`, {
     method: 'PUT',
     body: JSON.stringify({ data }),
   });
   return normalizeEntity(response.data) as StrapiStudent;
 };
 
-export const deleteStudent = async (id: number): Promise<void> => {
-  await request(`/students/${id}`, { method: 'DELETE' });
+export const deleteStudent = async (documentId: string): Promise<void> => {
+  await request(`/students/${documentId}`, { method: 'DELETE' });
 };
 
 export const getContactInfo = async (locale?: AppLocale) => {

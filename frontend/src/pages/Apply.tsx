@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import {
@@ -7,7 +7,7 @@ import {
   Check
 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { createApplication } from '../services/strapi';
+import { createApplication, getPrograms, type StrapiProgram } from '../services/strapi';
 
 type Step1Data = {
   lastName: string;
@@ -54,32 +54,6 @@ const STEPS = [
   { label: 'Підтвердження', icon: CheckCircle2 },
 ];
 
-const PROGRAMS: Record<string, string[]> = {
-  qualification: [
-    'Педагогічна майстерність (120 год.)',
-    'Цифрова грамотність для освітян (72 год.)',
-    'Інклюзивна освіта (72 год.)',
-    'Психологія стресу та кризових станів (180 год.)',
-    'Менеджмент в освіті (270 год.)',
-    'НУШ: практичні інструменти (48 год.)',
-    'Охорона праці в освіті (30 год.)',
-  ],
-  retraining: [
-    'Публічне управління та адміністрування (1,5 роки)',
-    'Психологія (1,5 роки)',
-    'Право (1,5 роки)',
-    'Економіка підприємства (1,5 роки)',
-  ],
-  'pre-university': [
-    'Українська мова',
-    'Математика',
-    'Історія України',
-    'Англійська мова',
-    'Біологія',
-    'Фізика',
-    'Комплекс: Математика + Українська мова',
-  ],
-};
 
 function UploadZone({ label, required, name, register }: {
   label: string;
@@ -128,7 +102,13 @@ function UploadZone({ label, required, name, register }: {
 export function Apply() {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [formState, setFormState] = useState<Partial<FormData>>({});
+  const [strapiPrograms, setStrapiPrograms] = useState<StrapiProgram[]>([]);
+
+  useEffect(() => {
+    getPrograms().then(setStrapiPrograms).catch(() => {});
+  }, []);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -140,6 +120,7 @@ export function Apply() {
   });
 
   const programCategory = watch('programCategory', 'qualification');
+  const allValues = watch();
 
   const handleNext = async () => {
     const fieldsPerStep: (keyof FormData)[][] = [
@@ -154,27 +135,42 @@ export function Apply() {
   };
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
+    if (submitting) return;
+    setSubmitting(true);
     setFormState(data);
     try {
       const financingMap: Record<string, string> = {
         budget: 'Бюджет', contract: 'Контракт', employer: 'Роботодавець',
       };
-      await createApplication({
-        full_name: `${data.lastName} ${data.firstName} ${data.patronymic || ''}`.trim(),
-        email: data.email,
-        phone: data.phone,
-        city: data.city,
-        organization: data.workplace,
-        program_name: data.program,
-        message: data.wishes,
-        financing: financingMap[data.financing] ?? data.financing,
-        birth_date: data.birthDate,
-        education_level: data.educationLevel,
-        diploma_specialty: data.diplomaSpecialty,
-        app_type: 'application',
-      });
-    } catch {
-      alert('Не вдалося надіслати заявку. Спробуйте пізніше.');
+      const files = {
+        diploma:  data.diploma?.[0],
+        passport: data.passport?.[0],
+        ipn:      data.ipn?.[0],
+        photo:    data.photo?.[0],
+      };
+      await createApplication(
+        {
+          full_name: `${data.lastName} ${data.firstName} ${data.patronymic || ''}`.trim(),
+          email: data.email,
+          phone: data.phone,
+          city: data.city,
+          organization: data.workplace,
+          program_name: data.program,
+          message: data.wishes,
+          financing: financingMap[data.financing] ?? data.financing,
+          birth_date: data.birthDate,
+          education_level: data.educationLevel,
+          diploma_specialty: data.diplomaSpecialty,
+          app_type: 'application',
+        },
+        files
+      );
+    } catch (err: any) {
+      const msg = err?.message?.includes('409')
+        ? 'Ви вже подавали заявку на цю програму. Повторна заявка неможлива.'
+        : 'Не вдалося надіслати заявку. Спробуйте пізніше.';
+      alert(msg);
+      setSubmitting(false);
       return;
     }
     setSubmitted(true);
@@ -439,9 +435,12 @@ export function Apply() {
                       className={clsx('w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:ring-dnu-blue outline-none appearance-none bg-white', errors.program ? 'border-red-400' : 'border-gray-300')}
                     >
                       <option value="">— Оберіть зі списку —</option>
-                      {(PROGRAMS[programCategory] || []).map((p) => (
-                        <option key={p}>{p}</option>
-                      ))}
+                      {strapiPrograms
+                        .filter(p => p.category === programCategory)
+                        .map(p => (
+                          <option key={p.id} value={p.title}>{p.title}</option>
+                        ))
+                      }
                     </select>
                     {errors.program && <p className="text-red-500 text-xs mt-1">{errors.program.message}</p>}
                   </div>
@@ -506,15 +505,19 @@ export function Apply() {
                   </h2>
                   <div className="bg-gray-50 rounded-xl border border-gray-200 divide-y divide-gray-100">
                     {[
-                      { key: "Ім'я", val: `${formState.lastName || ''} ${formState.firstName || ''}`.trim() || '—' },
-                      { key: 'Телефон', val: formState.phone || '—' },
-                      { key: 'Email', val: formState.email || '—' },
-                      { key: 'Місто', val: formState.city || '—' },
-                      { key: 'Рівень освіти', val: formState.educationLevel || '—' },
+                      { key: "Ім'я", val: `${allValues.lastName || ''} ${allValues.firstName || ''} ${allValues.patronymic || ''}`.trim() || '—' },
+                      { key: 'Дата народження', val: allValues.birthDate || '—' },
+                      { key: 'Телефон', val: allValues.phone || '—' },
+                      { key: 'Email', val: allValues.email || '—' },
+                      { key: 'Місто', val: allValues.city || '—' },
+                      { key: 'Рівень освіти', val: allValues.educationLevel || '—' },
+                      { key: 'Місце роботи', val: allValues.workplace || '—' },
+                      { key: 'Програма', val: allValues.program || '—' },
+                      { key: 'Фінансування', val: { budget: 'Бюджет', contract: 'Контракт', employer: 'Від роботодавця' }[allValues.financing ?? ''] || allValues.financing || '—' },
                     ].map(({ key, val }) => (
                       <div key={key} className="flex justify-between px-5 py-3 text-sm">
                         <span className="text-gray-500">{key}</span>
-                        <span className="font-medium text-gray-900">{val}</span>
+                        <span className="font-medium text-gray-900 text-right max-w-[60%]">{val}</span>
                       </div>
                     ))}
                   </div>
@@ -579,10 +582,23 @@ export function Apply() {
                   ) : (
                     <button
                       type="submit"
-                      className="flex items-center gap-2 px-8 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors shadow-sm text-base"
+                      disabled={submitting}
+                      className="flex items-center gap-2 px-8 py-3 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition-colors shadow-sm text-base disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      <CheckCircle2 className="w-5 h-5" />
-                      Надіслати заявку
+                      {submitting ? (
+                        <>
+                          <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                          </svg>
+                          Надсилання...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="w-5 h-5" />
+                          Надіслати заявку
+                        </>
+                      )}
                     </button>
                   )}
                 </div>
