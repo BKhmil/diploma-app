@@ -65,6 +65,11 @@
       "type": "enumeration",
       "enum": ["licenses", "regulations", "programs", "samples"],
       "default": "regulations"
+    },
+    "action": {
+      "type": "enumeration",
+      "enum": ["download", "view"],
+      "default": "download"
     }
   }
 }

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FileText, Download, Eye, Search, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
-import { getDocuments } from '../services/strapi';
+import { getDocuments, getContactInfo } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
+
+const STRAPI_BASE = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
 
 interface Document {
   id: number;
@@ -12,6 +14,7 @@ interface Document {
   type: 'PDF' | 'DOC' | 'DOCX';
   category: 'licenses' | 'regulations' | 'programs' | 'samples';
   action: 'download' | 'view';
+  fileUrl?: string;
 }
 
 const DOCS: Document[] = [
@@ -54,19 +57,44 @@ export default function Documents() {
   const [docs, setDocs] = useState<Document[]>(DOCS);
   const [activeTab, setActiveTab] = useState<'all' | 'licenses' | 'regulations' | 'programs' | 'samples'>('all');
   const [query, setQuery] = useState('');
+  const [pageTitle, setPageTitle] = useState('');
+  const [pageSubtitle, setPageSubtitle] = useState('');
+
+  React.useEffect(() => {
+    getContactInfo(locale)
+      .then((info: any) => {
+        if (info?.documents_page_title) setPageTitle(info.documents_page_title);
+        if (info?.documents_page_subtitle) setPageSubtitle(info.documents_page_subtitle);
+      })
+      .catch(() => undefined);
+  }, [locale]);
 
   React.useEffect(() => {
     getDocuments(locale)
       .then((items) => {
         if (!items.length) return;
-        const mapped: Document[] = items.map((item, idx) => ({
-          id: Number(item.id ?? idx + 1),
-          title: item.title || 'Документ',
-          meta: item.meta || item.description || '',
-          type: 'PDF',
-          category: (item.doc_category || 'regulations') as Document['category'],
-          action: 'download',
-        }));
+        const mapped: Document[] = items.map((item, idx) => {
+          const fileObj = item.file;
+          const fileUrl = fileObj?.url ? `${STRAPI_BASE}${fileObj.url}` : undefined;
+          const mime: string = fileObj?.mime ?? '';
+          let type: Document['type'] = 'PDF';
+          if (mime.includes('wordprocessingml') || mime.includes('msword')) {
+            type = mime.includes('openxmlformats') ? 'DOCX' : 'DOC';
+          } else if (fileObj?.name) {
+            const ext = fileObj.name.split('.').pop()?.toUpperCase();
+            if (ext === 'DOC') type = 'DOC';
+            else if (ext === 'DOCX') type = 'DOCX';
+          }
+          return {
+            id: Number(item.id ?? idx + 1),
+            title: item.title || 'Документ',
+            meta: item.meta || item.description || '',
+            type,
+            category: (item.doc_category || 'regulations') as Document['category'],
+            action: (item.action || 'download') as Document['action'],
+            fileUrl,
+          };
+        });
         setDocs(mapped);
       })
       .catch(() => undefined);
@@ -113,8 +141,8 @@ export default function Documents() {
             <span className="mx-2">›</span>
             <span className="text-gray-800 font-medium">Документи</span>
           </nav>
-          <h1 className="text-3xl font-extrabold text-gray-900 mb-1">Нормативні документи</h1>
-          <p className="text-gray-600 text-sm mb-6">Правові підстави діяльності, програми навчання та зразки документів</p>
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-1">{pageTitle || 'Нормативні документи'}</h1>
+          <p className="text-gray-600 text-sm mb-6">{pageSubtitle || 'Правові підстави діяльності, програми навчання та зразки документів'}</p>
 
           {/* Tabs */}
           <div className="flex gap-0 overflow-x-auto border-b-2 border-gray-200 -mx-4 px-4 md:mx-0 md:px-0">
@@ -196,13 +224,25 @@ export default function Documents() {
                           <div>
                             <div className="font-semibold text-sm text-gray-900 leading-snug mb-1 group-hover:text-dnu-blue transition-colors">{doc.title}</div>
                             <div className="text-xs text-gray-500 mb-3">{doc.meta}</div>
-                            <button className="flex items-center gap-1.5 text-xs font-medium text-dnu-blue hover:underline">
-                              {doc.action === 'download' ? (
-                                <><Download className="w-3.5 h-3.5" /> Завантажити .{doc.type.toLowerCase()}</>
-                              ) : (
-                                <><Eye className="w-3.5 h-3.5" /> Переглянути</>
-                              )}
-                            </button>
+                            {doc.fileUrl ? (
+                              <a
+                                href={doc.fileUrl}
+                                target={doc.action === 'view' ? '_blank' : undefined}
+                                download={doc.action === 'download' ? true : undefined}
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-xs font-medium text-dnu-blue hover:underline"
+                              >
+                                {doc.action === 'download' ? (
+                                  <><Download className="w-3.5 h-3.5" /> Завантажити .{doc.type.toLowerCase()}</>
+                                ) : (
+                                  <><Eye className="w-3.5 h-3.5" /> Переглянути</>
+                                )}
+                              </a>
+                            ) : (
+                              <span className="flex items-center gap-1.5 text-xs text-gray-300 cursor-not-allowed">
+                                <Download className="w-3.5 h-3.5" /> Файл не додано
+                              </span>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -220,10 +260,25 @@ export default function Documents() {
                               <div className="text-xs text-gray-500 mt-1">{doc.meta}</div>
                             </div>
                           </div>
-                          <button className="flex items-center gap-2 px-4 py-2 bg-dnu-blue text-white text-xs font-bold rounded-lg hover:bg-dnu-dark transition-colors shrink-0 ml-4">
-                            <Download className="w-3.5 h-3.5" />
-                            Завантажити
-                          </button>
+                          {doc.fileUrl ? (
+                            <a
+                              href={doc.fileUrl}
+                              target={doc.action === 'view' ? '_blank' : undefined}
+                              download={doc.action === 'download' ? true : undefined}
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 px-4 py-2 bg-dnu-blue text-white text-xs font-bold rounded-lg hover:bg-dnu-dark transition-colors shrink-0 ml-4"
+                            >
+                              {doc.action === 'view' ? (
+                                <><Eye className="w-3.5 h-3.5" /> Переглянути</>
+                              ) : (
+                                <><Download className="w-3.5 h-3.5" /> Завантажити</>
+                              )}
+                            </a>
+                          ) : (
+                            <span className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-400 text-xs font-bold rounded-lg shrink-0 ml-4 cursor-not-allowed">
+                              <Download className="w-3.5 h-3.5" /> Файл не додано
+                            </span>
+                          )}
                         </div>
                       ))}
                     </div>
