@@ -1,6 +1,6 @@
 import React from 'react';
 import { Calendar, Clock, Users, Award, ExternalLink } from 'lucide-react';
-import { Program } from '../../types';
+import { Program, formatDuration, formatPrice } from '../../types';
 import { Link } from 'react-router-dom';
 import { clsx } from 'clsx';
 
@@ -64,7 +64,7 @@ export const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
             <Clock className="w-4 h-4 mr-2.5 text-[#0056b3] shrink-0 mt-0.5" />
             <div className="flex-1">
               <span className="block text-xs font-medium text-gray-400 uppercase tracking-wider">Тривалість</span>
-              <span className="font-semibold">{program.duration}</span>
+              <span className="font-semibold">{formatDuration(program.duration, program.duration_unit)}</span>
               {program.credits && <span className="text-gray-500 font-normal ml-1">({program.credits} кредитів ЄКТС)</span>}
             </div>
           </div>
@@ -86,7 +86,7 @@ export const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
             <div>
               <span className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-0.5">Сума</span>
               <span className="font-bold text-lg text-[#003366] leading-none">
-                {program.price || 'Безкоштовно'}
+                {formatPrice(program.price)}
               </span>
             </div>
             {spotsLeft && (

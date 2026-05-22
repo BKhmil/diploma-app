@@ -103,6 +103,11 @@ const defaultEmploymentSection = {
   subtitle: 'Карта працевлаштування',
 };
 
+const defaultTestimonialsSection = {
+  title: 'Відгуки випускників',
+  subtitle: 'Що кажуть ті, хто вже пройшов навчання',
+};
+
 const achievements = [
   {
     iconKey: 'programs',
@@ -159,6 +164,7 @@ export default function Alumni() {
   const [employmentItems, setEmploymentItems] = useState(employment);
   const [achievementsTitle, setAchievementsTitle] = useState(defaultAchievementsSectionTitle);
   const [achievementItems, setAchievementItems] = useState(achievements);
+  const [testimonialsSection, setTestimonialsSection] = useState(defaultTestimonialsSection);
   const featured = alumniItems.find((item: any) => item.isFeatured) || alumniItems[0] || null;
   const testimonialsList = featured
     ? alumniItems.filter((item: any) => String(item.id) !== String((featured as any).id))
@@ -202,6 +208,13 @@ export default function Alumni() {
         }
 
         setAchievementsTitle(page.achievements_section_title || defaultAchievementsSectionTitle);
+
+        if (page.testimonials_section_title || page.testimonials_section_subtitle) {
+          setTestimonialsSection({
+            title: page.testimonials_section_title || defaultTestimonialsSection.title,
+            subtitle: page.testimonials_section_subtitle || defaultTestimonialsSection.subtitle,
+          });
+        }
 
         if (Array.isArray(page.achievement_items) && page.achievement_items.length) {
           const normalizedAchievements = page.achievement_items
@@ -291,8 +304,8 @@ export default function Alumni() {
 
         {/* Featured testimonial */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">Відгуки випускників</h2>
-          <p className="text-gray-600 mb-8">Що кажуть ті, хто вже пройшов навчання</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">{testimonialsSection.title}</h2>
+          <p className="text-gray-600 mb-8">{testimonialsSection.subtitle}</p>
 
           {featured && (
             <div className="bg-white border-2 border-dnu-blue/20 rounded-3xl p-8 mb-8 flex flex-col sm:flex-row gap-8 items-start shadow-sm hover:shadow-md transition-shadow">

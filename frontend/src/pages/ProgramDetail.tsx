@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatDuration, formatPrice } from '../types';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { usePrograms } from '../context/ProgramsContext';
 import {
@@ -106,7 +107,7 @@ export default function ProgramDetail() {
           </h1>
 
           <div className="flex flex-wrap gap-5 text-sm text-gray-600">
-            <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-dnu-blue" /><strong>Тривалість:</strong>&nbsp;{program.duration}</span>
+            <span className="flex items-center gap-1.5"><Clock className="w-4 h-4 text-dnu-blue" /><strong>Тривалість:</strong>&nbsp;{formatDuration(program.duration, program.duration_unit)}</span>
             {program.certificate && <span className="flex items-center gap-1.5"><Award className="w-4 h-4 text-dnu-blue" /><strong>Документ:</strong>&nbsp;{program.certificate}</span>}
             {program.targetAudience && <span className="flex items-center gap-1.5"><Users className="w-4 h-4 text-dnu-blue" /><strong>Для:</strong>&nbsp;{program.targetAudience}</span>}
           </div>
@@ -208,7 +209,7 @@ export default function ProgramDetail() {
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
               <div className="bg-dnu-dark text-white text-center py-5 px-6">
                 <p className="text-xs uppercase tracking-wider text-gray-400 mb-1">Вартість навчання</p>
-                <p className="text-3xl font-extrabold">{program.price || 'Безкоштовно'}</p>
+                <p className="text-3xl font-extrabold">{formatPrice(program.price)}</p>
                 {program.category === 'qualification' && (
                   <p className="text-xs text-gray-400 mt-1">або бюджетне місце (безкоштовно)</p>
                 )}
@@ -279,8 +280,8 @@ export default function ProgramDetail() {
                     {CATEGORY_LABEL[p.category]}
                   </span>
                   <h3 className="font-bold text-gray-900 mb-1 group-hover:text-dnu-blue transition-colors leading-snug">{p.title}</h3>
-                  <p className="text-sm text-gray-500">{p.duration} · {FORMAT_LABEL[p.format]}</p>
-                  <p className="text-sm font-bold text-dnu-dark mt-2">{p.price || 'Безкоштовно'}</p>
+                  <p className="text-sm text-gray-500">{formatDuration(p.duration, p.duration_unit)} · {FORMAT_LABEL[p.format]}</p>
+                  <p className="text-sm font-bold text-dnu-dark mt-2">{formatPrice(p.price)}</p>
                 </Link>
               ))}
             </div>

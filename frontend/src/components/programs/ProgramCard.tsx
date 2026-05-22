@@ -1,4 +1,4 @@
-import { Program } from '../../types';
+import { Program, formatDuration, formatPrice } from '../../types';
 import { Clock, Users, Monitor, MapPin, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { clsx } from 'clsx';
@@ -50,7 +50,7 @@ export function ProgramCard({ program }: ProgramCardProps) {
         <div className="space-y-2 text-sm text-slate-500 mb-6">
           <div className="flex items-center gap-2">
             <Clock size={16} className="text-dnu-gold" />
-            <span>{program.duration}</span>
+            <span>{formatDuration(program.duration, program.duration_unit)}</span>
           </div>
           {program.targetAudience && (
             <div className="flex items-start gap-2">
@@ -61,7 +61,7 @@ export function ProgramCard({ program }: ProgramCardProps) {
         </div>
 
         <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-          <span className="font-bold text-slate-900">{program.price}</span>
+          <span className="font-bold text-slate-900">{formatPrice(program.price)}</span>
           <Link 
             to={`/program/${program.id}`} 
             className="bg-dnu-blue text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition-colors"

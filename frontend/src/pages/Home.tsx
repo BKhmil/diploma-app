@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatDuration, formatPrice } from '../types';
 import { ArrowRight, BookOpen, Users, Award, Calendar, Search, CheckCircle2, TrendingUp, Presentation, Briefcase } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { usePrograms } from '../context/ProgramsContext';
@@ -289,12 +290,12 @@ export default function HomePage() {
                 <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-1">{program.description}</p>
                 <hr className="border-gray-100 mb-4" />
                 <div className="flex justify-between text-xs text-gray-500 mb-4">
-                  <span>⏱ {program.duration}</span>
+                  <span>⏱ {formatDuration(program.duration, program.duration_unit)}</span>
                   <span>{FORMAT_ICON[program.format]} {FORMAT_LABEL[program.format]}</span>
                   <span>{CERT_ICON[program.category]} {program.certificate?.split(' ')[0] || 'Документ'}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-[#003366]">{program.price || 'Безкоштовно'}</span>
+                  <span className="font-bold text-[#003366]">{formatPrice(program.price)}</span>
                   <span className="text-sm text-[#0056b3] font-semibold group-hover:underline flex items-center gap-1">
                     Детальніше <ArrowRight className="h-3.5 w-3.5" />
                   </span>
