@@ -11,13 +11,27 @@
     "draftAndPublish": false
   },
   "attributes": {
-    "name": {
+    "last_name": {
       "type": "string",
       "required": true
     },
+    "first_name": {
+      "type": "string",
+      "required": true
+    },
+    "middle_name": {
+      "type": "string"
+    },
     "email": {
       "type": "email",
-      "required": true
+      "required": true,
+      "unique": true
+    },
+    "enrollments": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::enrollment.enrollment",
+      "mappedBy": "student"
     },
     "phone": {
       "type": "string"
@@ -31,7 +45,7 @@
       "type": "string"
     },
     "enrolled": {
-      "type": "string"
+      "type": "date"
     },
     "status": {
       "type": "enumeration",
