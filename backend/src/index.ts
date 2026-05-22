@@ -3,6 +3,9 @@ import { runSeedSync } from './seed';
 const PUBLIC_ACTIONS = [
 	'api::program.program.find',
 	'api::program.program.findOne',
+	'api::program.program.create',
+	'api::program.program.update',
+	'api::program.program.delete',
 	'api::category.category.find',
 	'api::category.category.findOne',
 	'api::news.news.find',
@@ -45,6 +48,11 @@ const PUBLIC_ACTIONS = [
 	'api::student.student.create',
 	'api::student.student.update',
 	'api::student.student.delete',
+	'api::enrollment.enrollment.find',
+	'api::enrollment.enrollment.findOne',
+	'api::enrollment.enrollment.create',
+	'api::enrollment.enrollment.update',
+	'api::enrollment.enrollment.delete',
 ];
 
 const ensurePublicPermissions = async (strapi: any) => {

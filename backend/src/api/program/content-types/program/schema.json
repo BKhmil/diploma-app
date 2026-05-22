@@ -18,7 +18,6 @@
   "attributes": {
     "program_code": {
       "type": "string",
-      "required": true,
       "unique": true
     },
     "title": {
@@ -59,7 +58,12 @@
       "type": "integer"
     },
     "duration": {
-      "type": "string"
+      "type": "integer"
+    },
+    "duration_unit": {
+      "type": "enumeration",
+      "enum": ["weeks", "months", "years"],
+      "default": "months"
     },
     "credits_ects": {
       "type": "decimal"
@@ -72,7 +76,7 @@
       "enum": ["online", "offline", "mixed"]
     },
     "price": {
-      "type": "string"
+      "type": "integer"
     },
     "start_date": {
       "type": "date"
