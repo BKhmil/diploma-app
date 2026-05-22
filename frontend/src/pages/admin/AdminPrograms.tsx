@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
-import { Plus, Edit3, Trash2, Search, X, Check, Save } from 'lucide-react';
-import { usePrograms } from '../../context/ProgramsContext';
-import { Program } from '../../types';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Plus, Edit3, Trash2, Search, X, Check, Save, RefreshCw } from 'lucide-react';
 import { clsx } from 'clsx';
+import {
+  createProgram,
+  updateProgram,
+  deleteProgram,
+  getPrograms,
+  type StrapiProgram,
+} from '../../services/strapi';
+import { Program, formatDuration, formatPrice } from '../../types';
 
 const CATEGORY_LABELS: Record<string, string> = {
   qualification:   'Підвищення кваліфікації',
@@ -29,17 +35,18 @@ function Toast({ msg }: { msg: string }) {
 
 // ── Edit / New Modal ──────────────────────────────────────────────────────────
 interface ModalProps {
-  program: Partial<Program> | null;
+  program: Partial<StrapiProgram> | null;
   onClose: () => void;
-  onSave: (p: Program) => void;
+  onSave: (p: Program & { documentId?: string }) => void;
 }
 function ProgramModal({ program, onClose, onSave }: ModalProps) {
   const [form, setForm] = useState({
-    title:    program?.title    ?? '',
-    category: program?.category ?? 'qualification',
-    format:   program?.format   ?? 'online',
-    duration: program?.duration ?? '',
-    price:    program?.price    ?? '',
+    title:         program?.title         ?? '',
+    category:      program?.category      ?? 'qualification',
+    format:        program?.format        ?? 'online',
+    duration:      program?.duration      != null ? String(program.duration) : '',
+    duration_unit: program?.duration_unit ?? 'months',
+    price:         program?.price         != null ? String(program.price)    : '',
   });
   const set = (k: keyof typeof form) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -47,19 +54,21 @@ function ProgramModal({ program, onClose, onSave }: ModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.duration) return;
+    const dur = parseInt(form.duration, 10);
+    if (!form.title || !dur || dur < 1) return;
+    const pr = form.price ? parseInt(form.price, 10) : undefined;
     onSave({
-      ...(program as Program),
-      id:          program?.id ?? 'prog-' + Date.now(),
-      title:       form.title,
-      category:    form.category as Program['category'],
-      format:      form.format   as Program['format'],
-      duration:    form.duration,
-      price:       form.price || undefined,
-      description: program?.description ?? 'Опис програми.',
-      targetAudience: program?.targetAudience ?? 'Для всіх бажаючих',
+      id:             program?.id ?? '',
+      documentId:     program?.documentId,
+      title:          form.title,
+      category:       form.category      as Program['category'],
+      format:         form.format        as Program['format'],
+      duration:       dur,
+      duration_unit:  form.duration_unit as Program['duration_unit'],
+      price:          pr && pr > 0 ? pr : undefined,
+      description:    program?.description ?? '',
+      targetAudience: program?.targetAudience ?? '',
     });
-    onClose();
   };
 
   const isNew = !program?.id;
@@ -101,13 +110,24 @@ function ProgramModal({ program, onClose, onSave }: ModalProps) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Тривалість</label>
-              <input required value={form.duration} onChange={set('duration')} placeholder="напр. 3 місяці"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+              <div className="flex gap-2">
+                <input required type="number" min="1" max="999" value={form.duration} onChange={set('duration')} placeholder="3"
+                  className="w-20 px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+                <select value={form.duration_unit} onChange={set('duration_unit')}
+                  className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue bg-white">
+                  <option value="weeks">тижнів</option>
+                  <option value="months">місяців</option>
+                  <option value="years">років</option>
+                </select>
+              </div>
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Ціна</label>
-              <input value={form.price} onChange={set('price')} placeholder="напр. 4 500 грн"
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Ціна (грн)</label>
+              <div className="relative">
+                <input type="number" min="0" value={form.price} onChange={set('price')} placeholder="4500"
+                  className="w-full px-3 py-2 pr-10 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">грн</span>
+              </div>
             </div>
           </div>
           <div className="flex gap-3 pt-2">
@@ -146,31 +166,64 @@ function DeleteConfirm({ title, onCancel, onConfirm }: { title: string; onCancel
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 export default function AdminPrograms() {
-  const { programs: progs, setPrograms: setProgs } = usePrograms();
+  const [progs, setProgs]       = useState<StrapiProgram[]>([]);
+  const [loading, setLoading]   = useState(true);
   const [query, setQuery]       = useState('');
-  const [modal, setModal]       = useState<'new' | Program | null>(null);
-  const [toDelete, setToDelete] = useState<Program | null>(null);
+  const [modal, setModal]       = useState<'new' | StrapiProgram | null>(null);
+  const [toDelete, setToDelete] = useState<StrapiProgram | null>(null);
   const [toast, setToast]       = useState<string | null>(null);
+  const [saving, setSaving]     = useState(false);
 
   const notify = (msg: string) => { setToast(msg); setTimeout(() => setToast(null), 2500); };
 
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const items = await getPrograms('uk');
+      setProgs(items as StrapiProgram[]);
+    } catch {
+      notify('❌ Помилка завантаження програм');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
   const filtered = progs.filter(p =>
-    !query || p.title.toLowerCase().includes(query.toLowerCase()) || p.id.includes(query)
+    !query || p.title.toLowerCase().includes(query.toLowerCase())
   );
 
-  const handleSave = (p: Program) => {
-    setProgs(prev => {
-      const idx = prev.findIndex(x => x.id === p.id);
-      return idx >= 0 ? prev.map(x => x.id === p.id ? p : x) : [p, ...prev];
-    });
-    notify(modal === 'new' ? '✅ Програму додано' : '✅ Програму збережено');
+  const handleSave = async (p: Program & { documentId?: string }) => {
+    setSaving(true);
+    try {
+      if (p.documentId) {
+        const updated = await updateProgram(p.documentId, p);
+        setProgs(prev => prev.map(x => x.documentId === p.documentId ? updated : x));
+        notify('✅ Програму збережено');
+      } else {
+        const created = await createProgram(p);
+        setProgs(prev => [created, ...prev]);
+        notify('✅ Програму додано');
+      }
+    } catch {
+      notify('❌ Помилка збереження');
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!toDelete) return;
-    setProgs(prev => prev.filter(p => p.id !== toDelete.id));
-    notify('🗑 Програму видалено');
-    setToDelete(null);
+    try {
+      await deleteProgram(toDelete.documentId);
+      setProgs(prev => prev.filter(p => p.documentId !== toDelete.documentId));
+      notify('🗑 Програму видалено');
+    } catch {
+      notify('❌ Помилка видалення');
+    } finally {
+      setToDelete(null);
+    }
   };
 
   return (
@@ -180,11 +233,16 @@ export default function AdminPrograms() {
         <ProgramModal
           program={modal === 'new' ? null : modal}
           onClose={() => setModal(null)}
-          onSave={handleSave}
+          onSave={p => { void handleSave(p); setModal(null); }}
         />
       )}
       {toDelete && (
         <DeleteConfirm title={toDelete.title} onCancel={() => setToDelete(null)} onConfirm={handleDelete} />
+      )}
+      {saving && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-4 py-2 rounded-xl shadow-lg z-50">
+          Збереження...
+        </div>
       )}
 
       <div className="flex items-center justify-between">
@@ -192,10 +250,15 @@ export default function AdminPrograms() {
           <h1 className="text-xl font-extrabold text-gray-900">Програми навчання</h1>
           <p className="text-xs text-gray-500 mt-0.5">Всього: {progs.length} програм</p>
         </div>
-        <button onClick={() => setModal('new')}
-          className="flex items-center gap-2 px-4 py-2 bg-dnu-blue text-white text-sm font-semibold rounded-xl hover:bg-dnu-dark transition-colors">
-          <Plus className="w-4 h-4" /> Нова програма
-        </button>
+        <div className="flex gap-2">
+          <button onClick={load} className="flex items-center gap-1.5 px-3 py-2 text-xs border border-gray-300 bg-white rounded-xl hover:bg-gray-50 transition-colors">
+            <RefreshCw className="w-3.5 h-3.5" /> Оновити
+          </button>
+          <button onClick={() => setModal('new')}
+            className="flex items-center gap-2 px-4 py-2 bg-dnu-blue text-white text-sm font-semibold rounded-xl hover:bg-dnu-dark transition-colors">
+            <Plus className="w-4 h-4" /> Нова програма
+          </button>
+        </div>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
@@ -208,6 +271,9 @@ export default function AdminPrograms() {
           </div>
         </div>
 
+        {loading ? (
+          <div className="py-16 text-center text-sm text-gray-400">Завантаження...</div>
+        ) : null}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
@@ -233,8 +299,8 @@ export default function AdminPrograms() {
                     </span>
                   </td>
                   <td className="px-5 py-3 text-gray-600">{FORMAT_LABELS[p.format]}</td>
-                  <td className="px-5 py-3 text-gray-600">{p.duration}</td>
-                  <td className="px-5 py-3 font-semibold text-gray-800">{p.price || 'Безкоштовно'}</td>
+                  <td className="px-5 py-3 text-gray-600">{formatDuration(p.duration, p.duration_unit)}</td>
+                  <td className="px-5 py-3 font-semibold text-gray-800">{formatPrice(p.price)}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       <button onClick={() => setModal(p)} title="Редагувати"

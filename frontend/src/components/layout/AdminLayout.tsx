@@ -33,7 +33,7 @@ export default function AdminLayout() {
     return (
         <div className="flex bg-gray-50 min-h-screen">
             {/* Sidebar Navigation */}
-            <aside className="w-64 bg-slate-900 text-white flex flex-col">
+            <aside className="w-64 min-h-screen bg-slate-900 text-white flex flex-col sticky top-0 self-start">
                 <div className="p-5 border-b border-slate-800">
                     <Link to="/" className="text-lg font-bold text-white hover:text-dnu-blue transition-colors flex items-center gap-2">
                         <Settings className="w-5 h-5 text-dnu-blue" />

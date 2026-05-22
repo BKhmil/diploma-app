@@ -3,10 +3,13 @@ import { Search, UserPlus, Mail, Edit3, Trash2, X, Save, Check, RefreshCw } from
 import { clsx } from 'clsx';
 import {
   getStudents,
+  getPrograms,
   createStudent,
   updateStudent,
   deleteStudent,
+  studentFullName,
   type StrapiStudent,
+  type StrapiProgram,
   type StudentStatus,
 } from '../../services/strapi';
 
@@ -31,16 +34,20 @@ function Toast({ msg }: { msg: string }) {
 
 interface ModalProps {
   student: StrapiStudent | null;
+  programs: StrapiProgram[];
   onClose: () => void;
-  onSave: (s: Omit<StrapiStudent, 'id'> & { id?: number }) => void;
+  onSave: (s: Omit<StrapiStudent, 'id' | 'documentId'> & { id?: number; documentId?: string }) => void;
 }
-function StudentModal({ student, onClose, onSave }: ModalProps) {
+function StudentModal({ student, programs, onClose, onSave }: ModalProps) {
+  const todayIso = new Date().toISOString().slice(0, 10);
   const [form, setForm] = useState({
-    name:         student?.name         ?? '',
+    last_name:    student?.last_name    ?? '',
+    first_name:   student?.first_name   ?? '',
+    middle_name:  student?.middle_name  ?? '',
     email:        student?.email        ?? '',
     phone:        student?.phone        ?? '',
     program_name: student?.program_name ?? '',
-    enrolled:     student?.enrolled     ?? new Date().toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', year: 'numeric' }),
+    enrolled:     student?.enrolled     ?? todayIso,
     status:       (student?.status ?? 'active') as StudentStatus,
   });
   const set = (k: keyof typeof form) =>
@@ -49,28 +56,42 @@ function StudentModal({ student, onClose, onSave }: ModalProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email) return;
-    onSave({ ...form, ...(student?.id ? { id: student.id } : {}) });
+    if (!form.last_name || !form.first_name || !form.email) return;
+    onSave({ ...form, ...(student ? { id: student.id, documentId: student.documentId } : {}) });
     onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="font-extrabold text-gray-900">{student ? 'Редагувати слухача' : 'Новий слухач'}</h2>
           <button onClick={onClose} title="Закрити" className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">ПІБ</label>
-            <input required value={form.name} onChange={set('name')} title="ПІБ" placeholder="Прізвище Ім'я По-батькові"
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Прізвище <span className="text-red-400">*</span></label>
+              <input required value={form.last_name} onChange={set('last_name')} placeholder="Шевченко"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Ім'я <span className="text-red-400">*</span></label>
+              <input required value={form.first_name} onChange={set('first_name')} placeholder="Тарас"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">По батькові</label>
+              <input value={form.middle_name} onChange={set('middle_name')} placeholder="Григорович"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+            </div>
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Email</label>
-              <input required type="email" value={form.email} onChange={set('email')} title="Email"
+              <label className="block text-xs font-semibold text-gray-700 mb-1">Email <span className="text-red-400">*</span></label>
+              <input required type="email" value={form.email} onChange={set('email')}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
             </div>
             <div>
@@ -79,15 +100,22 @@ function StudentModal({ student, onClose, onSave }: ModalProps) {
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
             </div>
           </div>
+
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1">Програма</label>
-            <input value={form.program_name} onChange={set('program_name')} placeholder="Назва програми"
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
+            <select value={form.program_name} onChange={set('program_name')}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue bg-white">
+              <option value="">— не обрано —</option>
+              {programs.map(p => (
+                <option key={p.id} value={p.title}>{p.title}</option>
+              ))}
+            </select>
           </div>
+
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Дата зарахування</label>
-              <input value={form.enrolled} onChange={set('enrolled')}
+              <input type="date" value={form.enrolled} onChange={set('enrolled')}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-dnu-blue" />
             </div>
             <div>
@@ -98,9 +126,9 @@ function StudentModal({ student, onClose, onSave }: ModalProps) {
                 <option value="completed">Завершив</option>
                 <option value="paused">Призупинено</option>
               </select>
-              {/* aria label provided by visible label above */}
             </div>
           </div>
+
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={onClose}
               className="flex-1 py-2.5 border border-gray-300 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">
@@ -134,13 +162,17 @@ function DeleteConfirm({ name, onCancel, onConfirm }: { name: string; onCancel: 
   );
 }
 
+
 export default function AdminUsers() {
   const [students, setStudents] = useState<StrapiStudent[]>([]);
+  const [programs, setPrograms] = useState<StrapiProgram[]>([]);
   const [loading, setLoading]   = useState(true);
   const [query, setQuery]       = useState('');
   const [modal, setModal]       = useState<'new' | StrapiStudent | null>(null);
   const [toDelete, setToDelete] = useState<StrapiStudent | null>(null);
   const [toast, setToast]       = useState<string | null>(null);
+
+  useEffect(() => { getPrograms().then(setPrograms).catch(() => {}); }, []);
 
   const notify = (msg: string) => { setToast(msg); setTimeout(() => setToast(null), 2500); };
 
@@ -158,14 +190,16 @@ export default function AdminUsers() {
 
   useEffect(() => { load(); }, [load]);
 
-  const handleSave = async (s: Omit<StrapiStudent, 'id'> & { id?: number }) => {
+  const handleSave = async (s: Omit<StrapiStudent, 'id' | 'documentId'> & { id?: number; documentId?: string }) => {
     try {
-      if (s.id) {
-        const updated = await updateStudent(s.id, s);
+      if (s.documentId) {
+        const { id: _id, documentId: _did, ...payload } = s as StrapiStudent;
+        const updated = await updateStudent(s.documentId, payload);
         setStudents(prev => prev.map(x => x.id === s.id ? updated : x));
         notify('✅ Дані збережено');
       } else {
-        const created = await createStudent(s);
+        const { id: _id, documentId: _did, ...payload } = s as StrapiStudent;
+        const created = await createStudent(payload);
         setStudents(prev => [created, ...prev]);
         notify('✅ Слухача додано');
       }
@@ -177,7 +211,7 @@ export default function AdminUsers() {
   const handleDelete = async () => {
     if (!toDelete) return;
     try {
-      await deleteStudent(toDelete.id);
+      await deleteStudent(toDelete.documentId);
       setStudents(prev => prev.filter(s => s.id !== toDelete.id));
       notify('🗑 Слухача видалено');
     } catch {
@@ -195,12 +229,13 @@ export default function AdminUsers() {
       {modal !== null && (
         <StudentModal
           student={modal === 'new' ? null : modal}
+          programs={programs}
           onClose={() => setModal(null)}
           onSave={handleSave}
         />
       )}
       {toDelete && (
-        <DeleteConfirm name={toDelete.name} onCancel={() => setToDelete(null)} onConfirm={handleDelete} />
+        <DeleteConfirm name={studentFullName(toDelete)} onCancel={() => setToDelete(null)} onConfirm={handleDelete} />
       )}
 
       <div className="flex items-center justify-between">
@@ -250,7 +285,7 @@ export default function AdminUsers() {
                 {students.map(s => (
                   <tr key={s.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-3">
-                      <div className="font-semibold text-gray-900">{s.name}</div>
+                      <div className="font-semibold text-gray-900">{studentFullName(s)}</div>
                       <div className="text-gray-400">{s.email}</div>
                       {s.phone && <div className="text-gray-400">{s.phone}</div>}
                     </td>
