@@ -429,6 +429,8 @@ export const alumniPageEn: PageTranslation = {
   hero_subtitle: 'Find out how studying at CNE DNU changed the careers and lives of our students.',
   cta_title: 'Become our graduate',
   cta_description: 'Join the community of 50,000+ professionals who chose CNE DNU for their development.',
+  testimonials_section_title: 'Graduate Reviews',
+  testimonials_section_subtitle: 'What those who have completed their studies say',
   employment_section_title: 'Where our graduates work',
   employment_section_subtitle: 'Employment map',
   achievements_section_title: 'Our achievements',

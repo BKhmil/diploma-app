@@ -93,6 +93,22 @@
         }
       }
     },
+    "testimonials_section_title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "testimonials_section_subtitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "achievements_section_title": {
       "type": "string",
       "pluginOptions": {
