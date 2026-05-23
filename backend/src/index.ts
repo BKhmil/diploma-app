@@ -1,3 +1,4 @@
+import type { Core } from '@strapi/strapi';
 import { runSeedSync } from './seed';
 
 const PUBLIC_ACTIONS = [
@@ -69,7 +70,7 @@ const PUBLIC_ACTIONS = [
 	'api::site-settings.site-settings.findOne',
 ];
 
-const ensurePublicPermissions = async (strapi: any) => {
+const ensurePublicPermissions = async (strapi: Core.Strapi) => {
 	try {
 		const publicRole = await strapi.db
 			.query('plugin::users-permissions.role')
@@ -84,10 +85,10 @@ const ensurePublicPermissions = async (strapi: any) => {
 			.findMany({
 				where: { role: publicRole.id },
 				select: ['id', 'action'],
-			});
+			}) as Array<{ id: number; action: string }>;
 
 		for (const action of PUBLIC_ACTIONS) {
-			const match = existing.find((perm: any) => perm.action === action);
+			const match = existing.find((perm) => perm.action === action);
 			if (match) continue;
 
 			await strapi.db.query('plugin::users-permissions.permission').create({
@@ -101,7 +102,7 @@ const ensurePublicPermissions = async (strapi: any) => {
 	}
 };
 
-const backfillI18nLocales = async (strapi: any) => {
+const backfillI18nLocales = async (strapi: Core.Strapi) => {
 	const localizedTables = [
 		'programs',
 		'news',
@@ -141,7 +142,7 @@ const backfillI18nLocales = async (strapi: any) => {
 
 export default {
 	register() {},
-	async bootstrap({ strapi }: { strapi: any }) {
+	async bootstrap({ strapi }: { strapi: Core.Strapi }) {
 		await ensurePublicPermissions(strapi);
 		await runSeedSync(strapi);
 		await backfillI18nLocales(strapi);

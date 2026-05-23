@@ -1,3 +1,4 @@
+import type { Core } from '@strapi/strapi';
 import { seedPrograms } from '../content/programs';
 import { seedStaff, staffEnTranslations } from '../content/staff';
 import { seedPartners, partnersEnTranslations } from '../content/partners';
@@ -9,11 +10,11 @@ import { programTranslations } from '../translate';
 import { localizeUk, localizeEn } from '../locale';
 
 async function upsertLocale(
-  strapi: any,
+  strapi: Core.Strapi,
   uid: string,
-  whereUk: Record<string, any>,
-  ukData: Record<string, any>,
-  enData: Record<string, any>
+  whereUk: Record<string, unknown>,
+  ukData: Record<string, unknown>,
+  enData: Record<string, unknown>
 ) {
   const existingUk = await strapi.db.query(uid).findOne({ where: { ...whereUk, locale: 'uk' } });
   if (existingUk) {
@@ -29,7 +30,7 @@ async function upsertLocale(
   }
 }
 
-export async function syncPrograms(strapi: any) {
+export async function syncPrograms(strapi: Core.Strapi) {
   for (const prog of seedPrograms) {
     const en = programTranslations[prog.program_code];
     const ukData = {
@@ -74,7 +75,7 @@ export async function syncPrograms(strapi: any) {
   }
 }
 
-export async function syncStaff(strapi: any) {
+export async function syncStaff(strapi: Core.Strapi) {
   for (const member of seedStaff) {
     if (!member.email) continue;
     const enTrans = staffEnTranslations[member.email] || {};
@@ -103,7 +104,7 @@ export async function syncStaff(strapi: any) {
   }
 }
 
-export async function syncPartners(strapi: any) {
+export async function syncPartners(strapi: Core.Strapi) {
   for (const partner of seedPartners) {
     const enTrans = partnersEnTranslations[partner.name] || {};
     const ukData = {
@@ -124,7 +125,7 @@ export async function syncPartners(strapi: any) {
   }
 }
 
-export async function syncGraduates(strapi: any) {
+export async function syncGraduates(strapi: Core.Strapi) {
   for (const grad of seedGraduates) {
     const enTrans = graduatesEnTranslations[grad.name] || {};
     const ukData = {
@@ -151,7 +152,7 @@ export async function syncGraduates(strapi: any) {
   }
 }
 
-export async function syncDocuments(strapi: any) {
+export async function syncDocuments(strapi: Core.Strapi) {
   for (const doc of seedDocuments) {
     const enTrans = documentsEnTranslations[doc.document_code] || {};
     const ukData = {
@@ -172,7 +173,7 @@ export async function syncDocuments(strapi: any) {
   }
 }
 
-export async function syncPreUniversitySubjects(strapi: any) {
+export async function syncPreUniversitySubjects(strapi: Core.Strapi) {
   for (const subj of seedPreUniversitySubjects) {
     const enTrans = preUniversityEnTranslations[subj.subject_key] || {};
     const ukData = {
@@ -197,7 +198,7 @@ export async function syncPreUniversitySubjects(strapi: any) {
   }
 }
 
-export async function syncNews(strapi: any) {
+export async function syncNews(strapi: Core.Strapi) {
   for (const item of seedNews) {
     const enTrans = (newsEnTranslations[item.news_key] || {}) as { title?: string; excerpt?: string; content?: string };
     const ukData = {

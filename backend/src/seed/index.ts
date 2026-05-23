@@ -1,7 +1,8 @@
+import type { Core } from '@strapi/strapi';
 import { syncPrograms, syncStaff, syncPartners, syncGraduates, syncDocuments, syncPreUniversitySubjects, syncNews } from './sync/collections';
 import { syncHomePage, syncAboutPage, syncAlumniPage, syncQualificationPage, syncRetrainingPage, syncPartnersPage, syncPreUniversityPage, syncContactInfo, syncApplyPage, syncProgramsPage, syncStaffPage, syncDocumentsPage, syncNotFoundPage, syncSiteSettings } from './sync/singleTypes';
 
-export async function runSeedSync(strapi: any) {
+export async function runSeedSync(strapi: Core.Strapi) {
   strapi.log.info('[seed] Starting seed sync...');
 
   try {

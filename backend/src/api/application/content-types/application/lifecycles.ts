@@ -1,11 +1,53 @@
 import { errors } from '@strapi/utils';
 
+interface ApplicationRecord {
+  id: number;
+  app_type: 'application' | 'contact';
+  full_name: string;
+  email: string;
+  phone?: string | null;
+  program_name?: string | null;
+  organization?: string | null;
+  city?: string | null;
+  message?: string | null;
+  program?: { id: number } | null;
+}
+
+interface BeforeCreateData {
+  app_type?: string;
+  email?: string;
+  program_name?: string;
+  num?: number;
+}
+
+interface BeforeCreateEvent {
+  params: { data: BeforeCreateData };
+}
+
+interface AfterCreateEvent {
+  result: ApplicationRecord;
+}
+
+interface AfterUpdateEvent {
+  result: { id: number; status?: string };
+}
+
+/** Minimal type for the Strapi email plugin service. */
+interface EmailService {
+  send(options: { to: string; replyTo?: string; subject: string; html: string }): Promise<void>;
+}
+
+function getEmailService(): EmailService {
+  // Double cast needed: Strapi's Plugin type doesn't expose specific service shapes.
+  return (strapi.plugins as unknown as Record<string, { services: { email: EmailService } }>)['email'].services.email;
+}
+
 async function handleApproval(applicationId: number) {
   // Load full application with program relation
-  const app = await (strapi as any).db.query('api::application.application').findOne({
+  const app = await strapi.db.query('api::application.application').findOne({
     where: { id: applicationId },
     populate: ['program'],
-  });
+  }) as ApplicationRecord | null;
   if (!app || !app.email) return;
 
   // Split full_name into parts (Last First Middle)
@@ -15,12 +57,12 @@ async function handleApproval(applicationId: number) {
   const middle_name = nameParts[2] ?? '';
 
   // Find or create Student by email
-  let student = await (strapi as any).db.query('api::student.student').findOne({
+  let student = await strapi.db.query('api::student.student').findOne({
     where: { email: app.email },
-  });
+  }) as { id: number } | null;
 
   if (!student) {
-    student = await (strapi as any).db.query('api::student.student').create({
+    student = await strapi.db.query('api::student.student').create({
       data: {
         last_name,
         first_name,
@@ -31,23 +73,23 @@ async function handleApproval(applicationId: number) {
         enrolled: new Date().toISOString().slice(0, 10),
         status: 'active',
       },
-    });
-    (strapi as any).log.info(`[enrollment] Created student ${app.email}`);
+    }) as { id: number };
+    strapi.log.info(`[enrollment] Created student ${app.email}`);
   } else {
-    (strapi as any).log.info(`[enrollment] Found existing student ${app.email}`);
+    strapi.log.info(`[enrollment] Found existing student ${app.email}`);
   }
 
   // Check if enrollment for this application already exists
-  const existingEnrollment = await (strapi as any).db.query('api::enrollment.enrollment').findOne({
+  const existingEnrollment = await strapi.db.query('api::enrollment.enrollment').findOne({
     where: { application: applicationId },
   });
   if (existingEnrollment) {
-    (strapi as any).log.info(`[enrollment] Enrollment already exists for application #${applicationId}`);
+    strapi.log.info(`[enrollment] Enrollment already exists for application #${applicationId}`);
     return;
   }
 
   // Create Enrollment
-  await (strapi as any).db.query('api::enrollment.enrollment').create({
+  await strapi.db.query('api::enrollment.enrollment').create({
     data: {
       student:     student.id,
       program:     app.program?.id ?? null,
@@ -56,16 +98,16 @@ async function handleApproval(applicationId: number) {
       status:      'active',
     },
   });
-  (strapi as any).log.info(`[enrollment] Created enrollment for student ${app.email} → program ${app.program_name ?? '—'}`);
+  strapi.log.info(`[enrollment] Created enrollment for student ${app.email} → program ${app.program_name ?? '—'}`);
 }
 
 export default {
-  async beforeCreate(event: any) {
+  async beforeCreate(event: BeforeCreateEvent) {
     const { data } = event.params;
 
     // Duplicate check: same email + same program_name (non-contact applications only)
     if (data.app_type !== 'contact' && data.email && data.program_name) {
-      const existing = await (strapi as any).db.query('api::application.application').findOne({
+      const existing = await strapi.db.query('api::application.application').findOne({
         where: {
           email:        data.email,
           program_name: data.program_name,
@@ -82,12 +124,12 @@ export default {
 
     // Auto-increment num
     try {
-      const last = await (strapi as any).db.query('api::application.application').findMany({
+      const last = await strapi.db.query('api::application.application').findMany({
         where: { num: { $notNull: true } },
         orderBy: { num: 'desc' },
         limit: 1,
         select: ['num'],
-      });
+      }) as Array<{ num: number }>;
       const lastNum = (last?.[0]?.num && last[0].num > 1000) ? last[0].num : 1000;
       event.params.data.num = lastNum + 1;
     } catch {
@@ -95,18 +137,18 @@ export default {
     }
   },
 
-  async afterUpdate(event: any) {
+  async afterUpdate(event: AfterUpdateEvent) {
     const { result } = event;
     if (result?.status === 'accepted') {
       try {
         await handleApproval(result.id);
       } catch (err) {
-        (strapi as any).log.error(`[enrollment] afterUpdate error: ${String(err)}`);
+        strapi.log.error(`[enrollment] afterUpdate error: ${String(err)}`);
       }
     }
   },
 
-  async afterCreate(event: any) {
+  async afterCreate(event: AfterCreateEvent) {
     const { result } = event;
 
     // Guard: skip email entirely when SMTP is not configured.
@@ -114,7 +156,7 @@ export default {
     // The application record is already saved at this point, so the user action
     // is never blocked regardless of what happens below.
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      (strapi as any).log.info(
+      strapi.log.info(
         '[email] SMTP_USER / SMTP_PASS not set — skipping admin notification (application saved OK)'
       );
       return;
@@ -125,9 +167,9 @@ export default {
       let notifyEmail: string = process.env.ADMIN_NOTIFY_EMAIL || 'admin@cno.dnu.edu.ua';
 
       try {
-        const contactInfo = await (strapi as any).db
+        const contactInfo = await strapi.db
           .query('api::contact-info.contact-info')
-          .findOne({ where: { locale: 'uk' } });
+          .findOne({ where: { locale: 'uk' } }) as { email?: string } | null;
         if (contactInfo?.email) notifyEmail = contactInfo.email;
       } catch {
         // ignore, use default
@@ -159,14 +201,14 @@ export default {
             `<p style="color:#888;font-size:12px">Заявка #${result.id} · ${new Date().toLocaleString('uk-UA')}</p>`,
           ];
 
-      await (strapi as any).plugins['email'].services.email.send({
+      await getEmailService().send({
         to: notifyEmail,
         replyTo: result.email,
         subject,
         html: bodyLines.filter(Boolean).join('\n'),
       });
     } catch (err) {
-      (strapi as any).log.warn(`[email] Failed to send notification: ${String(err)}`);
+      strapi.log.warn(`[email] Failed to send notification: ${String(err)}`);
     }
   },
 };
