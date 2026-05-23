@@ -202,6 +202,22 @@
           "localized": true
         }
       }
+    },
+    "contacts_section_title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "apply_sidebar_title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

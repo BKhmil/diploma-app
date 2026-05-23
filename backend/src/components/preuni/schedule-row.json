@@ -1,0 +1,54 @@
+{
+  "collectionName": "components_preuni_schedule_rows",
+  "info": {
+    "displayName": "ScheduleRow",
+    "description": "A row in the pre-university class schedule"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "day": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "time": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "subject": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "format": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

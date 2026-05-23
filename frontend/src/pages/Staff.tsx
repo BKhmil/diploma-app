@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Mail, Award, Users, BookOpen } from 'lucide-react';
 import { clsx } from 'clsx';
 import { Link } from 'react-router-dom';
-import { getStaffMembers } from '../services/strapi';
+import { getStaffMembers, getStaffPage } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
 const STRAPI_BASE = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
@@ -23,164 +23,34 @@ interface StaffMember {
   photo: string;
 }
 
-const staffData: StaffMember[] = [
-  // Management
-  {
-    id: 1,
-    name: 'Кравченко Валентина Олегівна',
-    position: 'Директор ЦНО',
-    degree: 'д-р пед. наук, проф.',
-    experience: 25,
-    email: 'direktor@dnu.dp.ua',
-    programs: 8,
-    tags: ['Освіта дорослих', 'Менеджмент'],
-    role: 'management',
-    photo: 'https://i.pravatar.cc/150?img=47',
-  },
-  {
-    id: 2,
-    name: 'Білоус Іван Петрович',
-    position: 'Заступник директора',
-    degree: 'канд. пед. наук, доц.',
-    experience: 18,
-    email: 'zastupnyk@dnu.dp.ua',
-    programs: 5,
-    tags: ['Педагогіка', 'Адміністрування'],
-    role: 'management',
-    photo: 'https://i.pravatar.cc/150?img=12',
-  },
-  {
-    id: 3,
-    name: 'Мороз Ольга Сергіївна',
-    position: 'Завідувач відділу підвищення кваліфікації',
-    degree: 'канд. пед. наук',
-    experience: 12,
-    email: 'pk@dnu.dp.ua',
-    programs: 12,
-    tags: ['ПК', 'Методологія'],
-    role: 'management',
-    photo: 'https://i.pravatar.cc/150?img=44',
-  },
-  {
-    id: 4,
-    name: 'Ткаченко Руслан Миколайович',
-    position: 'Завідувач відділу перепідготовки',
-    degree: 'канд. юрид. наук',
-    experience: 10,
-    email: 'mags@dnu.dp.ua',
-    programs: 6,
-    tags: ['Перепідготовка', 'Право'],
-    role: 'management',
-    photo: 'https://i.pravatar.cc/150?img=15',
-  },
-  // Teachers
-  {
-    id: 5,
-    name: 'Петренко Анна Василівна',
-    position: 'канд. психол. наук, доцент',
-    department: 'Кафедра психології',
-    experience: 15,
-    programs: 5,
-    tags: ['Психологія', 'Педагогіка', 'Тренінги'],
-    role: 'teachers',
-    photo: 'https://i.pravatar.cc/150?img=49',
-  },
-  {
-    id: 6,
-    name: 'Гончаренко Дмитро Федорович',
-    position: 'д-р екон. наук, проф.',
-    department: 'Кафедра менеджменту',
-    experience: 22,
-    programs: 3,
-    tags: ['Менеджмент', 'Фінанси', 'Бізнес'],
-    role: 'teachers',
-    photo: 'https://i.pravatar.cc/150?img=8',
-  },
-  {
-    id: 7,
-    name: 'Коваль Світлана Іванівна',
-    position: 'Вчитель математики вищої категорії',
-    department: 'Ліцей №15 м. Дніпра',
-    experience: 19,
-    programs: 1,
-    tags: ['НМТ Математика', 'Алгебра', 'Геометрія'],
-    role: 'teachers',
-    photo: 'https://i.pravatar.cc/150?img=38',
-  },
-  {
-    id: 8,
-    name: 'Назаренко Олексій Борисович',
-    position: 'канд. філол. наук, доцент',
-    department: 'Кафедра української мови',
-    experience: 14,
-    programs: 2,
-    tags: ['Українська мова', 'НМТ Мова', 'Літературознавство'],
-    role: 'teachers',
-    photo: 'https://i.pravatar.cc/150?img=21',
-  },
-  {
-    id: 9,
-    name: 'Шевченко Марина Андріївна',
-    position: 'канд. пед. наук',
-    department: 'Кафедра педагогіки',
-    experience: 11,
-    programs: 4,
-    tags: ['НУШ', 'Інклюзивна освіта', 'Дидактика'],
-    role: 'teachers',
-    photo: 'https://i.pravatar.cc/150?img=41',
-  },
-  {
-    id: 10,
-    name: 'Лисенко Ярослав Михайлович',
-    position: 'канд. іст. наук, доцент',
-    department: 'Кафедра історії',
-    experience: 16,
-    programs: 2,
-    tags: ['Історія України', 'НМТ Історія'],
-    role: 'teachers',
-    photo: 'https://i.pravatar.cc/150?img=27',
-  },
-  // Administration
-  {
-    id: 11,
-    name: 'Харченко Оксана Вікторівна',
-    position: 'Головний бухгалтер',
-    experience: 8,
-    email: 'buh@dnu.dp.ua',
-    tags: ['Фінанси', 'Бухгалтерія'],
-    role: 'administration',
-    photo: 'https://i.pravatar.cc/150?img=51',
-  },
-  {
-    id: 12,
-    name: 'Сидоренко Тетяна Григорівна',
-    position: 'Менеджер з прийому',
-    experience: 5,
-    email: 'priem@dnu.dp.ua',
-    tags: ['Прийом', 'Документи'],
-    role: 'administration',
-    photo: 'https://i.pravatar.cc/150?img=45',
-  },
-];
-
-const FILTER_LABELS: Record<string, string> = {
-  all: `Всі (${staffData.length})`,
-  management: `Керівництво (${staffData.filter(s => s.role === 'management').length})`,
-  teachers: `Викладачі (${staffData.filter(s => s.role === 'teachers').length})`,
-  administration: `Адміністрація (${staffData.filter(s => s.role === 'administration').length})`,
-};
-
 export default function Staff() {
   const { locale } = useLanguage();
-  const [staff, setStaff] = useState<StaffMember[]>(staffData);
+  const [staff, setStaff] = useState<StaffMember[]>([]);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showAllTeachers, setShowAllTeachers] = useState(false);
+  const [pageData, setPageData] = useState<null | {
+    page_title?: string;
+    page_subtitle?: string;
+    leadership_section_title?: string;
+    teachers_section_title?: string;
+    teachers_section_subtitle_template?: string;
+    administration_section_title?: string;
+    cta_title?: string;
+    cta_text?: string;
+  }>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    getStaffPage(locale).then(setPageData).catch(() => undefined);
+  }, [locale]);
+
+  useEffect(() => {
     getStaffMembers(locale)
       .then((items) => {
-        if (!items.length) return;
+        if (!items.length) {
+          setStaff([]);
+          return;
+        }
         const mapped: StaffMember[] = items.map((item, idx) => ({
           id: Number(item.id ?? idx + 1),
           name: item.name || 'Працівник',
@@ -198,10 +68,11 @@ export default function Staff() {
         }));
         setStaff(mapped);
       })
-      .catch(() => undefined);
+      .catch(() => setStaff([]));
   }, [locale]);
 
   const management = staff.filter(s => s.role === 'management');
+  const administration = staff.filter(s => s.role === 'administration');
 
   const filteredTeachers = useMemo(() => {
     const teachers = staff.filter(s => s.role === 'teachers');
@@ -212,19 +83,27 @@ export default function Staff() {
       s.department?.toLowerCase().includes(q) ||
       s.tags.some(t => t.toLowerCase().includes(q))
     );
-  }, [searchQuery]);
+  }, [staff, searchQuery]);
 
   const displayedTeachers = showAllTeachers ? filteredTeachers : filteredTeachers.slice(0, 4);
-
-  const administration = staff.filter(s => s.role === 'administration');
 
   const showManagement = activeFilter === 'all' || activeFilter === 'management';
   const showTeachers = activeFilter === 'all' || activeFilter === 'teachers';
   const showAdmin = activeFilter === 'all' || activeFilter === 'administration';
 
+  const filterLabels: Record<string, string> = {
+    all: `Всі (${staff.length})`,
+    management: `${pageData?.leadership_section_title || 'Керівництво'} (${management.length})`,
+    teachers: `${pageData?.teachers_section_title || 'Викладачі'} (${filteredTeachers.length})`,
+    administration: `${pageData?.administration_section_title || 'Адміністрація'} (${administration.length})`,
+  };
+
+  const teachersSubtitle = pageData?.teachers_section_subtitle_template
+    ? pageData.teachers_section_subtitle_template.replace('{count}', String(filteredTeachers.length))
+    : '';
+
   return (
     <div className="bg-white min-h-screen">
-      {/* Header */}
       <div className="bg-gray-50 border-b border-gray-200 py-10">
         <div className="container mx-auto px-4 md:px-6">
           <nav className="text-sm text-gray-500 mb-4">
@@ -232,14 +111,13 @@ export default function Staff() {
             <span className="mx-2">›</span>
             <Link to="/about" className="hover:text-dnu-blue transition-colors">Про центр</Link>
             <span className="mx-2">›</span>
-            <span className="text-gray-800 font-medium">Персонал</span>
+            <span className="text-gray-800 font-medium">{pageData?.page_title || ''}</span>
           </nav>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Персонал Центру</h1>
-          <p className="text-gray-600">Команда досвідчених науковців та практиків</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{pageData?.page_title || ''}</h1>
+          <p className="text-gray-600">{pageData?.page_subtitle || ''}</p>
 
-          {/* Filter Tabs */}
           <div className="flex flex-wrap gap-2 mt-6">
-            {Object.entries(FILTER_LABELS).map(([key, label]) => (
+            {Object.entries(filterLabels).map(([key, label]) => (
               <button
                 key={key}
                 onClick={() => setActiveFilter(key)}
@@ -258,13 +136,11 @@ export default function Staff() {
       </div>
 
       <div className="container mx-auto px-4 md:px-6 py-12 space-y-16">
-
-        {/* Management Section */}
-        {showManagement && (
+        {showManagement && management.length > 0 && (
           <section>
             <div className="flex items-center gap-3 mb-8">
               <Award className="w-6 h-6 text-dnu-blue" />
-              <h2 className="text-2xl font-bold text-gray-900">Керівництво</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{pageData?.leadership_section_title || ''}</h2>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {management.map((person) => (
@@ -290,17 +166,16 @@ export default function Staff() {
           </section>
         )}
 
-        {/* Teachers Section */}
         {showTeachers && (
           <section>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
               <div className="flex items-center gap-3">
                 <BookOpen className="w-6 h-6 text-dnu-blue" />
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Викладацький склад</h2>
-                  <p className="text-sm text-gray-500 mt-0.5">
-                    {filteredTeachers.length} фахівців · кандидати та доктори наук, практикуючі спеціалісти
-                  </p>
+                  <h2 className="text-2xl font-bold text-gray-900">{pageData?.teachers_section_title || ''}</h2>
+                  {teachersSubtitle && (
+                    <p className="text-sm text-gray-500 mt-0.5">{teachersSubtitle}</p>
+                  )}
                 </div>
               </div>
               <div className="relative w-full sm:w-60">
@@ -346,7 +221,7 @@ export default function Staff() {
                     onClick={() => setShowAllTeachers(true)}
                     className="border border-gray-300 text-gray-700 font-medium px-6 py-2.5 rounded-xl hover:border-dnu-blue hover:text-dnu-blue transition-colors text-sm"
                   >
-                    Показати всіх {filteredTeachers.length} викладачів →
+                    Показати всіх {filteredTeachers.length} →
                   </button>
                 </div>
               )}
@@ -361,12 +236,11 @@ export default function Staff() {
           </section>
         )}
 
-        {/* Administration Section */}
-        {showAdmin && (
+        {showAdmin && administration.length > 0 && (
           <section>
             <div className="flex items-center gap-3 mb-6">
               <Users className="w-6 h-6 text-dnu-blue" />
-              <h2 className="text-2xl font-bold text-gray-900">Адміністрація</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{pageData?.administration_section_title || ''}</h2>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {administration.map((person) => (
@@ -392,16 +266,17 @@ export default function Staff() {
           </section>
         )}
 
-        {/* CTA */}
-        <section className="bg-dnu-dark rounded-3xl p-8 md:p-12 text-center text-white">
-          <h2 className="text-2xl font-bold mb-4">Хочете викладати у нас?</h2>
-          <p className="text-gray-300 mb-6 max-w-xl mx-auto">
-            Запрошуємо досвідчених фахівців та науковців до співпраці. Залишіть заявку і ми зв'яжемося з вами.
-          </p>
-          <Link to="/contacts" className="inline-block bg-white text-dnu-dark font-bold px-8 py-3 rounded-xl hover:bg-gray-100 transition-colors">
-            Зв'язатися з нами
-          </Link>
-        </section>
+        {(pageData?.cta_title || pageData?.cta_text) && (
+          <section className="bg-dnu-dark rounded-3xl p-8 md:p-12 text-center text-white">
+            <h2 className="text-2xl font-bold mb-4">{pageData.cta_title}</h2>
+            {pageData.cta_text && (
+              <p className="text-gray-300 mb-6 max-w-xl mx-auto">{pageData.cta_text}</p>
+            )}
+            <Link to="/contacts" className="inline-block bg-white text-dnu-dark font-bold px-8 py-3 rounded-xl hover:bg-gray-100 transition-colors">
+              Зв'язатися з нами
+            </Link>
+          </section>
+        )}
       </div>
     </div>
   );

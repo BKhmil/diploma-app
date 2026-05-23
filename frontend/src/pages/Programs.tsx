@@ -1,9 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { usePrograms } from '../context/ProgramsContext';
 import { Search, SlidersHorizontal, Clock, Monitor, MapPin, LayoutGrid, List, ChevronRight } from 'lucide-react';
 import { clsx } from 'clsx';
 import { Program, formatDuration, formatPrice } from '../types';
+import { getProgramsPage } from '../services/strapi';
+import { useLanguage } from '../context/LanguageContext';
 
 type Category = 'all' | 'qualification' | 'retraining' | 'master' | 'pre-university';
 type Format = 'all' | 'online' | 'offline' | 'mixed';
@@ -104,7 +106,20 @@ const AUDIENCE_TO_CATEGORY: Record<string, Category> = {
 
 export default function Programs() {
   const { programs } = usePrograms();
+  const { locale } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [pageData, setPageData] = useState<null | {
+    page_title?: string;
+    page_intro?: string;
+    search_placeholder?: string;
+    popular_tags_title?: string;
+    popular_tags?: { text: string; query: string; order: number }[];
+    empty_state_text?: string;
+  }>(null);
+
+  useEffect(() => {
+    getProgramsPage(locale).then(setPageData).catch(() => undefined);
+  }, [locale]);
   const initialSearch = searchParams.get('search') || '';
   const audienceParam = searchParams.get('audience') || '';
   const initialCategory = (searchParams.get('category') as Category)
@@ -152,8 +167,8 @@ export default function Programs() {
             <span className="mx-2">›</span>
             <span className="text-gray-800 font-medium">Каталог програм</span>
           </nav>
-          <h1 className="text-3xl font-bold text-gray-900 mb-1">Каталог програм</h1>
-          <p className="text-gray-600 mb-6">Оберіть програму навчання, що відповідає вашим цілям та можливостям</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-1">{pageData?.page_title || ''}</h1>
+          <p className="text-gray-600 mb-6">{pageData?.page_intro || ''}</p>
 
           {/* Search */}
           <form onSubmit={handleSearch} className="flex gap-3 max-w-2xl">
@@ -163,7 +178,7 @@ export default function Programs() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Пошук за назвою або ключовим словом..."
+                placeholder={pageData?.search_placeholder || ''}
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-dnu-blue focus:border-transparent outline-none"
               />
             </div>
@@ -275,7 +290,7 @@ export default function Programs() {
             ) : (
               <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
                 <Search className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p className="text-gray-600 font-medium">За вашим запитом програм не знайдено</p>
+                <p className="text-gray-600 font-medium">{pageData?.empty_state_text || ''}</p>
                 <button
                   onClick={() => { setSearchTerm(''); setCategory('all'); setFormat('all'); }}
                   className="mt-3 text-dnu-blue hover:underline text-sm"

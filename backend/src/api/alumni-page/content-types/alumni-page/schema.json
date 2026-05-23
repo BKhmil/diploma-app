@@ -18,114 +18,70 @@
   "attributes": {
     "hero_badge_text": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "hero_title": {
       "type": "string",
       "required": true,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "hero_subtitle": {
       "type": "text",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "graduate_year_template": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "current_position_label": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "hero_stats": {
       "type": "component",
       "repeatable": true,
       "component": "alumni.hero-stat",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "cta_title": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "cta_description": {
       "type": "text",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "employment_section_title": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "employment_section_subtitle": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "employment_items": {
       "type": "component",
       "repeatable": true,
       "component": "alumni.employment-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "testimonials_section_title": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "testimonials_section_subtitle": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "achievements_section_title": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "achievement_items": {
       "type": "component",
       "repeatable": true,
       "component": "alumni.achievement-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     }
   }
 }

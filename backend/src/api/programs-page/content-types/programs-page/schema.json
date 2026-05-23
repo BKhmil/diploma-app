@@ -1,0 +1,46 @@
+{
+  "kind": "singleType",
+  "collectionName": "programs_pages",
+  "info": {
+    "singularName": "programs-page",
+    "pluralName": "programs-pages",
+    "displayName": "ProgramsPage",
+    "description": "Programs catalog page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "page_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "page_intro": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "search_placeholder": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "popular_tags_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "popular_tags": {
+      "type": "component",
+      "repeatable": true,
+      "component": "programs.tag",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "empty_state_text": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

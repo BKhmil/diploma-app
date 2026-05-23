@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_about_mission_stats",
+  "info": {
+    "displayName": "MissionStat",
+    "description": "A statistic shown in the about page mission section"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "label": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

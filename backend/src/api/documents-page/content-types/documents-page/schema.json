@@ -1,0 +1,38 @@
+{
+  "kind": "singleType",
+  "collectionName": "documents_pages",
+  "info": {
+    "singularName": "documents-page",
+    "pluralName": "documents-pages",
+    "displayName": "DocumentsPage",
+    "description": "Documents page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "page_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "page_subtitle": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "samples_warning": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "category_labels": {
+      "type": "component",
+      "repeatable": true,
+      "component": "documents.category-label",
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

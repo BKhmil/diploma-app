@@ -18,49 +18,49 @@
   "attributes": {
     "page_title": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "page_intro": {
       "type": "text",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "admission_heading_retraining": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "admission_heading_master": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "documents_label": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "dates_label": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "empty_state_text": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "admission_docs_retraining": {
       "type": "component",
       "repeatable": true,
       "component": "retraining.list-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "admission_docs_master": {
       "type": "component",
       "repeatable": true,
       "component": "retraining.list-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "important_dates": {
       "type": "component",
       "repeatable": true,
       "component": "retraining.date-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     }
   }
 }

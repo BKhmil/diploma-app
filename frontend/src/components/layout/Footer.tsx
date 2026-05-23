@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Facebook, Instagram } from 'lucide-react';
-import { getContactInfo } from '../../services/strapi';
+import { getContactInfo, getSiteSettings } from '../../services/strapi';
 import { useLanguage } from '../../context/LanguageContext';
 
 export function Footer() {
@@ -23,9 +23,13 @@ export function Footer() {
     facebook_url?: string;
     instagram_url?: string;
   }>(null);
+  const [copyrightTemplate, setCopyrightTemplate] = React.useState('');
 
   React.useEffect(() => {
     getContactInfo(locale).then(setFooterData).catch(() => undefined);
+    getSiteSettings(locale).then((d: any) => {
+      if (d?.footer_copyright_template) setCopyrightTemplate(d.footer_copyright_template);
+    }).catch(() => undefined);
   }, [locale]);
 
   return (
@@ -34,53 +38,54 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Column 1: About */}
           <div className="space-y-4">
-            <h3 className="text-white text-lg font-bold">
-              {footerData?.footer_about_title || 'Центр неперервної освіти'}
-            </h3>
-            <p className="text-sm leading-relaxed">
-              {footerData?.footer_about_description ||
-                'Сучасна освітня платформа Дніпровського національного університету імені Олеся Гончара. Ми створюємо можливості для навчання протягом усього життя.'}
-            </p>
+            <h3 className="text-white text-lg font-bold">{footerData?.footer_about_title || ''}</h3>
+            <p className="text-sm leading-relaxed">{footerData?.footer_about_description || ''}</p>
           </div>
 
           {/* Column 2: Links */}
           <div className="space-y-4">
-            <h3 className="text-white text-lg font-bold">{footerData?.footer_nav_title || 'Навігація'}</h3>
+            <h3 className="text-white text-lg font-bold">{footerData?.footer_nav_title || ''}</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/about" className="hover:text-white transition-colors">{footerData?.footer_nav_about_label || 'Про Центр'}</Link></li>
-              <li><Link to="/qualification" className="hover:text-white transition-colors">{footerData?.footer_nav_qualification_label || 'Підвищення кваліфікації'}</Link></li>
-              <li><Link to="/retraining" className="hover:text-white transition-colors">{footerData?.footer_nav_retraining_label || 'Перепідготовка'}</Link></li>
-              <li><Link to="/pre-university" className="hover:text-white transition-colors">{footerData?.footer_nav_pre_university_label || 'Вступникам'}</Link></li>
-              <li><Link to="/alumni" className="hover:text-white transition-colors">{footerData?.footer_nav_alumni_label || 'Випускники'}</Link></li>
+              <li><Link to="/about" className="hover:text-white transition-colors">{footerData?.footer_nav_about_label || ''}</Link></li>
+              <li><Link to="/qualification" className="hover:text-white transition-colors">{footerData?.footer_nav_qualification_label || ''}</Link></li>
+              <li><Link to="/retraining" className="hover:text-white transition-colors">{footerData?.footer_nav_retraining_label || ''}</Link></li>
+              <li><Link to="/pre-university" className="hover:text-white transition-colors">{footerData?.footer_nav_pre_university_label || ''}</Link></li>
+              <li><Link to="/alumni" className="hover:text-white transition-colors">{footerData?.footer_nav_alumni_label || ''}</Link></li>
             </ul>
           </div>
 
           {/* Column 3: Contacts */}
           <div className="space-y-4">
-            <h3 className="text-white text-lg font-bold">{footerData?.footer_contacts_title || 'Контакти'}</h3>
+            <h3 className="text-white text-lg font-bold">{footerData?.footer_contacts_title || ''}</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-3">
-                <MapPin className="h-5 w-5 text-dnu-blue shrink-0" />
-                <span>{footerData?.address || 'пр. Науки, 72, м. Дніпро, 49010'}</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-dnu-blue shrink-0" />
-                <a href={`tel:${(footerData?.phone || '+38 (056) 123-45-67').replace(/\s/g, '')}`} className="hover:text-white transition-colors">
-                  {footerData?.phone || '+38 (056) 123-45-67'}
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-dnu-blue shrink-0" />
-                <a href={`mailto:${footerData?.email || 'info@cno.dnu.edu.ua'}`} className="hover:text-white transition-colors">
-                  {footerData?.email || 'info@cno.dnu.edu.ua'}
-                </a>
-              </li>
+              {footerData?.address && (
+                <li className="flex items-start gap-3">
+                  <MapPin className="h-5 w-5 text-dnu-blue shrink-0" />
+                  <span>{footerData.address}</span>
+                </li>
+              )}
+              {footerData?.phone && (
+                <li className="flex items-center gap-3">
+                  <Phone className="h-5 w-5 text-dnu-blue shrink-0" />
+                  <a href={`tel:${footerData.phone.replace(/\s/g, '')}`} className="hover:text-white transition-colors">
+                    {footerData.phone}
+                  </a>
+                </li>
+              )}
+              {footerData?.email && (
+                <li className="flex items-center gap-3">
+                  <Mail className="h-5 w-5 text-dnu-blue shrink-0" />
+                  <a href={`mailto:${footerData.email}`} className="hover:text-white transition-colors">
+                    {footerData.email}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
 
           {/* Column 4: Socials */}
           <div className="space-y-4">
-            <h3 className="text-white text-lg font-bold">{footerData?.footer_social_title || 'Ми в соцмережах'}</h3>
+            <h3 className="text-white text-lg font-bold">{footerData?.footer_social_title || ''}</h3>
             <div className="flex gap-4">
               <a
                 href={footerData?.facebook_url || '#'}
@@ -113,7 +118,11 @@ export function Footer() {
         </div>
 
         <div className="border-t border-slate-800 mt-12 pt-8 text-center text-xs">
-          <p>&copy; {new Date().getFullYear()} Центр неперервної освіти ДНУ ім. О. Гончара. Всі права захищено.</p>
+          <p>
+            {copyrightTemplate
+              ? copyrightTemplate.replace('{year}', String(new Date().getFullYear()))
+              : `© ${new Date().getFullYear()}`}
+          </p>
         </div>
       </div>
     </footer>

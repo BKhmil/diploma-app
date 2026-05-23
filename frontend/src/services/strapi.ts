@@ -495,7 +495,7 @@ export const getPreUniversityGroups = async (locale?: AppLocale) => {
 
 export const getHomePage = async (locale?: AppLocale) => {
   const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
-    '/home-page?populate[quality_bullets]=*&populate[direction_cards]=*&populate[admissions_cards]=*',
+    '/home-page?populate[quality_bullets]=*&populate[direction_cards]=*&populate[admissions_cards]=*&populate[stats]=*&populate[popular_tags]=*',
     locale,
     true
   );
@@ -505,7 +505,7 @@ export const getHomePage = async (locale?: AppLocale) => {
 
 export const getAboutPage = async (locale?: AppLocale) => {
   const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
-    '/about-page?populate[mission_checklist]=*&populate[timeline_items]=*&populate[leadership_items]=*',
+    '/about-page?populate[mission_checklist]=*&populate[timeline_items]=*&populate[leadership_items]=*&populate[mission_stats]=*',
     locale,
     true
   );
@@ -555,12 +555,114 @@ export const getPartnersPage = async (locale?: AppLocale) => {
 
 export const getPreUniversityPage = async (locale?: AppLocale) => {
   const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
-    '/pre-university-page?populate[steps]=*',
+    '/pre-university-page?populate[steps]=*&populate[advantages]=*&populate[schedule_rows]=*&populate[org_items]=*',
     locale,
     true
   );
   if (!response.data) return null;
   return normalizeEntity(response.data);
+};
+
+export const mediaUrl = (file: { url?: string } | null | undefined): string | null => {
+  if (!file?.url) return null;
+  if (file.url.startsWith('http')) return file.url;
+  return `${STRAPI_BASE_URL}${file.url}`;
+};
+
+export const getApplyPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/apply-page?populate[next_steps]=*&populate[documents_required]=*',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getProgramsPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/programs-page?populate[popular_tags]=*',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getStaffPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/staff-page',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getDocumentsPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/documents-page?populate[category_labels]=*',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getNotFoundPage = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/not-found-page?populate[popular_links]=*',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export const getSiteSettings = async (locale?: AppLocale) => {
+  const response = await requestWithLocaleFallback<StrapiSingleResponse<any>>(
+    '/site-settings',
+    locale,
+    true
+  );
+  if (!response.data) return null;
+  return normalizeEntity(response.data);
+};
+
+export interface StrapiNewsItem {
+  id: string;
+  documentId: string;
+  title: string;
+  excerpt?: string;
+  content?: string;
+  date?: string;
+  category: 'news' | 'announcement' | 'event';
+  is_pinned?: boolean;
+  slug?: string;
+  cover_image?: { url: string; mime: string };
+}
+
+export const getNews = async (locale?: AppLocale, limit = 3): Promise<StrapiNewsItem[]> => {
+  const response = await requestWithLocaleFallback<StrapiListResponse<any>>(
+    `/news?pagination[pageSize]=${limit}&sort=date:desc&populate=cover_image`,
+    locale,
+    true
+  );
+  return response.data.map((item) => {
+    const e = normalizeEntity(item);
+    return {
+      id: String(e.id),
+      documentId: item.documentId as string,
+      title: e.title,
+      excerpt: e.excerpt,
+      content: e.content,
+      date: e.date,
+      category: e.category ?? 'news',
+      is_pinned: e.is_pinned ?? false,
+      slug: e.slug,
+      cover_image: e.cover_image,
+    } as StrapiNewsItem;
+  });
 };
 
 export const strapiLogin = async (

@@ -50,10 +50,8 @@ export default function Contacts() {
     <div className="bg-white min-h-screen py-12">
       <div className="container mx-auto px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{contactInfo?.contacts_page_title || 'Контакти'}</h1>
-          <p className="text-lg text-gray-600">
-            {contactInfo?.contacts_page_subtitle || "Маєте запитання? Зв'яжіться з нами будь-яким зручним способом або заповніть форму зворотного зв'язку."}
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{contactInfo?.contacts_page_title || ''}</h1>
+          <p className="text-lg text-gray-600">{contactInfo?.contacts_page_subtitle || ''}</p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12">
@@ -68,7 +66,7 @@ export default function Contacts() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Адреса</h3>
-                    <p className="text-gray-600">{contactInfo?.address || 'пр. Науки, 72, м. Дніпро, 49010'}</p>
+                    <p className="text-gray-600">{contactInfo?.address || ''}</p>
                     {contactInfo?.room_note && <p className="text-sm text-gray-500 mt-1">{contactInfo.room_note}</p>}
                   </div>
                 </div>
@@ -79,7 +77,7 @@ export default function Contacts() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Телефони</h3>
-                    <p className="text-gray-600">{contactInfo?.phone || '+38 (056) 123-45-67'}</p>
+                    <p className="text-gray-600">{contactInfo?.phone || ''}</p>
                     {contactInfo?.secondary_phone && <p className="text-gray-600">{contactInfo.secondary_phone}</p>}
                   </div>
                 </div>
@@ -90,7 +88,7 @@ export default function Contacts() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">{contactInfo?.email || 'info@cno.dnu.edu.ua'}</p>
+                    <p className="text-gray-600">{contactInfo?.email || ''}</p>
                   </div>
                 </div>
 
@@ -100,8 +98,8 @@ export default function Contacts() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Графік роботи</h3>
-                    <p className="text-gray-600">{contactInfo?.working_hours || 'Пн-Пт: 9:00 - 17:00'}</p>
-                    <p className="text-gray-600">{contactInfo?.weekend_hours_note || 'Сб-Нд: Вихідний'}</p>
+                    <p className="text-gray-600">{contactInfo?.working_hours || ''}</p>
+                    {contactInfo?.weekend_hours_note && <p className="text-gray-600">{contactInfo.weekend_hours_note}</p>}
                   </div>
                 </div>
               </div>

@@ -53,6 +53,20 @@ const PUBLIC_ACTIONS = [
 	'api::enrollment.enrollment.create',
 	'api::enrollment.enrollment.update',
 	'api::enrollment.enrollment.delete',
+	'api::news.news.find',
+	'api::news.news.findOne',
+	'api::apply-page.apply-page.find',
+	'api::apply-page.apply-page.findOne',
+	'api::programs-page.programs-page.find',
+	'api::programs-page.programs-page.findOne',
+	'api::staff-page.staff-page.find',
+	'api::staff-page.staff-page.findOne',
+	'api::documents-page.documents-page.find',
+	'api::documents-page.documents-page.findOne',
+	'api::not-found-page.not-found-page.find',
+	'api::not-found-page.not-found-page.findOne',
+	'api::site-settings.site-settings.find',
+	'api::site-settings.site-settings.findOne',
 ];
 
 const ensurePublicPermissions = async (strapi: any) => {
@@ -104,6 +118,12 @@ const backfillI18nLocales = async (strapi: any) => {
 		'retraining_pages',
 		'partners_pages',
 		'pre_university_pages',
+		'apply_pages',
+		'programs_pages',
+		'staff_pages',
+		'documents_pages',
+		'not_found_pages',
+		'site_settings',
 	];
 
 	for (const table of localizedTables) {

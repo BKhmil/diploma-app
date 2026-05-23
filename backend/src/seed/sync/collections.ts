@@ -4,6 +4,7 @@ import { seedPartners, partnersEnTranslations } from '../content/partners';
 import { seedGraduates, graduatesEnTranslations } from '../content/graduates';
 import { seedDocuments, documentsEnTranslations } from '../content/documents';
 import { seedPreUniversitySubjects, preUniversityEnTranslations } from '../content/preUniversitySubjects';
+import { seedNews, newsEnTranslations } from '../content/news';
 import { programTranslations } from '../translate';
 import { localizeUk, localizeEn } from '../locale';
 
@@ -193,5 +194,28 @@ export async function syncPreUniversitySubjects(strapi: any) {
       is_popular: subj.is_popular,
     };
     await upsertLocale(strapi, 'api::pre-university-group.pre-university-group', { subject_key: subj.subject_key }, ukData, enData);
+  }
+}
+
+export async function syncNews(strapi: any) {
+  for (const item of seedNews) {
+    const enTrans = (newsEnTranslations[item.news_key] || {}) as { title?: string; excerpt?: string; content?: string };
+    const ukData = {
+      title: localizeUk(item.title),
+      excerpt: localizeUk(item.excerpt),
+      content: localizeUk(item.content),
+      date: item.date,
+      category: item.category,
+      is_pinned: item.is_pinned,
+    };
+    const enData = {
+      title: enTrans.title ? localizeEn(enTrans.title) : localizeEn(item.title),
+      excerpt: enTrans.excerpt ? localizeEn(enTrans.excerpt) : localizeEn(item.excerpt),
+      content: enTrans.content ? localizeEn(enTrans.content) : localizeEn(item.content),
+      date: item.date,
+      category: item.category,
+      is_pinned: item.is_pinned,
+    };
+    await upsertLocale(strapi, 'api::news.news', { date: item.date, category: item.category }, ukData, enData);
   }
 }

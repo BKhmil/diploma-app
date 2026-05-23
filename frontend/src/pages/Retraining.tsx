@@ -13,6 +13,11 @@ export default function Retraining() {
   const [pageData, setPageData] = useState<null | {
     page_title?: string;
     page_intro?: string;
+    admission_heading_retraining?: string;
+    admission_heading_master?: string;
+    documents_label?: string;
+    dates_label?: string;
+    empty_state_text?: string;
     admission_docs_retraining?: { text: string; order: number }[];
     admission_docs_master?: { text: string; order: number }[];
     important_dates?: { label: string; value: string; order: number }[];
@@ -28,10 +33,8 @@ export default function Retraining() {
     <div className="bg-gray-50 min-h-screen py-12">
       <div className="container mx-auto px-4 md:px-6">
         <div className="mb-12 text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{pageData?.page_title || 'Перепідготовка та Магістратура'}</h1>
-          <p className="text-lg text-gray-600">
-            {pageData?.page_intro || "Здобудьте нову спеціальність або підвищте свій освітній рівень. Ми пропонуємо програми перепідготовки та магістерські програми для вашого кар'єрного зростання."}
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{pageData?.page_title || ''}</h1>
+          <p className="text-lg text-gray-600">{pageData?.page_intro || ''}</p>
         </div>
 
         {/* Tabs */}
@@ -67,40 +70,40 @@ export default function Retraining() {
         {/* Info Block */}
         <div className="bg-white rounded-2xl p-8 mb-12 shadow-sm border border-gray-100">
           <h2 className="text-2xl font-bold mb-6">
-            {activeTab === 'retraining' ? 'Умови вступу на перепідготовку' : 'Умови вступу до магістратури'}
+            {activeTab === 'retraining'
+              ? (pageData?.admission_heading_retraining || '')
+              : (pageData?.admission_heading_master || '')}
           </h2>
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h3 className="font-semibold text-lg mb-3">Необхідні документи:</h3>
+              {pageData?.documents_label && (
+                <h3 className="font-semibold text-lg mb-3">{pageData.documents_label}</h3>
+              )}
               <ul className="list-disc list-inside space-y-2 text-gray-600">
-                {activeTab === 'retraining'
-                  ? (pageData?.admission_docs_retraining?.length
-                      ? [...pageData.admission_docs_retraining].sort((a, b) => a.order - b.order).map((d) => <li key={d.text}>{d.text}</li>)
-                      : [<li key="1">Заява на ім'я ректора</li>, <li key="2">Копія паспорта та ІПН</li>, <li key="3">Копія диплома про вищу освіту</li>, <li key="4">4 фотокартки 3х4</li>]
-                    )
-                  : (pageData?.admission_docs_master?.length
-                      ? [...pageData.admission_docs_master].sort((a, b) => a.order - b.order).map((d) => <li key={d.text}>{d.text}</li>)
-                      : [<li key="1">Заява на ім'я ректора</li>, <li key="2">Копія паспорта та ІПН</li>, <li key="3">Копія диплома про вищу освіту</li>, <li key="4">4 фотокартки 3х4</li>, <li key="5">Результати ЄВІ/ЄФВВ</li>]
-                    )
-                }
+                {(activeTab === 'retraining'
+                  ? pageData?.admission_docs_retraining
+                  : pageData?.admission_docs_master
+                )?.length
+                  ? [...(activeTab === 'retraining'
+                      ? pageData!.admission_docs_retraining!
+                      : pageData!.admission_docs_master!)
+                    ].sort((a, b) => a.order - b.order).map((d) => <li key={d.text}>{d.text}</li>)
+                  : null}
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-lg mb-3">Важливі дати:</h3>
+              {pageData?.dates_label && (
+                <h3 className="font-semibold text-lg mb-3">{pageData.dates_label}</h3>
+              )}
               <ul className="space-y-3 text-gray-600">
-                {(pageData?.important_dates?.length
-                  ? [...pageData.important_dates].sort((a, b) => a.order - b.order)
-                  : [
-                      { label: 'Початок прийому документів:', value: '1 липня 2026' },
-                      { label: 'Вступні випробування:', value: 'серпень 2026' },
-                      { label: 'Початок навчання:', value: '1 вересня 2026' },
-                    ]
-                ).map((d) => (
-                  <li key={d.label} className="flex justify-between border-b border-gray-100 pb-2">
-                    <span>{d.label}</span>
-                    <span className="font-medium text-dnu-dark">{d.value}</span>
-                  </li>
-                ))}
+                {pageData?.important_dates?.length
+                  ? [...pageData.important_dates].sort((a, b) => a.order - b.order).map((d) => (
+                    <li key={d.label} className="flex justify-between border-b border-gray-100 pb-2">
+                      <span>{d.label}</span>
+                      <span className="font-medium text-dnu-dark">{d.value}</span>
+                    </li>
+                  ))
+                  : null}
               </ul>
             </div>
           </div>
@@ -113,9 +116,9 @@ export default function Retraining() {
           ))}
         </div>
 
-        {displayedPrograms.length === 0 && (
+        {displayedPrograms.length === 0 && pageData?.empty_state_text && (
           <div className="text-center py-12 text-gray-500">
-            Наразі немає активних програм у цій категорії.
+            {pageData.empty_state_text}
           </div>
         )}
       </div>

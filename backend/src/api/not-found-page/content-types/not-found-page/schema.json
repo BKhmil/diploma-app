@@ -1,0 +1,46 @@
+{
+  "kind": "singleType",
+  "collectionName": "not_found_pages",
+  "info": {
+    "singularName": "not-found-page",
+    "pluralName": "not-found-pages",
+    "displayName": "NotFoundPage",
+    "description": "404 page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "search_label": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "search_placeholder": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "popular_links_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "popular_links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "notfound.link",
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

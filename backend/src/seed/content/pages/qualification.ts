@@ -1,12 +1,11 @@
 import { localizeUk, localizeEn } from '../../locale';
-import { qualificationPageEn } from '../../translate';
 
 export const getQualificationUk = () => ({
-  page_title: localizeUk('Підвищення кваліфікації'),
-  page_intro: localizeUk('Оберіть програму для професійного розвитку та отримайте сертифікат державного зразка. Ми пропонуємо курси для освітян, психологів, держслужбовців та інших фахівців.'),
+  page_title: localizeUk('Каталог коротких програм (seed v2)'),
+  page_intro: localizeUk('Оновлений демо-набір: мікрокурси з цифрових навичок, комунікації та управління. Усі рядки позначені (new).'),
 });
 
 export const getQualificationEn = () => ({
-  page_title: localizeEn(qualificationPageEn.page_title),
-  page_intro: localizeEn(qualificationPageEn.page_intro),
+  page_title: localizeEn('Short Programs Catalog (seed v2)'),
+  page_intro: localizeEn('Refreshed demo set: micro-courses in digital skills, communication, and management. All rows marked (new).'),
 });

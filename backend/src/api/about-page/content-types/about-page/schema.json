@@ -16,88 +16,102 @@
     }
   },
   "attributes": {
-    "history": {
-      "type": "richtext",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
-    },
-    "structure_description": {
-      "type": "richtext",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
-    },
-    "team_description": {
-      "type": "richtext",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
-    },
-    "cover_image": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": ["images"]
-    },
     "page_title": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "page_subtitle": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "mission_heading": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "mission_h2": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "mission_checklist": {
       "type": "component",
       "repeatable": true,
       "component": "about.checklist-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "mission_stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.mission-stat",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "image_overlay_org": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "image_overlay_address": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "history": {
+      "type": "richtext",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "history_section_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "history_section_subtitle": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "timeline_items": {
       "type": "component",
       "repeatable": true,
       "component": "about.timeline-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "leadership_section_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "leadership_section_subtitle": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "leadership_items": {
       "type": "component",
       "repeatable": true,
       "component": "about.leadership-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "documents_preview_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "documents_preview_subtitle": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "partners_preview_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "partners_preview_subtitle": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "structure_description": {
+      "type": "richtext",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "team_description": {
+      "type": "richtext",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "cover_image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
     }
   }
 }

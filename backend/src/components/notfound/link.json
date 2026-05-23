@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_notfound_links",
+  "info": {
+    "displayName": "PopularLink",
+    "description": "A popular link on the 404 page"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "path": {
+      "type": "string",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

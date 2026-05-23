@@ -7,7 +7,8 @@ import {
   Check
 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { createApplication, getPrograms, type StrapiProgram } from '../services/strapi';
+import { createApplication, getPrograms, getApplyPage, getContactInfo, type StrapiProgram } from '../services/strapi';
+import { useLanguage } from '../context/LanguageContext';
 
 type Step1Data = {
   lastName: string;
@@ -100,15 +101,37 @@ function UploadZone({ label, required, name, register }: {
 }
 
 export function Apply() {
+  const { locale } = useLanguage();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formState, setFormState] = useState<Partial<FormData>>({});
   const [strapiPrograms, setStrapiPrograms] = useState<StrapiProgram[]>([]);
+  const [applyData, setApplyData] = useState<null | {
+    hero_title?: string;
+    hero_subtitle?: string;
+    success_title?: string;
+    success_message?: string;
+    next_steps_title?: string;
+    next_steps?: { n: number; title: string; description: string; order: number }[];
+    documents_title?: string;
+    documents_required?: { text: string; order: number }[];
+    nmt_note?: string;
+    sidebar_contacts_title?: string;
+  }>(null);
+  const [contactInfo, setContactInfo] = useState<null | {
+    phone?: string;
+    email?: string;
+    working_hours?: string;
+  }>(null);
 
   useEffect(() => {
-    getPrograms().then(setStrapiPrograms).catch(() => {});
-  }, []);
+    getPrograms(locale).then(setStrapiPrograms).catch(() => {});
+    getApplyPage(locale).then(setApplyData).catch(() => undefined);
+    getContactInfo(locale).then((d: any) => {
+      if (d) setContactInfo({ phone: d.phone, email: d.email, working_hours: d.working_hours });
+    }).catch(() => undefined);
+  }, [locale]);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -177,31 +200,30 @@ export function Apply() {
   };
 
   if (submitted) {
+    const nextSteps = applyData?.next_steps?.length
+      ? [...applyData.next_steps].sort((a, b) => a.order - b.order)
+      : [];
     return (
       <div className="min-h-[70vh] flex items-center justify-center py-16 px-4">
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-10 max-w-lg w-full text-center">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-green-500" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">Заявку прийнято!</h1>
-          <p className="text-gray-600 mb-6 leading-relaxed">
-            Дякуємо! Ваша заявка успішно надіслана. Наш менеджер зв'яжеться з вами протягом <strong>1 робочого дня</strong>.
-          </p>
-          <div className="bg-gray-50 rounded-xl p-5 text-left space-y-3 mb-8 text-sm text-gray-700">
-            <p className="font-semibold text-gray-800">Що далі:</p>
-            <div className="flex items-start gap-3">
-              <span className="w-6 h-6 bg-dnu-blue text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">1</span>
-              <span>Менеджер зв'яжеться з вами для підтвердження</span>
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">{applyData?.success_title || ''}</h1>
+          <p className="text-gray-600 mb-6 leading-relaxed">{applyData?.success_message || ''}</p>
+          {nextSteps.length > 0 && (
+            <div className="bg-gray-50 rounded-xl p-5 text-left space-y-3 mb-8 text-sm text-gray-700">
+              {applyData?.next_steps_title && (
+                <p className="font-semibold text-gray-800">{applyData.next_steps_title}</p>
+              )}
+              {nextSteps.map((step) => (
+                <div key={step.n} className="flex items-start gap-3">
+                  <span className="w-6 h-6 bg-dnu-blue text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">{step.n}</span>
+                  <span>{step.description || step.title}</span>
+                </div>
+              ))}
             </div>
-            <div className="flex items-start gap-3">
-              <span className="w-6 h-6 bg-dnu-blue text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">2</span>
-              <span>Підпишете договір про надання освітніх послуг</span>
-            </div>
-            <div className="flex items-start gap-3">
-              <span className="w-6 h-6 bg-dnu-blue text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0">3</span>
-              <span>Отримаєте доступ до навчання</span>
-            </div>
-          </div>
+          )}
           <Link to="/" className="inline-block bg-dnu-blue text-white font-bold py-3 px-8 rounded-xl hover:bg-dnu-dark transition-colors">
             На головну
           </Link>
@@ -220,8 +242,8 @@ export function Apply() {
             <ChevronRight className="w-4 h-4" />
             <span className="text-gray-800 font-medium">Подати заявку</span>
           </nav>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Подати заявку на навчання</h1>
-          <p className="text-gray-600">Заповніть форму — менеджер зв'яжеться з вами протягом 1 робочого дня</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{applyData?.hero_title || ''}</h1>
+          <p className="text-gray-600">{applyData?.hero_subtitle || ''}</p>
 
           {/* Step Indicators */}
           <div className="flex items-center gap-0 mt-8 max-w-2xl">
@@ -609,46 +631,55 @@ export function Apply() {
 
           {/* Sidebar */}
           <aside className="space-y-5 sticky top-24">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-dnu-blue" />
-                Необхідні документи
-              </h3>
-              <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-start gap-2"><span>📄</span> Диплом про вищу освіту (скан)</li>
-                <li className="flex items-start gap-2"><span>🪪</span> Паспорт (стор. 1 і 2)</li>
-                <li className="flex items-start gap-2"><span>🔢</span> РНОКПП (ІПН)</li>
-                <li className="flex items-start gap-2"><span>📸</span> Фото 3×4 (jpg або png)</li>
-              </ul>
-              <p className="mt-3 text-xs text-gray-400 leading-relaxed">
-                * Для НМТ-підготовки: замість диплома — атестат
-              </p>
-            </div>
+            {(applyData?.documents_required?.length ?? 0) > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-dnu-blue" />
+                  {applyData?.documents_title || ''}
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  {[...(applyData?.documents_required || [])].sort((a, b) => a.order - b.order).map((doc, i) => (
+                    <li key={i} className="flex items-start gap-2"><span>📄</span> {doc.text}</li>
+                  ))}
+                </ul>
+                {applyData?.nmt_note && (
+                  <p className="mt-3 text-xs text-gray-400 leading-relaxed">* {applyData.nmt_note}</p>
+                )}
+              </div>
+            )}
 
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Що далі?</h3>
-              <ol className="space-y-3 text-sm text-gray-700">
-                {['Заповніть форму', 'Менеджер зв\'яжеться з вами', 'Підпишете договір', 'Отримаєте доступ до навчання'].map((s, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <span className="w-6 h-6 bg-dnu-light text-dnu-blue rounded-full flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ol>
-            </div>
+            {(applyData?.next_steps?.length ?? 0) > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h3 className="font-bold text-gray-900 mb-4">{applyData?.next_steps_title || ''}</h3>
+                <ol className="space-y-3 text-sm text-gray-700">
+                  {[...(applyData?.next_steps || [])].sort((a, b) => a.order - b.order).map((step) => (
+                    <li key={step.n} className="flex items-start gap-3">
+                      <span className="w-6 h-6 bg-dnu-light text-dnu-blue rounded-full flex items-center justify-center text-xs font-bold shrink-0">{step.n}</span>
+                      <span>{step.title}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
 
             <div className="bg-dnu-dark rounded-2xl p-6 text-white">
-              <h3 className="font-bold mb-3">Маєте запитання?</h3>
+              <h3 className="font-bold mb-3">{applyData?.sidebar_contacts_title || ''}</h3>
               <div className="space-y-2 text-sm text-gray-300">
-                <a href="tel:+380561234567" className="flex items-center gap-2 hover:text-white transition-colors">
-                  <Phone className="w-4 h-4" /> +38 (056) 123-45-67
-                </a>
-                <a href="mailto:info@cno.dnu.edu.ua" className="flex items-center gap-2 hover:text-white transition-colors">
-                  <Mail className="w-4 h-4" /> info@cno.dnu.edu.ua
-                </a>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4" /> Пн–Пт: 9:00–17:00
-                </div>
+                {contactInfo?.phone && (
+                  <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="flex items-center gap-2 hover:text-white transition-colors">
+                    <Phone className="w-4 h-4" /> {contactInfo.phone}
+                  </a>
+                )}
+                {contactInfo?.email && (
+                  <a href={`mailto:${contactInfo.email}`} className="flex items-center gap-2 hover:text-white transition-colors">
+                    <Mail className="w-4 h-4" /> {contactInfo.email}
+                  </a>
+                )}
+                {contactInfo?.working_hours && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" /> {contactInfo.working_hours}
+                  </div>
+                )}
               </div>
               <Link to="/contacts" className="mt-4 block w-full text-center border border-white/40 text-white text-sm font-medium py-2 rounded-lg hover:bg-white/10 transition-colors">
                 Написати нам

@@ -37,10 +37,8 @@ export default function Qualification() {
     <div className="bg-gray-50 min-h-screen py-12">
       <div className="container mx-auto px-4 md:px-6">
         <div className="mb-12 text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{pageData?.page_title || 'Підвищення кваліфікації'}</h1>
-          <p className="text-lg text-gray-600">
-            {pageData?.page_intro || 'Оберіть програму для професійного розвитку та отримайте сертифікат державного зразка. Ми пропонуємо курси для освітян, психологів, держслужбовців та інших фахівців.'}
-          </p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">{pageData?.page_title || ''}</h1>
+          <p className="text-lg text-gray-600">{pageData?.page_intro || ''}</p>
         </div>
 
         {/* Filters Section */}

@@ -13,42 +13,21 @@ interface Partner {
   agreement: string;
 }
 
-const educationalPartners: Partner[] = [
-  { id: 1, name: 'Університет митної справи та фінансів', city: 'Дніпро', type: 'Університет', tag: 'ЗВО', agreement: 'Меморандум про співпрацю' },
-  { id: 2, name: 'Дніпровський державний технічний університет', city: 'Кам\'янське', type: 'Університет', tag: 'ЗВО', agreement: 'Договір про співпрацю' },
-  { id: 3, name: 'Запорізький національний університет', city: 'Запоріжжя', type: 'Університет', tag: 'ЗВО', agreement: 'Меморандум про співпрацю' },
-  { id: 4, name: 'Ліцей №100 м. Дніпра', city: 'Дніпро', type: 'Ліцей', tag: 'Ліцей', agreement: 'Підготовчі курси НМТ' },
-  { id: 5, name: 'Криворізький державний педагогічний університет', city: 'Кривий Ріг', type: 'Університет', tag: 'ЗВО', agreement: 'Договір про співпрацю' },
-  { id: 6, name: 'Навчально-науковий інститут неперервної освіти НПУ', city: 'Київ', type: 'Інститут', tag: 'ЗВО', agreement: 'Меморандум' },
-];
-
-const enterprisePartners = [
-  { id: 1, name: 'ДТЕК Дніпровські електромережі', type: 'Корпоративне навчання' },
-  { id: 2, name: 'Придніпровська залізниця', type: 'Підвищення кваліфікації' },
-  { id: 3, name: 'Міська рада м. Дніпра', type: 'Підготовка держслужбовців' },
-  { id: 4, name: 'Дніпропетровська ОДА', type: 'Підвищення кваліфікації' },
-  { id: 5, name: 'Obrii IT Cluster', type: 'Корпоративне навчання' },
-  { id: 6, name: 'МРІЯ Агрохолдинг', type: 'Перепідготовка кадрів' },
-  { id: 7, name: 'АТ «Мотор Січ»', type: 'Корпоративне навчання' },
-  { id: 8, name: 'Центр занятості м. Дніпра', type: 'Перенавчання безробітних' },
-];
-
-const stats = [
-  { value: '45+', label: 'Організацій-партнерів', icon: Handshake },
-  { value: '12', label: 'Підприємств-замовників', icon: Building2 },
-  { value: '8', label: 'ЗВО-партнерів', icon: GraduationCap },
-  { value: '15+', label: 'Шкіл та ліцеїв', icon: School },
-];
 
 export default function Partners() {
   const { locale } = useLanguage();
-  const [eduPartners, setEduPartners] = React.useState<Partner[]>(educationalPartners);
-  const [businessPartners, setBusinessPartners] = React.useState(enterprisePartners);
+  const [eduPartners, setEduPartners] = React.useState<Partner[]>([]);
+  const [businessPartners, setBusinessPartners] = React.useState<{ id: number; name: string; type: string }[]>([]);
   const [pageData, setPageData] = React.useState<null | {
     page_title?: string;
     page_intro?: string;
     cta_title?: string;
     cta_text?: string;
+    educational_section_title?: string;
+    educational_section_subtitle?: string;
+    enterprise_section_title?: string;
+    enterprise_section_subtitle?: string;
+    benefits_section_title?: string;
     stats?: { value: string; label: string; icon_key: string; order: number }[];
     benefits?: { title: string; description: string; order: number }[];
   }>(null);
@@ -60,7 +39,11 @@ export default function Partners() {
   React.useEffect(() => {
     getPartners(locale)
       .then((items) => {
-        if (!items.length) return;
+        if (!items.length) {
+          setEduPartners([]);
+          setBusinessPartners([]);
+          return;
+        }
         const mapped = items.map((item, idx) => ({
           id: Number(item.id ?? idx + 1),
           name: item.name || 'Партнер',
@@ -102,7 +85,7 @@ export default function Partners() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {(pageData?.stats?.length
               ? [...pageData.stats].sort((a, b) => a.order - b.order)
-              : stats.map((s) => ({ value: s.value, label: s.label, icon_key: '', order: 0 }))
+              : []
             ).map(({ value, label }) => (
               <div key={label} className="text-center p-6 bg-gray-50 rounded-2xl border border-gray-100">
                 <Handshake className="w-8 h-8 text-dnu-blue mx-auto mb-3" />
@@ -120,9 +103,9 @@ export default function Partners() {
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <GraduationCap className="w-6 h-6 text-dnu-blue" />
-              <h2 className="text-2xl font-bold text-gray-900">Освітні заклади-партнери</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{pageData?.educational_section_title || ''}</h2>
             </div>
-            <p className="text-gray-600 text-sm">Університети, інститути та школи, з якими налагоджено офіційну співпрацю</p>
+            <p className="text-gray-600 text-sm">{pageData?.educational_section_subtitle || ''}</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {eduPartners.map((p) => (
@@ -149,9 +132,9 @@ export default function Partners() {
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <Building2 className="w-6 h-6 text-dnu-blue" />
-              <h2 className="text-2xl font-bold text-gray-900">Підприємства та організації</h2>
+              <h2 className="text-2xl font-bold text-gray-900">{pageData?.enterprise_section_title || ''}</h2>
             </div>
-            <p className="text-gray-600 text-sm">Підприємства, що направляють працівників на підвищення кваліфікації та перепідготовку</p>
+            <p className="text-gray-600 text-sm">{pageData?.enterprise_section_subtitle || ''}</p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {businessPartners.map((p) => (
@@ -170,15 +153,11 @@ export default function Partners() {
       {/* Benefits of Partnership */}
       <section className="py-14 bg-dnu-light border-t border-dnu-blue/10">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">Переваги партнерства</h2>
+          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">{pageData?.benefits_section_title || ''}</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {(pageData?.benefits?.length
               ? [...pageData.benefits].sort((a, b) => a.order - b.order)
-              : [
-                  { title: 'Корпоративне навчання', description: 'Розробимо індивідуальну програму підвищення кваліфікації спеціально для ваших співробітників.', order: 0 },
-                  { title: 'Документи держзразка', description: 'Після завершення навчання слухачі отримують офіційні документи державного зразка ДНУ.', order: 1 },
-                  { title: 'Гнучкий формат', description: 'Навчання в зручний для підприємства час — виїзні заняття, онлайн або змішаний формат.', order: 2 },
-                ]
+              : []
             ).map(({ title, description }, i) => (
               <div key={title} className="bg-white rounded-2xl p-6 border border-dnu-blue/10 shadow-sm">
                 <div className="text-3xl mb-4">{['🎓', '📜', '💼'][i] || '✅'}</div>

@@ -1,0 +1,32 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-settings",
+    "pluralName": "site-settings-list",
+    "displayName": "SiteSettings",
+    "description": "Global site settings (logo, copyright, etc.)"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "logo_line_1": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "logo_line_2": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "footer_copyright_template": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

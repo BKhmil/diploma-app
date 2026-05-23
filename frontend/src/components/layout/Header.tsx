@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, GraduationCap, Phone, Mail, Search, Globe } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
+import { getContactInfo, getSiteSettings } from '../../services/strapi';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,14 +13,23 @@ export function Header() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { locale, setLocale } = useLanguage();
   const navigate = useNavigate();
+  const [contactInfo, setContactInfo] = useState<{ phone?: string; email?: string } | null>(null);
+  const [siteSettings, setSiteSettings] = useState<{ logo_line_1?: string; logo_line_2?: string } | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    getContactInfo(locale).then((d: any) => {
+      if (d) setContactInfo({ phone: d.phone, email: d.email });
+    }).catch(() => undefined);
+    getSiteSettings(locale).then((d: any) => {
+      if (d) setSiteSettings({ logo_line_1: d.logo_line_1, logo_line_2: d.logo_line_2 });
+    }).catch(() => undefined);
+  }, [locale]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -63,12 +73,16 @@ export function Header() {
       <div className="hidden lg:block bg-dnu-dark text-white/90 text-sm py-2">
         <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
           <div className="flex gap-6 items-center">
-            <a href="tel:+380561234567" className="flex items-center gap-2 hover:text-white transition-colors">
-              <Phone className="h-3.5 w-3.5" /> +38 (056) 123-45-67
-            </a>
-            <a href="mailto:info@cno.dnu.edu.ua" className="flex items-center gap-2 hover:text-white transition-colors">
-              <Mail className="h-3.5 w-3.5" /> info@cno.dnu.edu.ua
-            </a>
+            {contactInfo?.phone && (
+              <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="flex items-center gap-2 hover:text-white transition-colors">
+                <Phone className="h-3.5 w-3.5" /> {contactInfo.phone}
+              </a>
+            )}
+            {contactInfo?.email && (
+              <a href={`mailto:${contactInfo.email}`} className="flex items-center gap-2 hover:text-white transition-colors">
+                <Mail className="h-3.5 w-3.5" /> {contactInfo.email}
+              </a>
+            )}
           </div>
           <div className="flex gap-5 items-center">
             {secondaryNavItems.map((item) => (
@@ -118,8 +132,8 @@ export function Header() {
                 <GraduationCap className="h-7 w-7 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="font-bold text-lg md:text-xl text-dnu-dark leading-tight">Центр післядипломної освіти</span>
-                <span className="text-xs md:text-sm text-gray-500 font-medium">ДНУ імені Олеся Гончара</span>
+                <span className="font-bold text-lg md:text-xl text-dnu-dark leading-tight">{siteSettings?.logo_line_1 || ''}</span>
+                <span className="text-xs md:text-sm text-gray-500 font-medium">{siteSettings?.logo_line_2 || ''}</span>
               </div>
             </Link>
 

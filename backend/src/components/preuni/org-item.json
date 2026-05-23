@@ -1,0 +1,39 @@
+{
+  "collectionName": "components_preuni_org_items",
+  "info": {
+    "displayName": "OrgItem",
+    "description": "An organizational info block on the pre-university page"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "icon_key": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "kind": "singleType",
+  "collectionName": "apply_pages",
+  "info": {
+    "singularName": "apply-page",
+    "pluralName": "apply-pages",
+    "displayName": "ApplyPage",
+    "description": "Application form page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "hero_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "hero_subtitle": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "success_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "success_message": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "next_steps_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "next_steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "apply.next-step",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "documents_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "documents_required": {
+      "type": "component",
+      "repeatable": true,
+      "component": "apply.required-doc",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "nmt_note": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "legal_consent_text": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "sidebar_contacts_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

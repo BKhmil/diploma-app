@@ -1,21 +1,22 @@
-export const ensureLocaleSuffix = (value: unknown, locale: 'uk' | 'en'): unknown => {
-  if (typeof value !== 'string') return value;
-  const trimmed = value.trim();
-  if (!trimmed) return value;
-  const withoutSuffix = trimmed.replace(/\s+\((uk|en)\)$/i, '');
-  return `${withoutSuffix} (${locale})`;
-};
+const stripMarkers = (value: string): string =>
+  value.trim().replace(/\s+\((new|uk|en)\)/gi, '').trim();
 
+/** Appends ` (new) (uk)` or ` (new) (en)` so Strapi admin rows are easy to spot after re-seed. */
 export const localizeUk = (value: string): string => {
   if (!value || !value.trim()) return value;
-  const withoutSuffix = value.trim().replace(/\s+\((uk|en)\)$/i, '');
-  return `${withoutSuffix} (uk)`;
+  return `${stripMarkers(value)} (new) (uk)`;
 };
 
 export const localizeEn = (value: string): string => {
   if (!value || !value.trim()) return value;
-  const withoutSuffix = value.trim().replace(/\s+\((uk|en)\)$/i, '');
-  return `${withoutSuffix} (en)`;
+  return `${stripMarkers(value)} (new) (en)`;
+};
+
+export const ensureLocaleSuffix = (value: unknown, locale: 'uk' | 'en'): unknown => {
+  if (typeof value !== 'string') return value;
+  const trimmed = value.trim();
+  if (!trimmed) return value;
+  return locale === 'uk' ? localizeUk(stripMarkers(trimmed)) : localizeEn(stripMarkers(trimmed));
 };
 
 export const localizeArrayUk = (arr: string[]): string[] => arr.map(localizeUk);

@@ -1,0 +1,52 @@
+{
+  "kind": "singleType",
+  "collectionName": "staff_pages",
+  "info": {
+    "singularName": "staff-page",
+    "pluralName": "staff-pages",
+    "displayName": "StaffPage",
+    "description": "Staff page content"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "page_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "page_subtitle": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "leadership_section_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "teachers_section_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "teachers_section_subtitle_template": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "administration_section_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "cta_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "cta_text": {
+      "type": "text",
+      "pluginOptions": { "i18n": { "localized": true } }
+    }
+  }
+}

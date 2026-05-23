@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { programs as initialPrograms } from '../data/programs';
 import { Program } from '../types';
 import { getPrograms } from '../services/strapi';
 import { useLanguage } from './LanguageContext';
@@ -12,19 +11,19 @@ interface ProgramsContextValue {
 const ProgramsContext = createContext<ProgramsContextValue | null>(null);
 
 export function ProgramsProvider({ children }: { children: React.ReactNode }) {
-  const [programs, setPrograms] = useState<Program[]>(initialPrograms);
+  const [programs, setPrograms] = useState<Program[]>([]);
   const { locale } = useLanguage();
 
   useEffect(() => {
     let mounted = true;
     getPrograms(locale)
       .then((items) => {
-        if (mounted && items.length > 0) {
+        if (mounted) {
           setPrograms(items);
         }
       })
       .catch(() => {
-        // Keep static fallback when backend is unavailable.
+        if (mounted) setPrograms([]);
       });
 
     return () => {

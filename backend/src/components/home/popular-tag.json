@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_home_popular_tags",
+  "info": {
+    "displayName": "PopularTag",
+    "description": "A popular search tag on the home page"
+  },
+  "options": {},
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "query": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

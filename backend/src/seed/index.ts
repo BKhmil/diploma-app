@@ -1,5 +1,5 @@
-import { syncPrograms, syncStaff, syncPartners, syncGraduates, syncDocuments, syncPreUniversitySubjects } from './sync/collections';
-import { syncHomePage, syncAboutPage, syncAlumniPage, syncQualificationPage, syncRetrainingPage, syncPartnersPage, syncPreUniversityPage, syncContactInfo } from './sync/singleTypes';
+import { syncPrograms, syncStaff, syncPartners, syncGraduates, syncDocuments, syncPreUniversitySubjects, syncNews } from './sync/collections';
+import { syncHomePage, syncAboutPage, syncAlumniPage, syncQualificationPage, syncRetrainingPage, syncPartnersPage, syncPreUniversityPage, syncContactInfo, syncApplyPage, syncProgramsPage, syncStaffPage, syncDocumentsPage, syncNotFoundPage, syncSiteSettings } from './sync/singleTypes';
 
 export async function runSeedSync(strapi: any) {
   strapi.log.info('[seed] Starting seed sync...');
@@ -33,6 +33,11 @@ export async function runSeedSync(strapi: any) {
     strapi.log.info('[seed] Syncing pre-university subjects...');
     await syncPreUniversitySubjects(strapi);
   } catch (e) { strapi.log.warn(`[seed] pre-university subjects failed: ${e}`); }
+
+  try {
+    strapi.log.info('[seed] Syncing news...');
+    await syncNews(strapi);
+  } catch (e) { strapi.log.warn(`[seed] news failed: ${e}`); }
 
   try {
     strapi.log.info('[seed] Syncing home page...');
@@ -73,6 +78,36 @@ export async function runSeedSync(strapi: any) {
     strapi.log.info('[seed] Syncing contact info...');
     await syncContactInfo(strapi);
   } catch (e) { strapi.log.warn(`[seed] contact info failed: ${e}`); }
+
+  try {
+    strapi.log.info('[seed] Syncing apply page...');
+    await syncApplyPage(strapi);
+  } catch (e) { strapi.log.warn(`[seed] apply page failed: ${e}`); }
+
+  try {
+    strapi.log.info('[seed] Syncing programs page...');
+    await syncProgramsPage(strapi);
+  } catch (e) { strapi.log.warn(`[seed] programs page failed: ${e}`); }
+
+  try {
+    strapi.log.info('[seed] Syncing staff page...');
+    await syncStaffPage(strapi);
+  } catch (e) { strapi.log.warn(`[seed] staff page failed: ${e}`); }
+
+  try {
+    strapi.log.info('[seed] Syncing documents page...');
+    await syncDocumentsPage(strapi);
+  } catch (e) { strapi.log.warn(`[seed] documents page failed: ${e}`); }
+
+  try {
+    strapi.log.info('[seed] Syncing not-found page...');
+    await syncNotFoundPage(strapi);
+  } catch (e) { strapi.log.warn(`[seed] not-found page failed: ${e}`); }
+
+  try {
+    strapi.log.info('[seed] Syncing site settings...');
+    await syncSiteSettings(strapi);
+  } catch (e) { strapi.log.warn(`[seed] site settings failed: ${e}`); }
 
   strapi.log.info('[seed] Seed sync complete.');
 }

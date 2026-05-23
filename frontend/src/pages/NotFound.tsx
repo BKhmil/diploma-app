@@ -1,10 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Home, BookOpen, Phone, Search } from 'lucide-react';
+import { getNotFoundPage } from '../services/strapi';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function NotFound() {
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
+  const { locale } = useLanguage();
+  const [cmsData, setCmsData] = useState<null | {
+    title?: string;
+    description?: string;
+    search_label?: string;
+    search_placeholder?: string;
+    popular_links_title?: string;
+    popular_links?: { label: string; path: string; order: number }[];
+  }>(null);
+
+  useEffect(() => {
+    getNotFoundPage(locale).then(setCmsData).catch(() => undefined);
+  }, [locale]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,25 +28,28 @@ export default function NotFound() {
     }
   };
 
+  const popularLinks = cmsData?.popular_links?.length
+    ? [...cmsData.popular_links].sort((a, b) => a.order - b.order)
+    : [];
+
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 py-16 bg-white">
-      {/* Large 404 */}
       <div className="text-[120px] md:text-[160px] font-black text-gray-100 leading-none select-none">
         404
       </div>
       <div className="w-20 h-1 bg-dnu-dark mx-auto mb-6 -mt-2" />
 
       <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 mb-3">
-        Сторінку не знайдено
+        {cmsData?.title || ''}
       </h1>
       <p className="text-gray-500 max-w-md leading-relaxed mb-10">
-        Вибачте, сторінки за цією адресою не існує або вона була переміщена.
-        Перевірте посилання або скористайтесь пошуком.
+        {cmsData?.description || ''}
       </p>
 
-      {/* Search */}
       <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6 w-full max-w-md mb-10">
-        <p className="text-sm font-bold text-gray-700 mb-3">Шукайте програму:</p>
+        {cmsData?.search_label && (
+          <p className="text-sm font-bold text-gray-700 mb-3">{cmsData.search_label}</p>
+        )}
         <form onSubmit={handleSearch} className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -39,7 +57,7 @@ export default function NotFound() {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Назва програми..."
+              placeholder={cmsData?.search_placeholder || ''}
               className="w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-dnu-blue focus:border-transparent outline-none"
             />
           </div>
@@ -52,7 +70,6 @@ export default function NotFound() {
         </form>
       </div>
 
-      {/* Quick links */}
       <div className="flex gap-3 flex-wrap justify-center mb-10">
         <Link
           to="/"
@@ -74,21 +91,17 @@ export default function NotFound() {
         </Link>
       </div>
 
-      {/* Popular links */}
-      <div className="text-sm text-gray-500">
-        <span className="mr-2">Популярні сторінки:</span>
-        {[
-          { to: '/retraining', label: 'Перепідготовка' },
-          { to: '/pre-university', label: 'Підготовка до НМТ' },
-          { to: '/apply', label: 'Подати заявку' },
-          { to: '/documents', label: 'Документи' },
-        ].map(({ to, label }, i, arr) => (
-          <span key={to}>
-            <Link to={to} className="text-dnu-dark hover:underline font-medium">{label}</Link>
-            {i < arr.length - 1 && <span className="mx-2 text-gray-300">·</span>}
-          </span>
-        ))}
-      </div>
+      {popularLinks.length > 0 && (
+        <div className="text-sm text-gray-500">
+          <span className="mr-2">{cmsData?.popular_links_title || ''}</span>
+          {popularLinks.map(({ path, label }, i, arr) => (
+            <span key={path}>
+              <Link to={path} className="text-dnu-dark hover:underline font-medium">{label}</Link>
+              {i < arr.length - 1 && <span className="mx-2 text-gray-300">·</span>}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

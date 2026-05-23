@@ -18,48 +18,94 @@
   "attributes": {
     "hero_title": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "hero_subtitle": {
       "type": "text",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "hero_badge": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "nmt_exam_date": {
       "type": "date"
     },
+    "countdown_label": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
     "bundle_title": {
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "bundle_description": {
       "type": "text",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "bundle_price_label": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "trial_lesson_text": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "subjects_section_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "subjects_discount_intro": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "card_default_duration": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "card_default_group_size": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "advantages": {
+      "type": "component",
+      "repeatable": true,
+      "component": "preuni.advantage",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "schedule_section_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "schedule_section_subtitle": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "schedule_rows": {
+      "type": "component",
+      "repeatable": true,
+      "component": "preuni.schedule-row",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "schedule_footnote": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "org_section_title": {
+      "type": "string",
+      "pluginOptions": { "i18n": { "localized": true } }
+    },
+    "org_items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "preuni.org-item",
+      "pluginOptions": { "i18n": { "localized": true } }
     },
     "steps": {
       "type": "component",
       "repeatable": true,
       "component": "pre-university.step-item",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": { "i18n": { "localized": true } }
     }
   }
 }
