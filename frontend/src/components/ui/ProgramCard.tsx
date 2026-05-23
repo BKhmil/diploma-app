@@ -21,10 +21,6 @@ export const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
     mixed: 'bg-purple-100 text-purple-800 border-purple-200'
   };
 
-  // Симуляція лейблу статусу (в реальному проекті це братиметься з API)
-  const isEnrolling = Math.random() > 0.5;
-  const spotsLeft = isEnrolling ? Math.floor(Math.random() * 10) + 1 : null;
-
   return (
     <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 h-full group">
       {/* Top Banner Context */}
@@ -32,20 +28,13 @@ export const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
         <span className={clsx('px-2.5 py-1 rounded-md border', formatColors[program.format])}>
           {formatLabels[program.format]}
         </span>
-
-        {isEnrolling ? (
-          <span className="flex items-center gap-1.5 text-green-600 bg-green-50 px-2.5 py-1 rounded-md border border-green-100">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            Набір відкрито
+        <span className="flex items-center gap-1.5 text-green-600 bg-green-50 px-2.5 py-1 rounded-md border border-green-100">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
-        ) : (
-          <span className="text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md border border-gray-200">
-            Заплановано
-          </span>
-        )}
+          Набір відкрито
+        </span>
       </div>
 
       <div className="p-6 flex-1 flex flex-col">
@@ -82,20 +71,11 @@ export const ProgramCard: React.FC<ProgramCardProps> = ({ program }) => {
       {/* Footer / Actions */}
       <div className="px-6 py-4 bg-white border-t border-gray-100">
         <div className="flex flex-col gap-3">
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-0.5">Сума</span>
-              <span className="font-bold text-lg text-[#003366] leading-none">
-                {formatPrice(program.price)}
-              </span>
-            </div>
-            {spotsLeft && (
-              <div className="text-right">
-                <span className="text-xs font-medium text-orange-500 bg-orange-50 px-2 py-0.5 rounded border border-orange-100">
-                  Залишилось {spotsLeft} місць
-                </span>
-              </div>
-            )}
+          <div>
+            <span className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-0.5">Сума</span>
+            <span className="font-bold text-lg text-[#003366] leading-none">
+              {formatPrice(program.price)}
+            </span>
           </div>
 
           <Link

@@ -64,7 +64,7 @@ export default function HomePage() {
   };
 
   const FORMAT_ICON: Record<string, string> = { online: '💻', offline: '📍', mixed: '🏛' };
-  const FORMAT_LABEL: Record<string, string> = { online: 'Онлайн', offline: 'Офлайн', mixed: 'Змішана' };
+  const FORMAT_LABEL: Record<string, string> = { online: 'Онлайн', offline: 'Офлайн', mixed: 'Змішаний' };
   const CERT_ICON: Record<string, string> = { qualification: '📋', retraining: '🎓', master: '🎓', 'pre-university': '📜' };
 
   React.useEffect(() => {
@@ -370,12 +370,13 @@ export default function HomePage() {
                     item.category === 'event' ? 'bg-green-50 text-green-700' :
                     'bg-gray-100 text-gray-600'
                   }`}>
-                    {item.category === 'announcement' ? 'Оголошення' :
-                     item.category === 'event' ? 'Подія' : 'Новина'}
+                    {locale === 'en'
+                      ? (item.category === 'announcement' ? 'Announcement' : item.category === 'event' ? 'Event' : 'News')
+                      : (item.category === 'announcement' ? 'Оголошення' : item.category === 'event' ? 'Подія' : 'Новина')}
                   </span>
                   {item.date && (
                     <span className="text-xs text-gray-400">
-                      {new Date(item.date).toLocaleDateString('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      {new Date(item.date).toLocaleDateString(locale === 'en' ? 'en-US' : 'uk-UA', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </span>
                   )}
                 </div>

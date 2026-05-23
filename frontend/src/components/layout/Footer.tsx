@@ -87,24 +87,28 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-white text-lg font-bold">{footerData?.footer_social_title || ''}</h3>
             <div className="flex gap-4">
-              <a
-                href={footerData?.facebook_url || '#'}
-                target="_blank"
-                rel="noreferrer"
-                title="Facebook"
-                className="bg-slate-800 p-2 rounded-full hover:bg-dnu-blue hover:text-white transition-colors"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href={footerData?.instagram_url || '#'}
-                target="_blank"
-                rel="noreferrer"
-                title="Instagram"
-                className="bg-slate-800 p-2 rounded-full hover:bg-dnu-blue hover:text-white transition-colors"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
+              {footerData?.facebook_url && (
+                <a
+                  href={footerData.facebook_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Facebook"
+                  className="bg-slate-800 p-2 rounded-full hover:bg-dnu-blue hover:text-white transition-colors"
+                >
+                  <Facebook className="h-5 w-5" />
+                </a>
+              )}
+              {footerData?.instagram_url && (
+                <a
+                  href={footerData.instagram_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Instagram"
+                  className="bg-slate-800 p-2 rounded-full hover:bg-dnu-blue hover:text-white transition-colors"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              )}
             </div>
             <div className="pt-4">
               <Link 

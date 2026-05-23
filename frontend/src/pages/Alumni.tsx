@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Quote, ArrowRight, Building2, GraduationCap, TrendingUp } from 'lucide-react';
-import { getAlumniPage, getGraduates } from '../services/strapi';
+import { getAlumniPage, getGraduates, mediaUrl } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
-
-const STRAPI_BASE = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
 
 const employmentIconMap: Record<string, string> = {
   education: '🏫',
@@ -33,6 +31,7 @@ function StarRating({ count }: { count: number }) {
 
 export default function Alumni() {
   const { locale } = useLanguage();
+  const [pageLoading, setPageLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
   const [alumniItems, setAlumniItems] = useState<{
     id: number; name: string; program: string; year: string;
@@ -128,9 +127,7 @@ export default function Alumni() {
           name: item.name || '',
           program: item.program || item.position || '',
           year: item.year || '',
-          photo: item.photo?.url
-            ? (item.photo.url.startsWith('http') ? item.photo.url : `${STRAPI_BASE}${item.photo.url}`)
-            : 'https://i.pravatar.cc/200?img=30',
+          photo: mediaUrl(item.photo) ?? 'https://i.pravatar.cc/200?img=30',
           text: item.story || '',
           rating: item.rating || 5,
           current: item.organization || '',
@@ -139,8 +136,17 @@ export default function Alumni() {
         setAlumniItems(mapped);
         setShowAll(false);
       })
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .finally(() => setPageLoading(false));
   }, [locale]);
+
+  if (pageLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-dnu-blue border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white min-h-screen">

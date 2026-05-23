@@ -105,7 +105,7 @@ const AUDIENCE_TO_CATEGORY: Record<string, Category> = {
 };
 
 export default function Programs() {
-  const { programs } = usePrograms();
+  const { programs, loading: programsLoading } = usePrograms();
   const { locale } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
   const [pageData, setPageData] = useState<null | {
@@ -142,7 +142,7 @@ export default function Programs() {
         (p.targetAudience?.toLowerCase().includes(q) ?? false);
       return matchCat && matchFmt && matchSearch;
     });
-  }, [searchTerm, category, format]);
+  }, [searchTerm, category, format, programs]);
 
   const categoryCounts: Record<string, number> = useMemo(() => {
     const counts: Record<string, number> = { all: programs.length };
@@ -150,7 +150,7 @@ export default function Programs() {
       counts[p.category] = (counts[p.category] || 0) + 1;
     });
     return counts;
-  }, []);
+  }, [programs]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,7 +269,11 @@ export default function Programs() {
               </div>
             </div>
 
-            {filtered.length > 0 ? (
+            {programsLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="w-8 h-8 border-4 border-dnu-blue border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : filtered.length > 0 ? (
               viewMode === 'grid' ? (
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
                   {filtered.map((p) => (
@@ -290,7 +294,7 @@ export default function Programs() {
             ) : (
               <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
                 <Search className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p className="text-gray-600 font-medium">{pageData?.empty_state_text || ''}</p>
+                <p className="text-gray-600 font-medium">{pageData?.empty_state_text || 'Нічого не знайдено'}</p>
                 <button
                   onClick={() => { setSearchTerm(''); setCategory('all'); setFormat('all'); }}
                   className="mt-3 text-dnu-blue hover:underline text-sm"

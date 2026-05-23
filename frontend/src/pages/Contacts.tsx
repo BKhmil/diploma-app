@@ -77,8 +77,12 @@ export default function Contacts() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Телефони</h3>
-                    <p className="text-gray-600">{contactInfo?.phone || ''}</p>
-                    {contactInfo?.secondary_phone && <p className="text-gray-600">{contactInfo.secondary_phone}</p>}
+                    {contactInfo?.phone && (
+                      <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className="text-gray-600 hover:text-dnu-blue transition-colors">{contactInfo.phone}</a>
+                    )}
+                    {contactInfo?.secondary_phone && (
+                      <a href={`tel:${contactInfo.secondary_phone.replace(/\s/g, '')}`} className="block text-gray-600 hover:text-dnu-blue transition-colors">{contactInfo.secondary_phone}</a>
+                    )}
                   </div>
                 </div>
 
@@ -88,7 +92,9 @@ export default function Contacts() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">{contactInfo?.email || ''}</p>
+                    {contactInfo?.email && (
+                      <a href={`mailto:${contactInfo.email}`} className="text-gray-600 hover:text-dnu-blue transition-colors">{contactInfo.email}</a>
+                    )}
                   </div>
                 </div>
 

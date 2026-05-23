@@ -7,7 +7,7 @@ import { getQualificationPage } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Qualification() {
-  const { programs } = usePrograms();
+  const { programs, loading: programsLoading } = usePrograms();
   const { locale } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFormat, setSelectedFormat] = useState<string>('all');
@@ -20,7 +20,7 @@ export default function Qualification() {
   // Filter only qualification programs
   const qualificationPrograms = useMemo(() => {
     return programs.filter(p => p.category === 'qualification');
-  }, []);
+  }, [programs]);
 
   // Apply search and format filters
   const filteredPrograms = useMemo(() => {
@@ -81,7 +81,11 @@ export default function Qualification() {
         </div>
 
         {/* Programs Grid */}
-        {filteredPrograms.length > 0 ? (
+        {programsLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="w-8 h-8 border-4 border-dnu-blue border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : filteredPrograms.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPrograms.map((program) => (
               <ProgramCard key={program.id} program={program} />
@@ -90,7 +94,7 @@ export default function Qualification() {
         ) : (
           <div className="text-center py-12">
             <p className="text-gray-500 text-lg">За вашим запитом програм не знайдено.</p>
-            <button 
+            <button
               onClick={() => {setSearchTerm(''); setSelectedFormat('all');}}
               className="mt-4 text-dnu-blue hover:underline"
             >

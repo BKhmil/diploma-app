@@ -7,7 +7,7 @@ import { getRetrainingPage } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Retraining() {
-  const { programs } = usePrograms();
+  const { programs, loading: programsLoading } = usePrograms();
   const { locale } = useLanguage();
   const [activeTab, setActiveTab] = useState<'retraining' | 'master'>('retraining');
   const [pageData, setPageData] = useState<null | {
@@ -110,15 +110,19 @@ export default function Retraining() {
         </div>
 
         {/* Programs Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayedPrograms.map((program) => (
-            <ProgramCard key={program.id} program={program} />
-          ))}
-        </div>
-
-        {displayedPrograms.length === 0 && pageData?.empty_state_text && (
+        {programsLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <div className="w-8 h-8 border-4 border-dnu-blue border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : displayedPrograms.length > 0 ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayedPrograms.map((program) => (
+              <ProgramCard key={program.id} program={program} />
+            ))}
+          </div>
+        ) : (
           <div className="text-center py-12 text-gray-500">
-            {pageData.empty_state_text}
+            {pageData?.empty_state_text || 'Програм не знайдено'}
           </div>
         )}
       </div>

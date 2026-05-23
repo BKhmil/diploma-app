@@ -49,11 +49,19 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 }
 
 export default function ProgramDetail() {
-  const { programs } = usePrograms();
+  const { programs, loading } = usePrograms();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const program = programs.find((p) => p.id === id);
   const [copied, setCopied] = useState(false);
+
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-dnu-blue border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!program) {
     return (
@@ -217,7 +225,7 @@ export default function ProgramDetail() {
 
               <div className="p-5 space-y-3">
                 {[
-                  { icon: <Clock className="w-4 h-4" />, label: 'Тривалість', val: program.duration },
+                  { icon: <Clock className="w-4 h-4" />, label: 'Тривалість', val: formatDuration(program.duration, program.duration_unit) },
                   { icon: FORMAT_ICON[program.format], label: 'Формат', val: FORMAT_LABEL[program.format] },
                   { icon: <Calendar className="w-4 h-4" />, label: 'Початок набору', val: startDateFormatted },
                   ...(program.groupSize ? [{ icon: <Users className="w-4 h-4" />, label: 'Розмір групи', val: `до ${program.groupSize} осіб` }] : []),

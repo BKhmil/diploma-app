@@ -7,8 +7,9 @@ import {
   Check
 } from 'lucide-react';
 import { clsx } from 'clsx';
-import { createApplication, getPrograms, getApplyPage, getContactInfo, type StrapiProgram } from '../services/strapi';
+import { createApplication, getApplyPage, getContactInfo, type StrapiProgram } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
+import { usePrograms } from '../context/ProgramsContext';
 
 type Step1Data = {
   lastName: string;
@@ -102,11 +103,11 @@ function UploadZone({ label, required, name, register }: {
 
 export function Apply() {
   const { locale } = useLanguage();
+  const { programs: strapiPrograms } = usePrograms();
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formState, setFormState] = useState<Partial<FormData>>({});
-  const [strapiPrograms, setStrapiPrograms] = useState<StrapiProgram[]>([]);
   const [applyData, setApplyData] = useState<null | {
     hero_title?: string;
     hero_subtitle?: string;
@@ -126,7 +127,6 @@ export function Apply() {
   }>(null);
 
   useEffect(() => {
-    getPrograms(locale).then(setStrapiPrograms).catch(() => {});
     getApplyPage(locale).then(setApplyData).catch(() => undefined);
     getContactInfo(locale).then((d: any) => {
       if (d) setContactInfo({ phone: d.phone, email: d.email, working_hours: d.working_hours });
@@ -178,7 +178,7 @@ export function Apply() {
           phone: data.phone,
           city: data.city,
           organization: data.workplace,
-          program_name: data.program,
+          program_name: strapiPrograms.find(p => p.id === data.program)?.title ?? data.program,
           message: data.wishes,
           financing: financingMap[data.financing] ?? data.financing,
           birth_date: data.birthDate,
@@ -461,7 +461,7 @@ export function Apply() {
                       {strapiPrograms
                         .filter(p => p.category === programCategory)
                         .map(p => (
-                          <option key={p.id} value={p.title}>{p.title}</option>
+                          <option key={p.id} value={p.id}>{p.title}</option>
                         ))
                       }
                     </select>

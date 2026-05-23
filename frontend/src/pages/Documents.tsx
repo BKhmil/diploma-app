@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FileText, Download, Eye, Search, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
-import { getDocuments, getDocumentsPage } from '../services/strapi';
+import { getDocuments, getDocumentsPage, mediaUrl } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
-
-const STRAPI_BASE = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
 
 interface Document {
   id: number;
@@ -48,7 +46,7 @@ export default function Documents() {
         }
         const mapped: Document[] = items.map((item, idx) => {
           const fileObj = item.file;
-          const fileUrl = fileObj?.url ? `${STRAPI_BASE}${fileObj.url}` : undefined;
+          const fileUrl = mediaUrl(fileObj) ?? undefined;
           const mime: string = fileObj?.mime ?? '';
           let type: Document['type'] = 'PDF';
           if (mime.includes('wordprocessingml') || mime.includes('msword')) {

@@ -46,11 +46,11 @@ export default function Partners() {
         }
         const mapped = items.map((item, idx) => ({
           id: Number(item.id ?? idx + 1),
-          name: item.name || 'Партнер',
-          city: item.city || 'Дніпро',
-          type: item.type || 'Організація',
+          name: item.name || '',
+          city: item.city || '',
+          type: item.type || 'organization',
           tag: item.type === 'university' ? 'ЗВО' : 'Партнер',
-          agreement: item.agreement || 'Договір про співпрацю',
+          agreement: item.agreement || '',
         }));
         setEduPartners(mapped.filter((p) => p.type === 'university' || p.tag === 'ЗВО'));
         setBusinessPartners(

@@ -2,10 +2,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Search, Mail, Award, Users, BookOpen } from 'lucide-react';
 import { clsx } from 'clsx';
 import { Link } from 'react-router-dom';
-import { getStaffMembers, getStaffPage } from '../services/strapi';
+import { getStaffMembers, getStaffPage, mediaUrl } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
-
-const STRAPI_BASE = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
 
 type StaffRole = 'management' | 'teachers' | 'administration';
 
@@ -25,6 +23,7 @@ interface StaffMember {
 
 export default function Staff() {
   const { locale } = useLanguage();
+  const [staffLoading, setStaffLoading] = useState(true);
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -62,13 +61,12 @@ export default function Staff() {
           programs: item.programs_count,
           tags: Array.isArray(item.tags) ? item.tags : [],
           role: (item.role || 'teachers') as StaffRole,
-          photo: item.photo?.url
-            ? (item.photo.url.startsWith('http') ? item.photo.url : `${STRAPI_BASE}${item.photo.url}`)
-            : 'https://i.pravatar.cc/150?img=41',
+          photo: mediaUrl(item.photo) ?? 'https://i.pravatar.cc/150?img=41',
         }));
         setStaff(mapped);
       })
-      .catch(() => setStaff([]));
+      .catch(() => setStaff([]))
+      .finally(() => setStaffLoading(false));
   }, [locale]);
 
   const management = staff.filter(s => s.role === 'management');
@@ -101,6 +99,14 @@ export default function Staff() {
   const teachersSubtitle = pageData?.teachers_section_subtitle_template
     ? pageData.teachers_section_subtitle_template.replace('{count}', String(filteredTeachers.length))
     : '';
+
+  if (staffLoading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-dnu-blue border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white min-h-screen">

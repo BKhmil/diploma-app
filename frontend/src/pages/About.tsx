@@ -224,7 +224,7 @@ export default function About() {
                   <span className="text-2xl shrink-0">📄</span>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-1 group-hover:text-dnu-blue transition-colors">{doc.title}</h3>
-                    {doc.description && <p className="text-xs text-gray-500 mb-3">{doc.description}</p>}
+                    {(doc.meta || doc.description) && <p className="text-xs text-gray-500 mb-3">{doc.meta || doc.description}</p>}
                     <span className="flex items-center gap-1.5 text-xs text-dnu-blue font-medium">
                       <FileText className="w-3.5 h-3.5" /> Переглянути в розділі документів
                     </span>

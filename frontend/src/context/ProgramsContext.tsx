@@ -5,6 +5,7 @@ import { useLanguage } from './LanguageContext';
 
 interface ProgramsContextValue {
   programs: Program[];
+  loading: boolean;
   setPrograms: React.Dispatch<React.SetStateAction<Program[]>>;
 }
 
@@ -12,18 +13,21 @@ const ProgramsContext = createContext<ProgramsContextValue | null>(null);
 
 export function ProgramsProvider({ children }: { children: React.ReactNode }) {
   const [programs, setPrograms] = useState<Program[]>([]);
+  const [loading, setLoading] = useState(true);
   const { locale } = useLanguage();
 
   useEffect(() => {
     let mounted = true;
+    setLoading(true);
     getPrograms(locale)
       .then((items) => {
-        if (mounted) {
-          setPrograms(items);
-        }
+        if (mounted) setPrograms(items);
       })
       .catch(() => {
         if (mounted) setPrograms([]);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
       });
 
     return () => {
@@ -32,7 +36,7 @@ export function ProgramsProvider({ children }: { children: React.ReactNode }) {
   }, [locale]);
 
   return (
-    <ProgramsContext.Provider value={{ programs, setPrograms }}>
+    <ProgramsContext.Provider value={{ programs, loading, setPrograms }}>
       {children}
     </ProgramsContext.Provider>
   );
