@@ -17,21 +17,21 @@ export default {
     // Admin: get single application
     {
       method: 'GET',
-      path: '/applications/:id',
+      path: '/applications/:documentId',
       handler: 'application.findOne',
       config: { auth: false },
     },
     // Admin: update status / comment
     {
       method: 'PUT',
-      path: '/applications/:id',
+      path: '/applications/:documentId',
       handler: 'application.update',
       config: { auth: false },
     },
     // Admin: delete
     {
       method: 'DELETE',
-      path: '/applications/:id',
+      path: '/applications/:documentId',
       handler: 'application.delete',
       config: { auth: false },
     },

@@ -1,3 +1,5 @@
+import { errors } from '@strapi/utils';
+
 async function handleApproval(applicationId: number) {
   // Load full application with program relation
   const app = await (strapi as any).db.query('api::application.application').findOne({
@@ -71,12 +73,9 @@ export default {
         },
       });
       if (existing) {
-        const err: any = new Error(`Заявка від ${data.email} на програму "${data.program_name}" вже існує`);
-        err.status = 409;
-        err.name = 'ApplicationDuplicateError';
-        throw (strapi as any).errors.badRequest(
-          'DUPLICATE_APPLICATION',
-          { message: `Ви вже подавали заявку на програму "${data.program_name}"` }
+        throw new errors.ValidationError(
+          `Ви вже подавали заявку на програму "${data.program_name}"`,
+          { code: 'DUPLICATE_APPLICATION' }
         );
       }
     }
