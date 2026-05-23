@@ -28,10 +28,16 @@ const normalizeEntity = <T extends Record<string, any>>(entity: StrapiEntity<T>)
   };
 };
 
+const getAuthHeader = (): Record<string, string> => {
+  const jwt = localStorage.getItem('strapiJwt');
+  return jwt ? { Authorization: `Bearer ${jwt}` } : {};
+};
+
 const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const res = await fetch(`${STRAPI_BASE_URL}/api${path}`, {
     headers: {
       'Content-Type': 'application/json',
+      ...getAuthHeader(),
       ...(init?.headers || {}),
     },
     ...init,
@@ -125,6 +131,7 @@ export const getPrograms = async (locale?: AppLocale): Promise<StrapiProgram[]> 
       outcomes: Array.isArray(entry.outcomes) ? entry.outcomes : [],
       modules: Array.isArray(entry.modules) ? entry.modules : [],
       faq: Array.isArray(entry.faq) ? entry.faq : [],
+      is_featured: entry.is_featured ?? false,
     } as StrapiProgram;
   });
 };
@@ -554,4 +561,21 @@ export const getPreUniversityPage = async (locale?: AppLocale) => {
   );
   if (!response.data) return null;
   return normalizeEntity(response.data);
+};
+
+export const strapiLogin = async (
+  identifier: string,
+  password: string
+): Promise<{ jwt: string; user: { id: number; username: string; email: string } }> => {
+  const res = await fetch(`${STRAPI_BASE_URL}/api/auth/local`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ identifier, password }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    const msg = data?.error?.message || `${res.status}`;
+    throw new Error(msg);
+  }
+  return res.json();
 };

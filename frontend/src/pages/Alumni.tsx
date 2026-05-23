@@ -4,6 +4,8 @@ import { Star, Quote, ArrowRight, Building2, GraduationCap, TrendingUp } from 'l
 import { getAlumniPage, getGraduates } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
+const STRAPI_BASE = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
+
 const stats = [
   { value: '50 000+', label: 'Всього випускників' },
   { value: '2 500+', label: 'Щорічно' },
@@ -257,7 +259,9 @@ export default function Alumni() {
           name: item.name || 'Випускник',
           program: item.program || item.position || 'Програма ЦНО',
           year: item.year || '2026',
-          photo: item.photo?.url ? item.photo.url : 'https://i.pravatar.cc/200?img=30',
+          photo: item.photo?.url
+            ? (item.photo.url.startsWith('http') ? item.photo.url : `${STRAPI_BASE}${item.photo.url}`)
+            : 'https://i.pravatar.cc/200?img=30',
           text: item.story || '',
           rating: item.rating || 5,
           current: item.organization || '',

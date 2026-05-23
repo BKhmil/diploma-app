@@ -26,7 +26,7 @@ type Step2Data = {
 };
 
 type Step3Data = {
-  programCategory: 'qualification' | 'retraining' | 'pre-university';
+  programCategory: 'qualification' | 'retraining' | 'pre-university' | 'master';
   program: string;
   financing: 'budget' | 'contract' | 'employer';
   wishes?: string;
@@ -413,6 +413,7 @@ export function Apply() {
                       {([
                         { value: 'qualification', label: 'Підвищення кваліфікації' },
                         { value: 'retraining', label: 'Перепідготовка' },
+                        { value: 'master', label: 'Магістратура' },
                         { value: 'pre-university', label: 'НМТ-підготовка' },
                       ] as const).map(({ value, label }) => (
                         <label key={value} className={clsx(

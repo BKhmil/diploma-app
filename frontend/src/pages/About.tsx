@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FileText, Download, ArrowRight, CheckCircle2, Building2 } from 'lucide-react';
+import { FileText, ArrowRight, CheckCircle2, Building2 } from 'lucide-react';
 import { getAboutPage } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -232,16 +232,16 @@ export default function About() {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {documents.map(({ icon, title, meta }) => (
-              <div key={title} className="bg-gray-50 border border-gray-200 rounded-xl p-5 flex items-start gap-4 hover:border-dnu-blue/40 hover:shadow-sm transition-all group">
+              <Link key={title} to="/documents" className="bg-gray-50 border border-gray-200 rounded-xl p-5 flex items-start gap-4 hover:border-dnu-blue/40 hover:shadow-sm transition-all group">
                 <span className="text-2xl shrink-0">{icon}</span>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-1">{title}</h3>
+                  <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-1 group-hover:text-dnu-blue transition-colors">{title}</h3>
                   <p className="text-xs text-gray-500 mb-3">{meta}</p>
-                  <button className="flex items-center gap-1.5 text-xs text-dnu-blue hover:underline font-medium">
-                    <Download className="w-3.5 h-3.5" /> Завантажити PDF
-                  </button>
+                  <span className="flex items-center gap-1.5 text-xs text-dnu-blue font-medium">
+                    <FileText className="w-3.5 h-3.5" /> Переглянути в розділі документів
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
           <div className="mt-4 text-center">

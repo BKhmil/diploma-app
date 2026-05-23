@@ -5,8 +5,7 @@ import { Settings, LogOut, LayoutDashboard, FileText, Users, ClipboardList } fro
 export default function AdminLayout() {
     const navigate = useNavigate();
     const location = useLocation();
-    // Мок авторизації для демо-версії ЦМС
-    const isAuthenticated = localStorage.getItem('isAdmin') === 'true';
+    const isAuthenticated = !!localStorage.getItem('strapiJwt');
 
     const navItem = (to: string, label: string, icon: React.ReactNode) => {
         const isActive = location.pathname === to || (to !== '/admin' && location.pathname.startsWith(to));
@@ -22,7 +21,7 @@ export default function AdminLayout() {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem('isAdmin');
+        localStorage.removeItem('strapiJwt');
         navigate('/admin/login');
     };
 

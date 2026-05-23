@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { getStaffMembers } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
+const STRAPI_BASE = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
+
 type StaffRole = 'management' | 'teachers' | 'administration';
 
 interface StaffMember {
@@ -190,7 +192,9 @@ export default function Staff() {
           programs: item.programs_count,
           tags: Array.isArray(item.tags) ? item.tags : [],
           role: (item.role || 'teachers') as StaffRole,
-          photo: item.photo?.url ? item.photo.url : 'https://i.pravatar.cc/150?img=41',
+          photo: item.photo?.url
+            ? (item.photo.url.startsWith('http') ? item.photo.url : `${STRAPI_BASE}${item.photo.url}`)
+            : 'https://i.pravatar.cc/150?img=41',
         }));
         setStaff(mapped);
       })

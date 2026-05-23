@@ -16,6 +16,7 @@ export interface Program {
   outcomes?: string[];
   modules?: { title: string; hours: number }[];
   faq?: { q: string; a: string }[];
+  is_featured?: boolean;
 }
 
 export const formatDuration = (value: number | undefined, unit?: 'weeks' | 'months' | 'years'): string => {

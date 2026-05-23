@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { KeyRound } from 'lucide-react';
+import { strapiLogin } from '../../services/strapi';
 
 export default function AdminLogin() {
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Простий хардкод пароль для демо ЦМС
-        if (password === 'admin123') {
-            localStorage.setItem('isAdmin', 'true');
+        setError('');
+        setLoading(true);
+        try {
+            const { jwt } = await strapiLogin(identifier, password);
+            localStorage.setItem('strapiJwt', jwt);
             navigate('/admin');
-        } else {
-            setError(true);
+        } catch (err: any) {
+            setError(err?.message || 'Невірний логін або пароль');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -31,35 +38,36 @@ export default function AdminLogin() {
 
                 <form onSubmit={handleLogin} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Логін</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Email або логін</label>
                         <input
                             type="text"
-                            defaultValue="admin"
-                            disabled
-                            className="w-full px-4 py-2 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 cursor-not-allowed"
+                            value={identifier}
+                            onChange={(e) => { setIdentifier(e.target.value); setError(''); }}
+                            placeholder="admin@example.com"
+                            required
+                            className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-dnu-blue focus:border-transparent outline-none transition-all ${error ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Пароль (введіть admin123)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Пароль</label>
                         <input
                             type="password"
                             value={password}
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                                setError(false);
-                            }}
+                            onChange={(e) => { setPassword(e.target.value); setError(''); }}
                             placeholder="Пароль"
+                            required
                             className={`w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-dnu-blue focus:border-transparent outline-none transition-all ${error ? 'border-red-500 bg-red-50' : 'border-gray-300'}`}
                         />
-                        {error && <p className="text-red-500 text-xs mt-1">Неправильний пароль</p>}
+                        {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full bg-dnu-blue text-white py-3 rounded-xl font-bold hover:bg-dnu-dark transition-colors"
+                        disabled={loading}
+                        className="w-full bg-dnu-blue text-white py-3 rounded-xl font-bold hover:bg-dnu-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                        Увійти в панель
+                        {loading ? 'Вхід...' : 'Увійти в панель'}
                     </button>
                 </form>
 

@@ -95,11 +95,21 @@ function ProgramCardList({ program }: { program: Program }) {
   );
 }
 
+const AUDIENCE_TO_CATEGORY: Record<string, Category> = {
+  teachers: 'qualification',
+  civil: 'qualification',
+  applicants: 'pre-university',
+  specialists: 'retraining',
+};
+
 export default function Programs() {
   const { programs } = usePrograms();
   const [searchParams, setSearchParams] = useSearchParams();
   const initialSearch = searchParams.get('search') || '';
-  const initialCategory = (searchParams.get('category') as Category) || 'all';
+  const audienceParam = searchParams.get('audience') || '';
+  const initialCategory = (searchParams.get('category') as Category)
+    || AUDIENCE_TO_CATEGORY[audienceParam]
+    || 'all';
 
   const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [category, setCategory] = useState<Category>(initialCategory);

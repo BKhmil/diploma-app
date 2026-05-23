@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Building2, GraduationCap, School, Handshake, Download, ArrowRight, ExternalLink } from 'lucide-react';
+import { Building2, GraduationCap, School, Handshake, ArrowRight, ExternalLink } from 'lucide-react';
 import { getPartners, getPartnersPage } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -71,11 +71,9 @@ export default function Partners() {
         }));
         setEduPartners(mapped.filter((p) => p.type === 'university' || p.tag === 'ЗВО'));
         setBusinessPartners(
-          mapped.map((p) => ({
-            id: p.id,
-            name: p.name,
-            type: p.type,
-          }))
+          mapped
+            .filter((p) => p.type !== 'university' && p.tag !== 'ЗВО')
+            .map((p) => ({ id: p.id, name: p.name, type: p.type }))
         );
       })
       .catch(() => undefined);
@@ -174,27 +172,18 @@ export default function Partners() {
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">Переваги партнерства</h2>
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: '🎓',
-                title: 'Корпоративне навчання',
-                desc: 'Розробимо індивідуальну програму підвищення кваліфікації спеціально для ваших співробітників.',
-              },
-              {
-                icon: '📜',
-                title: 'Документи держзразка',
-                desc: 'Після завершення навчання слухачі отримують офіційні документи державного зразка ДНУ.',
-              },
-              {
-                icon: '💼',
-                title: 'Гнучкий формат',
-                desc: 'Навчання в зручний для підприємства час — виїзні заняття, онлайн або змішаний формат.',
-              },
-            ].map(({ icon, title, desc }) => (
+            {(pageData?.benefits?.length
+              ? [...pageData.benefits].sort((a, b) => a.order - b.order)
+              : [
+                  { title: 'Корпоративне навчання', description: 'Розробимо індивідуальну програму підвищення кваліфікації спеціально для ваших співробітників.', order: 0 },
+                  { title: 'Документи держзразка', description: 'Після завершення навчання слухачі отримують офіційні документи державного зразка ДНУ.', order: 1 },
+                  { title: 'Гнучкий формат', description: 'Навчання в зручний для підприємства час — виїзні заняття, онлайн або змішаний формат.', order: 2 },
+                ]
+            ).map(({ title, description }, i) => (
               <div key={title} className="bg-white rounded-2xl p-6 border border-dnu-blue/10 shadow-sm">
-                <div className="text-3xl mb-4">{icon}</div>
+                <div className="text-3xl mb-4">{['🎓', '📜', '💼'][i] || '✅'}</div>
                 <h3 className="font-bold text-gray-900 mb-2">{title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+                <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
               </div>
             ))}
           </div>
@@ -204,10 +193,11 @@ export default function Partners() {
       {/* Become a Partner CTA */}
       <section className="py-16 bg-dnu-dark text-white text-center">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Стати партнером ЦНО ДНУ</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            {pageData?.cta_title || 'Стати партнером ЦНО ДНУ'}
+          </h2>
           <p className="text-gray-300 max-w-xl mx-auto mb-8 text-sm leading-relaxed">
-            Запрошуємо підприємства, установи та організації до співпраці. Ми розробимо
-            індивідуальну програму корпоративного навчання для ваших співробітників.
+            {pageData?.cta_text || 'Запрошуємо підприємства, установи та організації до співпраці. Ми розробимо індивідуальну програму корпоративного навчання для ваших співробітників.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -216,9 +206,12 @@ export default function Partners() {
             >
               Зв'язатися з нами <ArrowRight className="w-4 h-4" />
             </Link>
-            <button className="inline-flex items-center justify-center gap-2 border-2 border-white/40 text-white font-medium px-8 py-3 rounded-xl hover:bg-white/10 transition-colors">
-              <Download className="w-4 h-4" /> Завантажити презентацію
-            </button>
+            <Link
+              to="/documents"
+              className="inline-flex items-center justify-center gap-2 border-2 border-white/40 text-white font-medium px-8 py-3 rounded-xl hover:bg-white/10 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" /> Наші документи
+            </Link>
           </div>
         </div>
       </section>

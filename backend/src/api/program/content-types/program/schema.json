@@ -120,6 +120,10 @@
       "type": "media",
       "multiple": false,
       "allowedTypes": ["images"]
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
     }
   }
 }

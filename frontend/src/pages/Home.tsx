@@ -6,8 +6,6 @@ import { usePrograms } from '../context/ProgramsContext';
 import { getHomePage } from '../services/strapi';
 import { useLanguage } from '../context/LanguageContext';
 
-const FEATURED_IDS = ['q4', 'r1', 'p1']; // Педагогічна майстерність, Психологія, НМТ Математика
-
 export default function HomePage() {
   const { locale } = useLanguage();
   const { programs } = usePrograms();
@@ -30,7 +28,10 @@ export default function HomePage() {
   }>(null);
   const navigate = useNavigate();
 
-  const featuredPrograms = programs.filter((p) => FEATURED_IDS.includes(p.id));
+  const featuredPrograms = (() => {
+    const featured = programs.filter((p) => p.is_featured);
+    return featured.length > 0 ? featured : programs.slice(0, 3);
+  })();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +43,10 @@ export default function HomePage() {
 
   const handleTagSearch = (tag: string) => {
     navigate(`/programs?search=${encodeURIComponent(tag)}`);
+  };
+
+  const DIRECTION_ICON_MAP: Record<string, React.ElementType> = {
+    TrendingUp, Briefcase, Award, Presentation, BookOpen, Users,
   };
 
   const FORMAT_ICON: Record<string, string> = { online: '💻', offline: '📍', mixed: '🏛' };
@@ -150,62 +155,90 @@ export default function HomePage() {
       {/* Target Audiences / Key Directions */}
       <section className="container mx-auto px-4 md:px-6 mb-24 -mt-20 relative z-20">
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Link to="/qualification" className="group flex flex-col justify-between bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:-translate-y-2 hover:shadow-xl transition-all h-full">
-            <div>
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-[#0056b3] mb-5 group-hover:scale-110 transition-transform">
-                <TrendingUp className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Здобути нові навички</h3>
-              <p className="text-gray-600 text-sm mb-6">
-                Підвищення кваліфікації для фахівців. Сучасні програми та сертифікати державного зразка.
-              </p>
-            </div>
-            <div className="flex items-center text-[#0056b3] font-medium text-sm group-hover:underline mt-auto pt-4 border-t border-gray-50">
-              Програми підвищення кваліфікації <ArrowRight className="ml-2 h-4 w-4" />
-            </div>
-          </Link>
-
-          <Link to="/retraining" className="group flex flex-col justify-between bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:-translate-y-2 hover:shadow-xl transition-all h-full">
-            <div>
-              <div className="w-12 h-12 bg-[#e6f0fa] rounded-xl flex items-center justify-center text-[#003366] mb-5 group-hover:scale-110 transition-transform">
-                <Briefcase className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Змінити професію</h3>
-              <p className="text-gray-600 text-sm mb-6">
-                Магістратура та програми перепідготовки. Отримайте нову спеціальність на базі вищої освіти.
-              </p>
-            </div>
-            <div className="flex items-center text-[#003366] font-medium text-sm group-hover:underline mt-auto pt-4 border-t border-gray-50">
-              Спеціальності та вимоги <ArrowRight className="ml-2 h-4 w-4" />
-            </div>
-          </Link>
-
-          <Link to="/pre-university" className="group flex flex-col justify-between bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:-translate-y-2 hover:shadow-xl transition-all h-full">
-            <div>
-              <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-[#e65c00] mb-5 group-hover:scale-110 transition-transform">
-                <Award className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Вступити до ВНЗ</h3>
-              <p className="text-gray-600 text-sm mb-6">
-                Ефективна підготовка до складання НМТ, ЄВІ, ЄФВВ. Заняття з провідними викладачами ДНУ.
-              </p>
-            </div>
-            <div className="flex items-center text-[#e65c00] font-medium text-sm group-hover:underline mt-auto pt-4 border-t border-gray-50">
-              Підготовчі курси <ArrowRight className="ml-2 h-4 w-4" />
-            </div>
-          </Link>
-
-          <div className="bg-[#003366] rounded-2xl p-6 shadow-lg text-white group relative overflow-hidden flex flex-col justify-center items-center text-center h-full">
-            <div className="absolute inset-0 bg-[#0056b3] opacity-0 group-hover:opacity-100 transition-opacity z-0"></div>
-            <div className="relative z-10">
-              <Presentation className="h-10 w-10 mx-auto mb-4 opacity-80" />
-              <h3 className="text-xl font-bold mb-4">Не знаєте, що обрати?</h3>
-              <p className="text-white/80 text-sm mb-6">Отримайте безкоштовну консультацію від наших фахівців.</p>
-              <Link to="/contacts" className="inline-block bg-white text-[#003366] px-6 py-2.5 rounded-lg font-bold hover:bg-gray-100 transition-colors w-full">
-                Консультація
+          {homeData?.direction_cards?.length ? (
+            [...homeData.direction_cards]
+              .sort((a, b) => a.order - b.order)
+              .map((card) => {
+                const IconComp = DIRECTION_ICON_MAP[card.icon_key] || TrendingUp;
+                return (
+                  <Link
+                    key={card.title}
+                    to={card.link_path || '/programs'}
+                    className="group flex flex-col justify-between bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:-translate-y-2 hover:shadow-xl transition-all h-full"
+                  >
+                    <div>
+                      <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-[#0056b3] mb-5 group-hover:scale-110 transition-transform">
+                        <IconComp className="h-6 w-6" />
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{card.title}</h3>
+                      <p className="text-gray-600 text-sm mb-6">{card.description}</p>
+                    </div>
+                    <div className="flex items-center text-[#0056b3] font-medium text-sm group-hover:underline mt-auto pt-4 border-t border-gray-50">
+                      Детальніше <ArrowRight className="ml-2 h-4 w-4" />
+                    </div>
+                  </Link>
+                );
+              })
+          ) : (
+            <>
+              <Link to="/qualification" className="group flex flex-col justify-between bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:-translate-y-2 hover:shadow-xl transition-all h-full">
+                <div>
+                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-[#0056b3] mb-5 group-hover:scale-110 transition-transform">
+                    <TrendingUp className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Здобути нові навички</h3>
+                  <p className="text-gray-600 text-sm mb-6">
+                    Підвищення кваліфікації для фахівців. Сучасні програми та сертифікати державного зразка.
+                  </p>
+                </div>
+                <div className="flex items-center text-[#0056b3] font-medium text-sm group-hover:underline mt-auto pt-4 border-t border-gray-50">
+                  Програми підвищення кваліфікації <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
               </Link>
-            </div>
-          </div>
+
+              <Link to="/retraining" className="group flex flex-col justify-between bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:-translate-y-2 hover:shadow-xl transition-all h-full">
+                <div>
+                  <div className="w-12 h-12 bg-[#e6f0fa] rounded-xl flex items-center justify-center text-[#003366] mb-5 group-hover:scale-110 transition-transform">
+                    <Briefcase className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Змінити професію</h3>
+                  <p className="text-gray-600 text-sm mb-6">
+                    Магістратура та програми перепідготовки. Отримайте нову спеціальність на базі вищої освіти.
+                  </p>
+                </div>
+                <div className="flex items-center text-[#003366] font-medium text-sm group-hover:underline mt-auto pt-4 border-t border-gray-50">
+                  Спеціальності та вимоги <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
+              </Link>
+
+              <Link to="/pre-university" className="group flex flex-col justify-between bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:-translate-y-2 hover:shadow-xl transition-all h-full">
+                <div>
+                  <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-[#e65c00] mb-5 group-hover:scale-110 transition-transform">
+                    <Award className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Вступити до ВНЗ</h3>
+                  <p className="text-gray-600 text-sm mb-6">
+                    Ефективна підготовка до складання НМТ, ЄВІ, ЄФВВ. Заняття з провідними викладачами ДНУ.
+                  </p>
+                </div>
+                <div className="flex items-center text-[#e65c00] font-medium text-sm group-hover:underline mt-auto pt-4 border-t border-gray-50">
+                  Підготовчі курси <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
+              </Link>
+
+              <div className="bg-[#003366] rounded-2xl p-6 shadow-lg text-white group relative overflow-hidden flex flex-col justify-center items-center text-center h-full">
+                <div className="absolute inset-0 bg-[#0056b3] opacity-0 group-hover:opacity-100 transition-opacity z-0"></div>
+                <div className="relative z-10">
+                  <Presentation className="h-10 w-10 mx-auto mb-4 opacity-80" />
+                  <h3 className="text-xl font-bold mb-4">Не знаєте, що обрати?</h3>
+                  <p className="text-white/80 text-sm mb-6">Отримайте безкоштовну консультацію від наших фахівців.</p>
+                  <Link to="/contacts" className="inline-block bg-white text-[#003366] px-6 py-2.5 rounded-lg font-bold hover:bg-gray-100 transition-colors w-full">
+                    Консультація
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
@@ -331,56 +364,79 @@ export default function HomePage() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden relative group">
-            <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-            <div className="p-6">
-              <div className="flex items-center gap-2 text-blue-600 mb-3 bg-blue-50 w-max px-3 py-1 rounded-md text-sm font-bold">
-                <Calendar className="h-4 w-4" />
-                до 15 Травня
+          {homeData?.admissions_cards?.length ? (
+            [...homeData.admissions_cards]
+              .sort((a, b) => a.order - b.order)
+              .map((card, i) => (
+                <div key={i} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative group">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-gray-300 group-hover:bg-[#0056b3] transition-colors"></div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-gray-600 mb-3 bg-gray-100 w-max px-3 py-1 rounded-md text-sm font-bold">
+                      <Calendar className="h-4 w-4" />
+                      {card.date_label}
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{card.title}</h3>
+                    <p className="text-gray-600 text-sm mb-4">{card.description}</p>
+                    <Link to="/programs" className="text-[#0056b3] font-medium text-sm group-hover:underline flex items-center">
+                      Детальніше <ArrowRight className="ml-1 h-3 w-3" />
+                    </Link>
+                  </div>
+                </div>
+              ))
+          ) : (
+            <>
+              <div className="bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden relative group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-blue-600 mb-3 bg-blue-50 w-max px-3 py-1 rounded-md text-sm font-bold">
+                    <Calendar className="h-4 w-4" />
+                    до 15 Травня
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Реєстрація на курси підготовки до НМТ</h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Інтенсивний курс підготовки з математики, укр. мови та історії. Офлайн та онлайн формати.
+                  </p>
+                  <Link to="/pre-university" className="text-[#0056b3] font-medium text-sm group-hover:underline flex items-center">
+                    Деталі та реєстрація <ArrowRight className="ml-1 h-3 w-3" />
+                  </Link>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Реєстрація на курси підготовки до НМТ</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Інтенсивний курс підготовки з математики, укр. мови та історії. Офлайн та онлайн формати.
-              </p>
-              <Link to="/pre-university" className="text-[#0056b3] font-medium text-sm group-hover:underline flex items-center">
-                Деталі та реєстрація <ArrowRight className="ml-1 h-3 w-3" />
-              </Link>
-            </div>
-          </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative group">
-            <div className="absolute top-0 left-0 w-1 h-full bg-gray-300 group-hover:bg-[#0056b3] transition-colors"></div>
-            <div className="p-6">
-              <div className="flex items-center gap-2 text-gray-600 mb-3 bg-gray-100 w-max px-3 py-1 rounded-md text-sm font-bold">
-                <Calendar className="h-4 w-4" />
-                набір відкрито
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-gray-300 group-hover:bg-[#0056b3] transition-colors"></div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-gray-600 mb-3 bg-gray-100 w-max px-3 py-1 rounded-md text-sm font-bold">
+                    <Calendar className="h-4 w-4" />
+                    набір відкрито
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Підвищення кваліфікації психологів</h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Нова програма «Кризове консультування». Обсяг: 180 год. (6 кредитів ЄКТС).
+                  </p>
+                  <Link to="/programs/q1" className="text-[#0056b3] font-medium text-sm group-hover:underline flex items-center">
+                    Деталі програми <ArrowRight className="ml-1 h-3 w-3" />
+                  </Link>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Підвищення кваліфікації психологів</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Нова програма «Кризове консультування». Обсяг: 180 год. (6 кредитів ЄКТС).
-              </p>
-              <Link to="/programs/q1" className="text-[#0056b3] font-medium text-sm group-hover:underline flex items-center">
-                Деталі програми <ArrowRight className="ml-1 h-3 w-3" />
-              </Link>
-            </div>
-          </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative group">
-            <div className="absolute top-0 left-0 w-1 h-full bg-gray-300 group-hover:bg-[#0056b3] transition-colors"></div>
-            <div className="p-6">
-              <div className="flex items-center gap-2 text-gray-600 mb-3 bg-gray-100 w-max px-3 py-1 rounded-md text-sm font-bold">
-                <BookOpen className="h-4 w-4" />
-                вступ 2026
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative group">
+                <div className="absolute top-0 left-0 w-1 h-full bg-gray-300 group-hover:bg-[#0056b3] transition-colors"></div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-gray-600 mb-3 bg-gray-100 w-max px-3 py-1 rounded-md text-sm font-bold">
+                    <BookOpen className="h-4 w-4" />
+                    вступ 2026
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Набір на магістратуру та перепідготовку</h3>
+                  <p className="text-gray-600 text-sm mb-4">
+                    Прийом документів з 1 липня. Спеціальності: Психологія, Право, Менеджмент, Публічне управління.
+                  </p>
+                  <Link to="/retraining" className="text-[#0056b3] font-medium text-sm group-hover:underline flex items-center">
+                    Умови вступу <ArrowRight className="ml-1 h-3 w-3" />
+                  </Link>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Набір на магістратуру та перепідготовку</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Прийом документів з 1 липня. Спеціальності: Психологія, Право, Менеджмент, Публічне управління.
-              </p>
-              <Link to="/retraining" className="text-[#0056b3] font-medium text-sm group-hover:underline flex items-center">
-                Умови вступу <ArrowRight className="ml-1 h-3 w-3" />
-              </Link>
-            </div>
-          </div>
+            </>
+          )}
         </div>
 
         <div className="mt-6 text-center md:hidden">

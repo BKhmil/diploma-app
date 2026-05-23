@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Menu, X, GraduationCap, Phone, Mail, Search, Globe } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
@@ -7,7 +7,11 @@ import { useLanguage } from '../../context/LanguageContext';
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const { locale, setLocale } = useLanguage();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -18,6 +22,23 @@ export function Header() {
   }, []);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleSearchToggle = () => {
+    setIsSearchOpen((prev) => {
+      if (!prev) setTimeout(() => searchInputRef.current?.focus(), 50);
+      return !prev;
+    });
+    setSearchQuery('');
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/programs?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+    setIsSearchOpen(false);
+    setSearchQuery('');
+  };
 
   // Первинна навігація (Основні напрямки)
   const primaryNavItems = [
@@ -121,9 +142,29 @@ export function Header() {
             </nav>
 
             <div className="hidden xl:flex items-center gap-4">
-              <button aria-label="Search" className="text-gray-600 hover:text-dnu-blue transition-colors p-2">
-                <Search className="h-5 w-5" />
-              </button>
+              {isSearchOpen ? (
+                <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Пошук програм..."
+                    className="w-48 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-dnu-blue focus:border-transparent"
+                    onKeyDown={(e) => e.key === 'Escape' && setIsSearchOpen(false)}
+                  />
+                  <button type="submit" aria-label="Знайти" className="text-dnu-blue hover:text-dnu-dark transition-colors p-1">
+                    <Search className="h-5 w-5" />
+                  </button>
+                  <button type="button" onClick={handleSearchToggle} aria-label="Закрити пошук" className="text-gray-400 hover:text-gray-600 transition-colors p-1">
+                    <X className="h-4 w-4" />
+                  </button>
+                </form>
+              ) : (
+                <button aria-label="Пошук" onClick={handleSearchToggle} className="text-gray-600 hover:text-dnu-blue transition-colors p-2">
+                  <Search className="h-5 w-5" />
+                </button>
+              )}
               <Link
                 to="/apply"
                 className="bg-dnu-blue text-white px-5 py-2.5 rounded-md font-medium hover:bg-dnu-dark transition-all shadow-sm hover:shadow-md"
