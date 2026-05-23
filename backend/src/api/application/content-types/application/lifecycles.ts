@@ -109,6 +109,17 @@ export default {
   async afterCreate(event: any) {
     const { result } = event;
 
+    // Guard: skip email entirely when SMTP is not configured.
+    // This prevents a ~30 s TCP-timeout hang in dev when credentials are absent.
+    // The application record is already saved at this point, so the user action
+    // is never blocked regardless of what happens below.
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      (strapi as any).log.info(
+        '[email] SMTP_USER / SMTP_PASS not set — skipping admin notification (application saved OK)'
+      );
+      return;
+    }
+
     try {
       // Get notification email from contact-info or fall back to env
       let notifyEmail: string = process.env.ADMIN_NOTIFY_EMAIL || 'admin@cno.dnu.edu.ua';
