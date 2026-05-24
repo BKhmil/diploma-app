@@ -15,23 +15,24 @@ export default {
       config: { auth: false },
     },
     // Admin: get single application
+    // Strapi 5 core controllers read ctx.params.id (not documentId)
     {
       method: 'GET',
-      path: '/applications/:documentId',
+      path: '/applications/:id',
       handler: 'application.findOne',
       config: { auth: false },
     },
     // Admin: update status / comment
     {
       method: 'PUT',
-      path: '/applications/:documentId',
+      path: '/applications/:id',
       handler: 'application.update',
       config: { auth: false },
     },
     // Admin: delete
     {
       method: 'DELETE',
-      path: '/applications/:documentId',
+      path: '/applications/:id',
       handler: 'application.delete',
       config: { auth: false },
     },

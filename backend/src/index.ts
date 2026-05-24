@@ -23,7 +23,6 @@ const PUBLIC_READ_CONTENT_TYPES = [
 	'document.document',
 	'partner.partner',
 	'internship.internship',
-	'pre-university-group.pre-university-group',
 	'staff-member.staff-member',
 	'home-page.home-page',
 	'about-page.about-page',
@@ -117,6 +116,23 @@ async function syncRolePermissions(
 	}
 }
 
+const ensureUkLocale = async (strapi: Core.Strapi) => {
+	try {
+		const existing = await strapi.db
+			.query('plugin::i18n.locale')
+			.findOne({ where: { code: 'uk' } });
+
+		if (!existing) {
+			await strapi.db.query('plugin::i18n.locale').create({
+				data: { name: 'Ukrainian (uk)', code: 'uk' },
+			});
+			strapi.log.info('[i18n] Registered "uk" locale in database');
+		}
+	} catch (error) {
+		strapi.log.warn(`[i18n] Failed to ensure uk locale: ${String(error)}`);
+	}
+};
+
 const ensurePublicPermissions = async (strapi: Core.Strapi) => {
 	try {
 		await syncRolePermissions(strapi, 'public', PUBLIC_ACTIONS);
@@ -169,6 +185,7 @@ const backfillI18nLocales = async (strapi: Core.Strapi) => {
 export default {
 	register() {},
 	async bootstrap({ strapi }: { strapi: Core.Strapi }) {
+		await ensureUkLocale(strapi);
 		await ensurePublicPermissions(strapi);
 		await runSeedSync(strapi);
 		await backfillI18nLocales(strapi);

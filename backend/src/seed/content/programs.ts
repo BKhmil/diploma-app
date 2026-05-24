@@ -16,6 +16,9 @@ export interface SeedProgram {
   modules?: { title: string; hours: number }[];
   faq?: { q: string; a: string }[];
   status: 'active';
+  is_featured?: boolean;
+  icon_emoji?: string;
+  price_hint?: string;
 }
 
 const mk = (
@@ -68,9 +71,12 @@ export const seedPrograms: SeedProgram[] = [
   mk('r3', 'HR analytics', 'retraining', 12, 'months', 'mixed', 'Метрики персоналу та People Analytics.', { duration: 12 }),
   mk('m1', 'Магістр: продуктовий менеджмент', 'master', 2, 'years', 'mixed', 'Магістерський трек m1 — seed v2.', { duration_unit: 'years', certificate: 'Демо-диплом магістра' }),
   mk('m2', 'Магістр: data science', 'master', 2, 'years', 'online', 'ML basics, Python, етика даних.', { duration_unit: 'years' }),
-  mk('p1', 'НМТ: Математика (інтенсив)', 'pre-university', 4, 'months', 'offline', 'Предмет p1 — звʼязок з pre-university-group math.', { price: 950, group_size: 10 }),
-  mk('p2', 'НМТ: Історія України', 'pre-university', 4, 'months', 'online', 'Предмет p2 — онлайн-формат.', { format: 'online', price: 820 }),
-  mk('p3', 'НМТ: Англійська мова', 'pre-university', 4, 'months', 'online', 'Предмет p3 — B1+.', { format: 'online', price: 990 }),
-  mk('p4', 'НМТ: Біологія', 'pre-university', 4, 'months', 'offline', 'Предмет p4 — лабораторні модулі.', { format: 'offline' }),
-  mk('p5', 'НМТ: Фізика', 'pre-university', 4, 'months', 'offline', 'Предмет p5 — задачі НМТ.', { format: 'offline' }),
+  mk('p-math', 'НМТ: Математика (інтенсив)', 'pre-university', 4, 'months', 'offline', 'Алгебра та геометрія — підготовка до НМТ з нуля.', { price: 950, group_size: 10, icon_emoji: '📐', price_hint: 'від 950 грн/міс', is_featured: true }),
+  mk('p-ukr',  'НМТ: Українська мова',       'pre-university', 4, 'months', 'offline', 'Мова, текст, тести НМТ.',                                  { price: 900, icon_emoji: '📖', price_hint: 'від 900 грн/міс', is_featured: true }),
+  mk('p-eng',  'НМТ: Англійська мова',       'pre-university', 4, 'months', 'online',  'Рівень B1+, граматика та лексика для НМТ.',                { format: 'online', price: 990, icon_emoji: '🌐', price_hint: 'від 990 грн/міс' }),
+  mk('p-hist', 'НМТ: Історія України',       'pre-university', 4, 'months', 'online',  'Хронологія, дати, аналіз джерел.',                          { format: 'online', price: 820, icon_emoji: '🏛', price_hint: 'від 820 грн/міс', is_featured: true }),
+  mk('p-bio',  'НМТ: Біологія',              'pre-university', 4, 'months', 'offline', 'Клітина, генетика, екологія — лабораторні модулі.',         { format: 'offline', price: 880, icon_emoji: '🔬', price_hint: 'від 880 грн/міс' }),
+  mk('p-phys', 'НМТ: Фізика',                'pre-university', 4, 'months', 'offline', 'Механіка, електрика, оптика — задачі НМТ.',                { format: 'offline', price: 880, icon_emoji: '⚛️', price_hint: 'від 880 грн/міс' }),
+  mk('p-chem', 'НМТ: Хімія',                 'pre-university', 4, 'months', 'offline', 'Загальна, органічна, неорганічна — практикум.',             { format: 'offline', price: 880, icon_emoji: '🧪', price_hint: 'від 880 грн/міс' }),
+  mk('p-geo',  'НМТ: Географія',             'pre-university', 4, 'months', 'online',  'Фізична та економічна географія для НМТ.',                  { format: 'online', price: 820, icon_emoji: '🌍', price_hint: 'від 820 грн/міс' }),
 ];

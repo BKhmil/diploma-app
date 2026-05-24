@@ -17,6 +17,8 @@ export interface Program {
   modules?: { title: string; hours: number }[];
   faq?: { q: string; a: string }[];
   is_featured?: boolean;
+  icon_emoji?: string;
+  price_hint?: string;
 }
 
 export const formatDuration = (value: number | undefined, unit?: 'weeks' | 'months' | 'years'): string => {

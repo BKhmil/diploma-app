@@ -1,5 +1,5 @@
 import type { Core } from '@strapi/strapi';
-import { syncPrograms, syncStaff, syncPartners, syncGraduates, syncDocuments, syncPreUniversitySubjects, syncNews } from './sync/collections';
+import { syncPrograms, syncStaff, syncPartners, syncGraduates, syncDocuments, syncNews } from './sync/collections';
 import { syncHomePage, syncAboutPage, syncAlumniPage, syncQualificationPage, syncRetrainingPage, syncPartnersPage, syncPreUniversityPage, syncContactInfo, syncApplyPage, syncProgramsPage, syncStaffPage, syncDocumentsPage, syncNotFoundPage, syncSiteSettings } from './sync/singleTypes';
 
 export async function runSeedSync(strapi: Core.Strapi) {
@@ -29,11 +29,6 @@ export async function runSeedSync(strapi: Core.Strapi) {
     strapi.log.info('[seed] Syncing documents...');
     await syncDocuments(strapi);
   } catch (e) { strapi.log.warn(`[seed] documents failed: ${e}`); }
-
-  try {
-    strapi.log.info('[seed] Syncing pre-university subjects...');
-    await syncPreUniversitySubjects(strapi);
-  } catch (e) { strapi.log.warn(`[seed] pre-university subjects failed: ${e}`); }
 
   try {
     strapi.log.info('[seed] Syncing news...');

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Calendar, Clock, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getPreUniversityGroups, getPreUniversityPage } from '../services/strapi';
+import { getPreUniversityPage } from '../services/strapi';
+import { usePrograms } from '../context/ProgramsContext';
+import { formatPrice } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 
 const NMT_DATE = new Date('2026-05-28T09:00:00');
@@ -28,6 +30,7 @@ const weekDayKeys = ['day', 'mon', 'tue', 'wed', 'thu', 'fri'] as const;
 
 export default function PreUniversity() {
   const { locale } = useLanguage();
+  const { programs } = usePrograms();
   const [pageData, setPageData] = useState<null | {
     hero_title?: string;
     hero_subtitle?: string;
@@ -52,33 +55,25 @@ export default function PreUniversity() {
 
   const nmtDate = pageData?.nmt_exam_date ? new Date(pageData.nmt_exam_date + 'T09:00:00') : NMT_DATE;
   const { days, hours, minutes } = useCountdown(nmtDate);
-  const [subjectsList, setSubjectsList] = useState<{
-    id: string; icon: string; title: string; desc: string; price: string; popular: boolean;
-  }[]>([]);
+
+  // Pre-university subjects are programs filtered by category — single source of truth.
+  const subjectsList = useMemo(
+    () =>
+      programs
+        .filter((p) => p.category === 'pre-university')
+        .map((p) => ({
+          id: p.id,
+          icon: p.icon_emoji || '📘',
+          title: p.title,
+          desc: p.description || '',
+          price: p.price_hint || formatPrice(p.price),
+          popular: p.is_featured ?? false,
+        })),
+    [programs]
+  );
 
   useEffect(() => {
     getPreUniversityPage(locale).then(setPageData).catch(() => undefined);
-  }, [locale]);
-
-  useEffect(() => {
-    getPreUniversityGroups(locale)
-      .then((items: any[]) => {
-        if (!items.length) {
-          setSubjectsList([]);
-          return;
-        }
-        setSubjectsList(
-          items.map((item, idx) => ({
-            id: String(item.subject_key ?? item.id ?? idx + 1),
-            icon: item.icon_emoji || '📘',
-            title: item.name || item.subject || '',
-            desc: item.description || item.schedule || '',
-            price: item.price_hint || '',
-            popular: item.is_popular ?? idx < 2,
-          }))
-        );
-      })
-      .catch(() => undefined);
   }, [locale]);
 
   const advantages = pageData?.advantages?.length

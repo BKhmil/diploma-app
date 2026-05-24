@@ -8,7 +8,7 @@
     "description": "Qualification and education programs"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {
     "i18n": {
@@ -124,6 +124,18 @@
     "is_featured": {
       "type": "boolean",
       "default": false
+    },
+    "icon_emoji": {
+      "type": "string",
+      "maxLength": 8
+    },
+    "price_hint": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

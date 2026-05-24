@@ -4,7 +4,6 @@ import { seedStaff, staffEnTranslations } from '../content/staff';
 import { seedPartners, partnersEnTranslations } from '../content/partners';
 import { seedGraduates, graduatesEnTranslations } from '../content/graduates';
 import { seedDocuments, documentsEnTranslations } from '../content/documents';
-import { seedPreUniversitySubjects, preUniversityEnTranslations } from '../content/preUniversitySubjects';
 import { seedNews, newsEnTranslations } from '../content/news';
 import { programTranslations } from '../translate';
 import { localizeUk, localizeEn } from '../locale';
@@ -49,6 +48,9 @@ export async function syncPrograms(strapi: Core.Strapi) {
       faq: prog.faq ? prog.faq.map((f) => ({ q: localizeUk(f.q), a: localizeUk(f.a) })) : [],
       category: prog.category,
       status: prog.status,
+      is_featured: prog.is_featured ?? false,
+      icon_emoji: prog.icon_emoji,
+      price_hint: prog.price_hint ? localizeUk(prog.price_hint) : undefined,
     };
     const enData = {
       title: en ? localizeEn(en.title) : localizeEn(prog.title),
@@ -70,6 +72,9 @@ export async function syncPrograms(strapi: Core.Strapi) {
         : (prog.faq ? prog.faq.map((f) => ({ q: localizeEn(f.q), a: localizeEn(f.a) })) : []),
       category: prog.category,
       status: prog.status,
+      is_featured: prog.is_featured ?? false,
+      icon_emoji: prog.icon_emoji,
+      price_hint: prog.price_hint ? localizeEn(prog.price_hint) : undefined,
     };
     await upsertLocale(strapi, 'api::program.program', { program_code: prog.program_code }, ukData, enData);
   }
@@ -170,31 +175,6 @@ export async function syncDocuments(strapi: Core.Strapi) {
       doc_category: doc.doc_category,
     };
     await upsertLocale(strapi, 'api::document.document', { document_code: doc.document_code }, ukData, enData);
-  }
-}
-
-export async function syncPreUniversitySubjects(strapi: Core.Strapi) {
-  for (const subj of seedPreUniversitySubjects) {
-    const enTrans = preUniversityEnTranslations[subj.subject_key] || {};
-    const ukData = {
-      name: localizeUk(subj.name),
-      subject: localizeUk(subj.subject),
-      description: subj.description ? localizeUk(subj.description) : undefined,
-      format: subj.format,
-      icon_emoji: subj.icon_emoji,
-      price_hint: subj.price_hint ? localizeUk(subj.price_hint) : undefined,
-      is_popular: subj.is_popular,
-    };
-    const enData = {
-      name: enTrans.name ? localizeEn(enTrans.name) : localizeEn(subj.name),
-      subject: enTrans.subject ? localizeEn(enTrans.subject) : localizeEn(subj.subject),
-      description: enTrans.description ? localizeEn(enTrans.description) : (subj.description ? localizeEn(subj.description) : undefined),
-      format: subj.format,
-      icon_emoji: subj.icon_emoji,
-      price_hint: subj.price_hint ? localizeEn(subj.price_hint) : undefined,
-      is_popular: subj.is_popular,
-    };
-    await upsertLocale(strapi, 'api::pre-university-group.pre-university-group', { subject_key: subj.subject_key }, ukData, enData);
   }
 }
 

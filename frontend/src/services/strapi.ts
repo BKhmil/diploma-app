@@ -4,6 +4,10 @@ import { AppLocale } from '../context/LanguageContext';
 const STRAPI_BASE_URL = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
 const STRAPI_LOCALE = (import.meta.env.VITE_STRAPI_LOCALE || 'uk').toLowerCase();
 
+/** The locale used for all admin-dashboard write operations.
+ *  Every POST/PUT/DELETE to an i18n-enabled collection must include this. */
+const ADMIN_LOCALE = 'uk';
+
 type StrapiEntity<T> = {
   id: number | string;
   attributes?: T;
@@ -71,6 +75,13 @@ const publicRequest = async <T>(path: string): Promise<T> => {
   }
 
   return res.json();
+};
+
+/** Admin write request — always appends ?locale=uk so i18n-enabled entries are
+ *  saved in the Ukrainian locale rather than Strapi's internal fallback. */
+const adminRequest = async <T>(path: string, init?: RequestInit): Promise<T> => {
+  const separator = path.includes('?') ? '&' : '?';
+  return request<T>(`${path}${separator}locale=${ADMIN_LOCALE}`, init);
 };
 
 const withLocale = (path: string) => {
@@ -151,6 +162,8 @@ export const getPrograms = async (locale?: AppLocale): Promise<StrapiProgram[]> 
       modules: Array.isArray(entry.modules) ? entry.modules : [],
       faq: Array.isArray(entry.faq) ? entry.faq : [],
       is_featured: entry.is_featured ?? false,
+      icon_emoji: entry.icon_emoji || undefined,
+      price_hint: entry.price_hint || undefined,
     } as StrapiProgram;
   });
 };
@@ -158,7 +171,7 @@ export const getPrograms = async (locale?: AppLocale): Promise<StrapiProgram[]> 
 export const createProgram = async (
   data: Omit<Program, 'id'>
 ): Promise<StrapiProgram> => {
-  const response = await request<any>('/programs', {
+  const response = await adminRequest<any>('/programs', {
     method: 'POST',
     body: JSON.stringify({
       data: {
@@ -195,7 +208,7 @@ export const updateProgram = async (
   if (data.price         !== undefined) payload.price         = data.price ?? null;
   if (data.description !== undefined) payload.description  = data.description;
   if (data.targetAudience !== undefined) payload.target_audience = data.targetAudience;
-  const response = await request<any>(`/programs/${documentId}`, {
+  const response = await adminRequest<any>(`/programs/${documentId}`, {
     method: 'PUT',
     body: JSON.stringify({ data: payload }),
   });
@@ -208,7 +221,7 @@ export const updateProgram = async (
 };
 
 export const deleteProgram = async (documentId: string): Promise<void> => {
-  await request(`/programs/${documentId}`, { method: 'DELETE' });
+  await adminRequest(`/programs/${documentId}`, { method: 'DELETE' });
 };
 
 export const createApplication = async (
@@ -497,15 +510,6 @@ export const getStaffMembers = async (locale?: AppLocale) => {
 export const getGraduates = async (locale?: AppLocale) => {
   const response = await requestWithLocaleFallback<StrapiListResponse<any>>(
     '/graduates?pagination[pageSize]=200&populate=*',
-    locale,
-    true
-  );
-  return response.data.map(normalizeEntity);
-};
-
-export const getPreUniversityGroups = async (locale?: AppLocale) => {
-  const response = await requestWithLocaleFallback<StrapiListResponse<any>>(
-    '/pre-university-groups?pagination[pageSize]=100&sort=createdAt:desc',
     locale,
     true
   );
