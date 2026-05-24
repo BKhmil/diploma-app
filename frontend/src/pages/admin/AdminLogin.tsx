@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { KeyRound } from 'lucide-react';
 import { strapiLogin } from '../../services/strapi';
@@ -9,6 +9,12 @@ export default function AdminLogin() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (localStorage.getItem('strapiJwt')) {
+            navigate('/admin', { replace: true });
+        }
+    }, [navigate]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();

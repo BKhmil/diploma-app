@@ -100,9 +100,15 @@ export function Header() {
               </NavLink>
             ))}
             <div className="border-l border-white/20 pl-5 flex items-center gap-4">
-              <Link to="/admin/login" className="text-gray-300 hover:text-white transition-colors text-xs font-medium bg-white/10 px-3 py-1 rounded-full">
-                Увійти
-              </Link>
+              {localStorage.getItem('strapiJwt') ? (
+                <Link to="/admin" className="text-gray-300 hover:text-white transition-colors text-xs font-medium bg-white/10 px-3 py-1 rounded-full">
+                  Адмін панель
+                </Link>
+              ) : (
+                <Link to="/admin/login" className="text-gray-300 hover:text-white transition-colors text-xs font-medium bg-white/10 px-3 py-1 rounded-full">
+                  Увійти
+                </Link>
+              )}
               <button
                 type="button"
                 onClick={() => setLocale(locale === 'uk' ? 'en' : 'uk')}
