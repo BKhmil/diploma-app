@@ -1,103 +1,129 @@
 import type { Core } from '@strapi/strapi';
 import { runSeedSync } from './seed';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Permission policy
+//
+// PUBLIC role  — anonymous visitors (no JWT). Read-only public content +
+//                form submissions (application.create).
+// AUTHENTICATED — admin dashboard users (logged in with @strapi/users-permissions
+//                JWT). Full CRUD on operational resources.
+//
+// Public read permissions are NOT granted to Authenticated by design — the
+// frontend uses `publicRequest` (no JWT) for public content fetches, so a
+// logged-in admin browsing the public site still gets the Public role for
+// reads, while the admin dashboard sends the JWT for writes only.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const PUBLIC_READ_CONTENT_TYPES = [
+	'program.program',
+	'category.category',
+	'news.news',
+	'graduate.graduate',
+	'document.document',
+	'partner.partner',
+	'internship.internship',
+	'pre-university-group.pre-university-group',
+	'staff-member.staff-member',
+	'home-page.home-page',
+	'about-page.about-page',
+	'contact-info.contact-info',
+	'alumni-page.alumni-page',
+	'qualification-page.qualification-page',
+	'retraining-page.retraining-page',
+	'partners-page.partners-page',
+	'pre-university-page.pre-university-page',
+	'apply-page.apply-page',
+	'programs-page.programs-page',
+	'staff-page.staff-page',
+	'documents-page.documents-page',
+	'not-found-page.not-found-page',
+	'site-settings.site-settings',
+];
+
 const PUBLIC_ACTIONS = [
-	'api::program.program.find',
-	'api::program.program.findOne',
+	...PUBLIC_READ_CONTENT_TYPES.flatMap((uid) => [
+		`api::${uid}.find`,
+		`api::${uid}.findOne`,
+	]),
+	// Form submissions from public Apply / Contact pages
+	'api::application.application.create',
+];
+
+const AUTHENTICATED_ACTIONS = [
+	// Programs CRUD (admin dashboard)
 	'api::program.program.create',
 	'api::program.program.update',
 	'api::program.program.delete',
-	'api::category.category.find',
-	'api::category.category.findOne',
-	'api::news.news.find',
-	'api::news.news.findOne',
-	'api::graduate.graduate.find',
-	'api::graduate.graduate.findOne',
-	'api::document.document.find',
-	'api::document.document.findOne',
-	'api::partner.partner.find',
-	'api::partner.partner.findOne',
-	'api::internship.internship.find',
-	'api::internship.internship.findOne',
-	'api::pre-university-group.pre-university-group.find',
-	'api::pre-university-group.pre-university-group.findOne',
-	'api::staff-member.staff-member.find',
-	'api::staff-member.staff-member.findOne',
-	'api::home-page.home-page.find',
-	'api::home-page.home-page.findOne',
-	'api::about-page.about-page.find',
-	'api::about-page.about-page.findOne',
-	'api::contact-info.contact-info.find',
-	'api::contact-info.contact-info.findOne',
-	'api::alumni-page.alumni-page.find',
-	'api::alumni-page.alumni-page.findOne',
-	'api::qualification-page.qualification-page.find',
-	'api::qualification-page.qualification-page.findOne',
-	'api::retraining-page.retraining-page.find',
-	'api::retraining-page.retraining-page.findOne',
-	'api::partners-page.partners-page.find',
-	'api::partners-page.partners-page.findOne',
-	'api::pre-university-page.pre-university-page.find',
-	'api::pre-university-page.pre-university-page.findOne',
-	'api::application.application.create',
+	// Application management — review / status updates / cleanup
 	'api::application.application.find',
 	'api::application.application.findOne',
+	'api::application.application.create',
 	'api::application.application.update',
 	'api::application.application.delete',
+	// Student records (admin only)
 	'api::student.student.find',
 	'api::student.student.findOne',
 	'api::student.student.create',
 	'api::student.student.update',
 	'api::student.student.delete',
+	// Enrollment records (admin only)
 	'api::enrollment.enrollment.find',
 	'api::enrollment.enrollment.findOne',
 	'api::enrollment.enrollment.create',
 	'api::enrollment.enrollment.update',
 	'api::enrollment.enrollment.delete',
-	'api::news.news.find',
-	'api::news.news.findOne',
-	'api::apply-page.apply-page.find',
-	'api::apply-page.apply-page.findOne',
-	'api::programs-page.programs-page.find',
-	'api::programs-page.programs-page.findOne',
-	'api::staff-page.staff-page.find',
-	'api::staff-page.staff-page.findOne',
-	'api::documents-page.documents-page.find',
-	'api::documents-page.documents-page.findOne',
-	'api::not-found-page.not-found-page.find',
-	'api::not-found-page.not-found-page.findOne',
-	'api::site-settings.site-settings.find',
-	'api::site-settings.site-settings.findOne',
 ];
+
+async function syncRolePermissions(
+	strapi: Core.Strapi,
+	roleType: string,
+	desiredActions: string[],
+): Promise<void> {
+	const role = await strapi.db
+		.query('plugin::users-permissions.role')
+		.findOne({ where: { type: roleType } }) as { id: number } | null;
+
+	if (!role) return;
+
+	const existing = await strapi.db
+		.query('plugin::users-permissions.permission')
+		.findMany({
+			where: { role: role.id },
+			select: ['id', 'action'],
+		}) as Array<{ id: number; action: string }>;
+
+	const existingActions = new Set(existing.map((p) => p.action));
+	const desiredSet = new Set(desiredActions);
+
+	// Add missing
+	for (const action of desiredActions) {
+		if (existingActions.has(action)) continue;
+		await strapi.db.query('plugin::users-permissions.permission').create({
+			data: { action, role: role.id },
+		});
+	}
+
+	// Revoke anything not in the desired set, but only for the actions we manage.
+	// We keep U&P plugin auth permissions and any unrelated entries untouched.
+	const managedPrefixes = ['api::'];
+	for (const perm of existing) {
+		if (desiredSet.has(perm.action)) continue;
+		if (!managedPrefixes.some((p) => perm.action.startsWith(p))) continue;
+		await strapi.db.query('plugin::users-permissions.permission').delete({
+			where: { id: perm.id },
+		});
+		strapi.log.info(`[perms] Revoked "${perm.action}" from role "${roleType}"`);
+	}
+}
 
 const ensurePublicPermissions = async (strapi: Core.Strapi) => {
 	try {
-		const publicRole = await strapi.db
-			.query('plugin::users-permissions.role')
-			.findOne({
-				where: { type: 'public' },
-			});
-
-		if (!publicRole) return;
-
-		const existing = await strapi.db
-			.query('plugin::users-permissions.permission')
-			.findMany({
-				where: { role: publicRole.id },
-				select: ['id', 'action'],
-			}) as Array<{ id: number; action: string }>;
-
-		for (const action of PUBLIC_ACTIONS) {
-			const match = existing.find((perm) => perm.action === action);
-			if (match) continue;
-
-			await strapi.db.query('plugin::users-permissions.permission').create({
-				data: { action, role: publicRole.id },
-			});
-		}
+		await syncRolePermissions(strapi, 'public', PUBLIC_ACTIONS);
+		await syncRolePermissions(strapi, 'authenticated', AUTHENTICATED_ACTIONS);
 	} catch (error) {
 		strapi.log.warn(
-			`Failed to auto-configure public permissions: ${String(error)}`,
+			`Failed to auto-configure role permissions: ${String(error)}`,
 		);
 	}
 };

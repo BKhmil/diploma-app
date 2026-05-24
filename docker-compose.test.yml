@@ -1,0 +1,56 @@
+# Ephemeral stack for integration tests.
+# Uses a completely separate database (diploma_test_db) and a different host port
+# (1338) so it never touches the dev instance running on 1337.
+#
+# Usage:
+#   docker-compose -f docker-compose.test.yml up --build -d
+#   STRAPI_URL=http://localhost:1338 npm run test:integration   (from backend/)
+#   docker-compose -f docker-compose.test.yml down -v           # wipes the test DB
+
+services:
+  postgres_test:
+    image: postgres:16-alpine
+    container_name: diploma_postgres_test
+    environment:
+      POSTGRES_DB: diploma_test_db
+      POSTGRES_USER: strapi_test
+      POSTGRES_PASSWORD: strapi_test_pass
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U strapi_test -d diploma_test_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    # No named volume — data is stored in an anonymous volume that disappears on `down -v`
+    tmpfs:
+      - /var/lib/postgresql/data
+
+  backend_test:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: diploma_backend_test
+    depends_on:
+      postgres_test:
+        condition: service_healthy
+    environment:
+      HOST: 0.0.0.0
+      PORT: 1337
+      APP_KEYS: "testkey1,testkey2,testkey3,testkey4"
+      API_TOKEN_SALT: test_api_token_salt
+      ADMIN_JWT_SECRET: test_admin_jwt_secret
+      JWT_SECRET: test_jwt_secret
+      TRANSFER_TOKEN_SALT: test_transfer_salt
+      ENCRYPTION_KEY: test_encryption_key
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres_test
+      DATABASE_PORT: 5432
+      DATABASE_NAME: diploma_test_db
+      DATABASE_USERNAME: strapi_test
+      DATABASE_PASSWORD: strapi_test_pass
+      DATABASE_SSL: "false"
+      # SMTP intentionally left empty — email is skipped in dev/test (SMTP guard)
+      SMTP_USER: ""
+      SMTP_PASS: ""
+    ports:
+      - "1338:1337"

@@ -15,7 +15,7 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry",
     "test": "jest --config jest.config.ts --passWithNoTests",
     "test:coverage": "jest --config jest.config.ts --coverage",
-    "test:integration": "jest --config jest.integration.config.ts --runInBand --forceExit --passWithNoTests",
+    "test:integration": "STRAPI_URL=http://localhost:1338 jest --config jest.integration.config.ts --runInBand --forceExit --passWithNoTests",
     "test:all": "npm test && npm run test:integration"
   },
   "dependencies": {

@@ -9,6 +9,24 @@
 
 import { api, post, put, del, STRAPI_URL, uniqueEmail } from '../helpers/api';
 
+// Refuse to run integration tests against the production/dev instance by default.
+// Set ALLOW_INTEGRATION_ON_DEV=1 to bypass (e.g. in CI with a dedicated stack).
+beforeAll(() => {
+  const url = STRAPI_URL.replace(/\/$/, '');
+  const isTestPort = url.endsWith(':1338');
+  const isAllowed = process.env.ALLOW_INTEGRATION_ON_DEV === '1';
+  if (!isTestPort && !isAllowed) {
+    throw new Error(
+      `\n\n🚫  Integration tests must run against the TEST instance (port 1338), not "${url}".\n` +
+      `    Start the test stack first:\n` +
+      `      docker-compose -f docker-compose.test.yml up --build -d\n` +
+      `    Then run:\n` +
+      `      STRAPI_URL=http://localhost:1338 npm run test:integration\n` +
+      `    Or set ALLOW_INTEGRATION_ON_DEV=1 to bypass this guard.\n`
+    );
+  }
+});
+
 type AppRef = { id?: number; documentId?: string };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -40,11 +58,17 @@ async function updateApplication(ref: AppRef, data: object) {
 
 afterAll(async () => {
   for (const ref of createdApps) {
-    if (ref.documentId) {
-      const byDoc = await del(`/api/applications/${ref.documentId}`).catch(() => ({ status: 500 }));
-      if ((byDoc as any).status !== 404) continue;
+    try {
+      if (ref.documentId) {
+        const res = await del(`/api/applications/${ref.documentId}`);
+        if (res.status !== 404) continue;
+      }
+      if (ref.id != null) {
+        await del(`/api/applications/${ref.id}`);
+      }
+    } catch (err) {
+      console.warn(`[cleanup] Failed to delete test application (id=${ref.id}, documentId=${ref.documentId}):`, err);
     }
-    if (ref.id != null) await del(`/api/applications/${ref.id}`).catch(() => {});
   }
 });
 

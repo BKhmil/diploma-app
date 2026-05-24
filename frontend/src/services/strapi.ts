@@ -33,6 +33,7 @@ const getAuthHeader = (): Record<string, string> => {
   return jwt ? { Authorization: `Bearer ${jwt}` } : {};
 };
 
+/** Authenticated request — attaches the stored JWT if present. Use for write operations and admin panel data. */
 const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const res = await fetch(`${STRAPI_BASE_URL}/api${path}`, {
     headers: {
@@ -41,6 +42,24 @@ const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
       ...(init?.headers || {}),
     },
     ...init,
+  });
+
+  if (!res.ok) {
+    throw new Error(`${res.status}`);
+  }
+
+  if (res.status === 204 || res.headers.get('content-length') === '0') {
+    return undefined as unknown as T;
+  }
+
+  return res.json();
+};
+
+/** Public request — never sends a JWT. Use for read-only public content so a
+ *  stored admin JWT doesn't trigger the Authenticated role and cause 403s. */
+const publicRequest = async <T>(path: string): Promise<T> => {
+  const res = await fetch(`${STRAPI_BASE_URL}/api${path}`, {
+    headers: { 'Content-Type': 'application/json' },
   });
 
   if (!res.ok) {
@@ -88,14 +107,14 @@ const requestWithLocaleFallback = async <T>(
   const activeLocale = resolveLocale(locale);
 
   try {
-    const primary = await request<T>(withRuntimeLocale(path, activeLocale));
+    const primary = await publicRequest<T>(withRuntimeLocale(path, activeLocale));
     if (fallbackOnEmpty && shouldFallbackToUk(activeLocale) && hasNoData(primary)) {
-      return request<T>(withRuntimeLocale(path, 'uk'));
+      return publicRequest<T>(withRuntimeLocale(path, 'uk'));
     }
     return primary;
   } catch (error) {
     if (shouldFallbackToUk(activeLocale)) {
-      return request<T>(withRuntimeLocale(path, 'uk'));
+      return publicRequest<T>(withRuntimeLocale(path, 'uk'));
     }
     throw error;
   }
