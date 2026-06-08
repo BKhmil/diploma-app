@@ -2,7 +2,7 @@ import { localizeUk, localizeEn } from '../../locale';
 
 export const getProgramsPageUk = () => ({
   page_title: localizeUk('Бібліотека програм seed v2'),
-  page_intro: localizeUk('Повний каталог з колекції Program. Кожен запис має (new) у текстових полях після повторного seed.'),
+  page_intro: localizeUk('Повний каталог з колекції Program. Кожен запис редагується в Content Manager.'),
   search_placeholder: localizeUk('Шукати: UX, Data, НМТ, Agile...'),
   popular_tags_title: localizeUk('Швидкі фільтри (seed):'),
   popular_tags: [
@@ -16,7 +16,7 @@ export const getProgramsPageUk = () => ({
 
 export const getProgramsPageEn = () => ({
   page_title: localizeEn('Program library seed v2'),
-  page_intro: localizeEn('Full catalog from the Program collection. Each entry has (new) on text fields after re-seed.'),
+  page_intro: localizeEn('Full catalog from the Program collection. Each entry is edited in the Content Manager.'),
   search_placeholder: localizeEn('Search: UX, Data, NMT, Agile...'),
   popular_tags_title: localizeEn('Quick filters (seed):'),
   popular_tags: [

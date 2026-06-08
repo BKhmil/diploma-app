@@ -17,7 +17,7 @@ const mkEn = (
   targetAudience,
   outcomes: [
     'Understand program structure in Strapi',
-    'See the (new) marker after seed',
+    'See changes instantly after saving',
     'Edit content without deploy',
   ],
   modules: [

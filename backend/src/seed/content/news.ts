@@ -18,7 +18,7 @@ export const seedNews: SeedNewsItem[] = [
     is_pinned: true,
     title: 'Відкрито демо-набір seed v2',
     excerpt: 'Оголошення з колекції News — перевірте поля title, excerpt, content у Strapi.',
-    content: 'Це перша демо-новина seed v2.\n\nУсі текстові поля отримують суфікси (new) та (uk)/(en) після sync.\n\nРедагуйте в Content Manager → News.',
+    content: 'Це перша демо-новина seed v2.\n\nУсі текстові поля редагуються в адмінці.\n\nРедагуйте в Content Manager → News.',
   },
   {
     news_key: 'news-002',
@@ -50,7 +50,7 @@ export const newsEnTranslations: Record<string, SeedNewsTranslation> = {
   'news-001': {
     title: 'Demo intake seed v2 is open',
     excerpt: 'Announcement from News collection — check title, excerpt, content in Strapi.',
-    content: 'This is the first seed v2 demo news item.\n\nAll text fields get (new) and (uk)/(en) suffixes after sync.\n\nEdit in Content Manager → News.',
+    content: 'This is the first seed v2 demo news item.\n\nAll text fields are edited in the admin.\n\nEdit in Content Manager → News.',
   },
   'news-002': {
     title: 'CMS open day',

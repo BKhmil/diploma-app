@@ -3,7 +3,7 @@ import { localizeUk, localizeEn } from '../../locale';
 export const getHomeUk = () => ({
   hero_badge_text: localizeUk('Демо-головна · seed v2'),
   hero_title: localizeUk('Навчання, яке видно в Strapi'),
-  hero_subtitle: localizeUk('Усі блоки нижче заповнюються з single type home-page. Шукайте суфікс (new) у адмінці.'),
+  hero_subtitle: localizeUk('Усі блоки нижче заповнюються з single type home-page та редагуються в адмінці.'),
   mission: localizeUk('Місія seed v2: показати повний шлях контенту від CMS до сайту.'),
   stats_graduates: 880,
   stats_programs: 42,
@@ -37,7 +37,7 @@ export const getHomeUk = () => ({
     { text: localizeUk('Single type: home-page') },
     { text: localizeUk('Колекція: program') },
     { text: localizeUk('Колекція: news (превʼю)') },
-    { text: localizeUk('Мітка (new) після re-seed') },
+    { text: localizeUk('Редагується в Content Manager') },
   ],
   direction_cards: [
     { title: localizeUk('Короткі курси'), description: localizeUk('Демо-напрям qualification'), link_path: '/qualification', icon_key: 'trending_up', order: 1 },
@@ -54,7 +54,7 @@ export const getHomeUk = () => ({
 export const getHomeEn = () => ({
   hero_badge_text: localizeEn('Demo home · seed v2'),
   hero_title: localizeEn('Learning you can see in Strapi'),
-  hero_subtitle: localizeEn('All sections below come from home-page single type. Look for the (new) suffix in admin.'),
+  hero_subtitle: localizeEn('All sections below come from the home-page single type and are edited in the admin.'),
   mission: localizeEn('Seed v2 mission: show the full CMS-to-site content path.'),
   stats_graduates: 880,
   stats_programs: 42,
@@ -88,7 +88,7 @@ export const getHomeEn = () => ({
     { text: localizeEn('Single type: home-page') },
     { text: localizeEn('Collection: program') },
     { text: localizeEn('Collection: news (preview)') },
-    { text: localizeEn('(new) marker after re-seed') },
+    { text: localizeEn('Edited in Content Manager') },
   ],
   direction_cards: [
     { title: localizeEn('Short courses'), description: localizeEn('Demo track qualification'), link_path: '/qualification', icon_key: 'trending_up', order: 1 },

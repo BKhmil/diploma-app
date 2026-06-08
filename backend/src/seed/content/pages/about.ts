@@ -21,7 +21,7 @@ export const getAboutUk = () => ({
     { text: localizeUk('Перевірка single type about-page') },
     { text: localizeUk('Перевірка компонентів repeatable') },
     { text: localizeUk('Превʼю з колекцій') },
-    { text: localizeUk('Мітка (new) у всіх рядках') },
+    { text: localizeUk('Увесь контент редагується без коду') },
   ],
   mission_stats: [
     { value: localizeUk('12'), label: localizeUk('Років seed'), order: 1 },
@@ -63,7 +63,7 @@ export const getAboutEn = () => ({
     { text: localizeEn('Check about-page single type') },
     { text: localizeEn('Check repeatable components') },
     { text: localizeEn('Previews from collections') },
-    { text: localizeEn('(new) marker on all rows') },
+    { text: localizeEn('All content editable without code') },
   ],
   mission_stats: [
     { value: localizeEn('12'), label: localizeEn('Seed years'), order: 1 },
