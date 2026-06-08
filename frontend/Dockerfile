@@ -7,7 +7,10 @@ RUN npm ci
 
 COPY . .
 
-ARG VITE_STRAPI_URL=http://localhost:1337
+# Set to '' (empty) for server deploy so the frontend makes same-origin calls
+# and nginx proxies /api -> backend:1337.
+# Set to http://localhost:1337 for local dev without Docker.
+ARG VITE_STRAPI_URL=
 ENV VITE_STRAPI_URL=${VITE_STRAPI_URL}
 
 RUN npm run build
