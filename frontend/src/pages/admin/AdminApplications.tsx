@@ -326,7 +326,7 @@ export default function AdminApplications() {
                     ] as { label: string; file?: StrapiMediaFile }[]).filter(d => d.file).map(({ label, file }) => (
                       <a
                         key={label}
-                        href={`${(import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '')}${file!.url}`}
+                        href={`${(import.meta.env.VITE_STRAPI_URL ?? 'http://localhost:1337').replace(/\/$/, '')}${file!.url}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 px-2.5 py-1.5 border border-gray-200 rounded-lg hover:border-dnu-blue hover:text-dnu-blue transition-colors text-xs text-gray-700 group"
