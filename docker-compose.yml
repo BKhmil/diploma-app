@@ -43,6 +43,17 @@ services:
       DATABASE_USERNAME: ${POSTGRES_USER}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_SSL: "false"
+      # First-launch superadmin provisioning
+      SUPERADMIN_EMAIL: ${SUPERADMIN_EMAIL:-}
+      SUPERADMIN_PASSWORD: ${SUPERADMIN_PASSWORD:-}
+      SUPERADMIN_FIRSTNAME: ${SUPERADMIN_FIRSTNAME:-ЦНО}
+      SUPERADMIN_LASTNAME: ${SUPERADMIN_LASTNAME:-Admin}
+      # Seed control
+      SEED_ON_FIRST_RUN: ${SEED_ON_FIRST_RUN:-true}
+      SEED_FORCE: ${SEED_FORCE:-false}
+      # CORS origins — comma-separated, set to server URL in production
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
+      # Email / SMTP (leave empty to disable notifications)
       SMTP_HOST: ${SMTP_HOST:-smtp.office365.com}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_USER: ${SMTP_USER:-}
@@ -59,13 +70,16 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL}
+        # Empty = same-origin mode: nginx proxies /api → backend:1337 (recommended).
+        # Set to http://SERVER_IP:1337 only if backend is on a separate host.
+        VITE_STRAPI_URL: ${VITE_STRAPI_URL:-}
     container_name: diploma_frontend
     restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "3000:80"
+      # On the server: keep default 80 (HTTP). Locally: set FRONTEND_PORT=3000 in .env
+      - "${FRONTEND_PORT:-80}:80"
 
   backup:
     image: postgres:16-alpine
@@ -83,6 +97,8 @@ services:
     volumes:
       - ./backups:/backups
       - ./backup/backup.sh:/usr/local/bin/backup.sh:ro
+      # Read-only access to uploaded files so each backup can snapshot them too.
+      - ./backend/public/uploads:/uploads-src:ro
     entrypoint: ["/bin/sh", "/usr/local/bin/backup.sh"]
 
 volumes:
