@@ -49,6 +49,12 @@ services:
       DATABASE_USERNAME: strapi_test
       DATABASE_PASSWORD: strapi_test_pass
       DATABASE_SSL: "false"
+      # Auto-provision a Strapi superadmin on first boot (used by auth integration tests)
+      SUPERADMIN_EMAIL: "admin@test.local"
+      SUPERADMIN_PASSWORD: "TestAdmin123!"
+      SUPERADMIN_FIRSTNAME: "Test"
+      SUPERADMIN_LASTNAME: "Admin"
+      SEED_ON_FIRST_RUN: "true"
       # SMTP intentionally left empty — email is skipped in dev/test (SMTP guard)
       SMTP_USER: ""
       SMTP_PASS: ""

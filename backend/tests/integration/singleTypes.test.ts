@@ -137,6 +137,44 @@ describe('GET /api/contact-info — field validation', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Locale linking — uk and en must share the same documentId (test case 6)
+//
+// In Strapi 5 the two locales are linked by a shared documentId.  If seed
+// ever used svc.create() for the en locale instead of svc.update(), it would
+// produce a separate, unlinked document with a different documentId.
+// ─────────────────────────────────────────────────────────────────────────────
+describe('Locale linking — uk and en share the same documentId', () => {
+  const endpoints = [
+    '/api/home-page',
+    '/api/about-page',
+    '/api/contact-info',
+    '/api/site-settings',
+  ];
+
+  for (const endpoint of endpoints) {
+    it(`${endpoint}: uk and en documentId are equal`, async () => {
+      const [ukRes, enRes] = await Promise.all([
+        api(`${endpoint}?locale=uk`),
+        api(`${endpoint}?locale=en`),
+      ]);
+
+      expect(ukRes.status).toBe(200);
+      expect(enRes.status).toBe(200);
+
+      const ukId = ukRes.body.data?.documentId;
+      const enId = enRes.body.data?.documentId;
+
+      // Both locales must expose a documentId
+      expect(typeof ukId).toBe('string');
+      expect(typeof enId).toBe('string');
+
+      // And they must be the same value — proving the locales are linked
+      expect(ukId).toBe(enId);
+    });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // home-page — component arrays
 // ─────────────────────────────────────────────────────────────────────────────
 describe('GET /api/home-page — component arrays', () => {

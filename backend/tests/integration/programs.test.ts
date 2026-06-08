@@ -154,57 +154,31 @@ describe('GET /api/programs/:documentId', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// POST / DELETE /api/programs  (public create is allowed by seed permissions)
+// Write protection
+//
+// Program create/update/delete are granted to the Authenticated role only
+// (see AUTHENTICATED_ACTIONS in src/index.ts); the Public role gets read-only
+// find/findOne. So anonymous (no-token) writes must be rejected with 401/403.
+// The admin dashboard performs these writes with a JWT attached.
 // ─────────────────────────────────────────────────────────────────────────────
-describe('POST + DELETE /api/programs', () => {
-  let createdDocumentId: string | null = null;
-
-  afterAll(async () => {
-    if (createdDocumentId) {
-      await del(`/api/programs/${createdDocumentId}`);
-    }
-  });
-
-  it('creates a new program and returns 200/201', async () => {
-    const { status, body } = await post('/api/programs', {
+describe('POST / PUT / DELETE /api/programs — rejected without a token', () => {
+  it('rejects an unauthenticated create with 401/403', async () => {
+    const { status } = await post('/api/programs', {
       data: {
-        title: 'Jest Test Program — DELETE ME',
+        title: 'Jest Test Program — should be rejected',
         category: 'qualification',
         format: 'online',
         duration: 2,
         duration_unit: 'months',
-        description: 'Created by integration test suite',
+        description: 'Created by integration test suite (must not persist)',
         status: 'active',
       },
     });
-
-    expect([200, 201]).toContain(status);
-    expect(body.data).toBeDefined();
-    expect(body.data.title).toBe('Jest Test Program — DELETE ME');
-    createdDocumentId = body.data.documentId;
+    expect([401, 403]).toContain(status);
   });
 
-  it('newly created program is retrievable via GET', async () => {
-    if (!createdDocumentId) return;
-    const { status, body } = await api(`/api/programs/${createdDocumentId}`);
-    expect(status).toBe(200);
-    expect(body.data.category).toBe('qualification');
-  });
-
-  it('deletes the created program', async () => {
-    if (!createdDocumentId) return;
-    const { status } = await del(`/api/programs/${createdDocumentId}`);
-    expect([200, 204]).toContain(status);
-    createdDocumentId = null;
-  });
-
-  it('returns 400/422 when required fields are missing', async () => {
-    const { status } = await post('/api/programs', {
-      data: {
-        // title is required but missing
-        category: 'qualification',
-      },
-    });
-    expect(status).toBeGreaterThanOrEqual(400);
+  it('rejects an unauthenticated delete with 401/403', async () => {
+    const { status } = await del('/api/programs/any-document-id');
+    expect([401, 403]).toContain(status);
   });
 });

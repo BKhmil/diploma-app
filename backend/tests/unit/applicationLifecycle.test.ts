@@ -180,15 +180,34 @@ describe('beforeCreate — duplicate application guard', () => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // afterCreate — email notification
+//
+// The hook is fire-and-forget: it launches sendApplicationNotification without
+// awaiting it.  Two things are required to test it correctly:
+//   1. SMTP_USER / SMTP_PASS must be set, or the hook returns early.
+//   2. After awaiting afterCreate(), flush the microtask queue so the
+//      detached promise has a chance to run before the assertions.
 // ─────────────────────────────────────────────────────────────────────────────
+
+/** Drain all pending microtasks (Promise chains) created by fire-and-forget calls. */
+const flushPromises = () => new Promise<void>(resolve => setImmediate(resolve));
+
 describe('afterCreate — email notification', () => {
+  beforeEach(() => {
+    process.env.SMTP_USER = 'test-user';
+    process.env.SMTP_PASS = 'test-pass';
+  });
+
+  afterEach(() => {
+    delete process.env.SMTP_USER;
+    delete process.env.SMTP_PASS;
+  });
+
   it('sends an admin notification email after a new application', async () => {
     const { strapi, queryMock } = makeStrapiMock();
-    // contact-info lookup
     queryMock.findOne.mockResolvedValue({ email: 'admin@university.ua' });
     (global as any).strapi = strapi;
 
-    const event = {
+    const event: any = {
       result: {
         id: 1,
         app_type: 'application',
@@ -200,6 +219,7 @@ describe('afterCreate — email notification', () => {
     };
 
     await lifecycles.afterCreate(event);
+    await flushPromises(); // let the detached promise complete
 
     expect(strapi.plugins.email.services.email.send).toHaveBeenCalledTimes(1);
     const callArg = strapi.plugins.email.services.email.send.mock.calls[0][0];
@@ -214,7 +234,7 @@ describe('afterCreate — email notification', () => {
     queryMock.findOne.mockResolvedValue(null); // no contact-info → default email
     (global as any).strapi = strapi;
 
-    const event = {
+    const event: any = {
       result: {
         id: 2,
         app_type: 'contact',
@@ -225,6 +245,7 @@ describe('afterCreate — email notification', () => {
     };
 
     await lifecycles.afterCreate(event);
+    await flushPromises();
 
     const callArg = strapi.plugins.email.services.email.send.mock.calls[0][0];
     expect(callArg.subject).toContain('Нове повідомлення від Марія Коваль');
@@ -237,7 +258,7 @@ describe('afterCreate — email notification', () => {
     strapi.plugins.email.services.email.send.mockRejectedValue(new Error('SMTP error'));
     (global as any).strapi = strapi;
 
-    const event = {
+    const event: any = {
       result: {
         id: 3,
         app_type: 'application',
@@ -247,10 +268,38 @@ describe('afterCreate — email notification', () => {
       },
     };
 
-    // Should NOT throw; the lifecycle swallows email errors
+    // afterCreate itself must not throw — the fire-and-forget catches internally
     await expect(lifecycles.afterCreate(event)).resolves.toBeUndefined();
+    await flushPromises();
+
     expect(strapi.log.warn).toHaveBeenCalledWith(
       expect.stringContaining('Failed to send notification')
+    );
+  });
+
+  it('skips email and logs info when SMTP is not configured', async () => {
+    // Override the beforeEach values so SMTP looks absent
+    delete process.env.SMTP_USER;
+    delete process.env.SMTP_PASS;
+
+    const { strapi } = makeStrapiMock();
+    (global as any).strapi = strapi;
+
+    const event: any = {
+      result: {
+        id: 4,
+        app_type: 'application',
+        full_name: 'No SMTP User',
+        email: 'nosmtp@example.com',
+        program_name: 'Some Program',
+      },
+    };
+
+    await lifecycles.afterCreate(event);
+
+    expect(strapi.plugins.email.services.email.send).not.toHaveBeenCalled();
+    expect(strapi.log.info).toHaveBeenCalledWith(
+      expect.stringContaining('SMTP not configured')
     );
   });
 });
