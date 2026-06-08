@@ -5,7 +5,7 @@ import { runSeedSync } from './seed';
 // Permission policy
 //
 // PUBLIC role  — anonymous visitors (no JWT). Read-only public content +
-//                form submissions (application.create).
+//                form submissions (application.create) + file uploads.
 // AUTHENTICATED — admin dashboard users (logged in with @strapi/users-permissions
 //                JWT). Full CRUD on operational resources.
 //
@@ -24,6 +24,7 @@ const PUBLIC_READ_CONTENT_TYPES = [
 	'partner.partner',
 	'internship.internship',
 	'staff-member.staff-member',
+	'pre-university-group.pre-university-group',
 	'home-page.home-page',
 	'about-page.about-page',
 	'contact-info.contact-info',
@@ -47,6 +48,10 @@ const PUBLIC_ACTIONS = [
 	]),
 	// Form submissions from public Apply / Contact pages
 	'api::application.application.create',
+	// File uploads for applications (doc_diploma, doc_passport, etc.)
+	'plugin::upload.content-api.upload',
+	'plugin::upload.content-api.find',
+	'plugin::upload.content-api.findOne',
 ];
 
 const AUTHENTICATED_ACTIONS = [
@@ -105,7 +110,7 @@ async function syncRolePermissions(
 
 	// Revoke anything not in the desired set, but only for the actions we manage.
 	// We keep U&P plugin auth permissions and any unrelated entries untouched.
-	const managedPrefixes = ['api::'];
+	const managedPrefixes = ['api::', 'plugin::upload'];
 	for (const perm of existing) {
 		if (desiredSet.has(perm.action)) continue;
 		if (!managedPrefixes.some((p) => perm.action.startsWith(p))) continue;
@@ -182,11 +187,69 @@ const backfillI18nLocales = async (strapi: Core.Strapi) => {
 	}
 };
 
+/** Disable public self-registration — only Strapi admins can create Users. */
+const disablePublicRegistration = async (strapi: Core.Strapi) => {
+	try {
+		const upStore = strapi.store({ type: 'plugin', name: 'users-permissions' });
+		const advanced = await upStore.get({ key: 'advanced' }) as Record<string, unknown> | null;
+		if (advanced && advanced.allow_register !== false) {
+			await upStore.set({ key: 'advanced', value: { ...advanced, allow_register: false } });
+			strapi.log.info('[auth] Disabled public self-registration');
+		}
+	} catch (error) {
+		strapi.log.warn(`[auth] Failed to disable public registration: ${String(error)}`);
+	}
+};
+
+/**
+ * Auto-provision first Strapi superadmin from env vars on fresh install.
+ * Only runs when there are no admin users at all.
+ *
+ * Required env: SUPERADMIN_EMAIL, SUPERADMIN_PASSWORD
+ * Optional env: SUPERADMIN_FIRSTNAME, SUPERADMIN_LASTNAME
+ */
+const provisionFirstSuperadmin = async (strapi: Core.Strapi) => {
+	try {
+		if (!process.env.SUPERADMIN_EMAIL || !process.env.SUPERADMIN_PASSWORD) {
+			return; // No env creds configured — skip silently
+		}
+
+		const adminCount = await strapi.db.query('admin::user').count();
+		if (adminCount > 0) {
+			return; // Already have at least one admin
+		}
+
+		const role = await strapi.db.query('admin::role').findOne({
+			where: { code: 'strapi-super-admin' },
+		}) as { id: number } | null;
+
+		if (!role) {
+			strapi.log.warn('[superadmin] Could not find super-admin role — skipping auto-provision');
+			return;
+		}
+
+		await strapi.service('admin::user').create({
+			email: process.env.SUPERADMIN_EMAIL,
+			firstname: process.env.SUPERADMIN_FIRSTNAME || 'ЦНО',
+			lastname: process.env.SUPERADMIN_LASTNAME || 'Admin',
+			password: process.env.SUPERADMIN_PASSWORD,
+			isActive: true,
+			roles: [role.id],
+		});
+
+		strapi.log.info(`[superadmin] Provisioned superadmin: ${process.env.SUPERADMIN_EMAIL}`);
+	} catch (error) {
+		strapi.log.warn(`[superadmin] Failed to provision superadmin: ${String(error)}`);
+	}
+};
+
 export default {
 	register() {},
 	async bootstrap({ strapi }: { strapi: Core.Strapi }) {
 		await ensureUkLocale(strapi);
 		await ensurePublicPermissions(strapi);
+		await disablePublicRegistration(strapi);
+		await provisionFirstSuperadmin(strapi);
 		await runSeedSync(strapi);
 		await backfillI18nLocales(strapi);
 	},
