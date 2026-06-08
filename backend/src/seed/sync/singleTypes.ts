@@ -14,131 +14,99 @@ import { getDocumentsPageUk, getDocumentsPageEn } from '../content/pages/documen
 import { getNotFoundUk, getNotFoundEn } from '../content/pages/notFound';
 import { getSiteSettingsUk, getSiteSettingsEn } from '../content/pages/siteSettings';
 
+/** Upsert a single-type in uk and en, keeping both locales on one documentId. */
 async function upsertSingleType(
-  strapi: Core.Strapi,
-  uid: UID.ContentType,
-  ukData: Record<string, unknown>,
-  enData: Record<string, unknown>
+	strapi: Core.Strapi,
+	uid: UID.ContentType,
+	ukData: Record<string, unknown>,
+	enData: Record<string, unknown>
 ) {
-  const docService = strapi.documents(uid);
+	const svc = strapi.documents(uid);
 
-  // Find any existing row (draft or published) for each locale
-  const ukRow = await strapi.db.query(uid).findOne({ where: { locale: 'uk' } });
-  const enRow = await strapi.db.query(uid).findOne({ where: { locale: 'en' } });
+	// Find existing uk document
+	const existingUk = await strapi.db.query(uid).findOne({ where: { locale: 'uk' } }) as { documentId?: string } | null;
 
-  const ukDocumentId: string | undefined = ukRow?.document_id;
-  const enDocumentId: string | undefined = enRow?.document_id;
+	let documentId: string;
 
-  if (ukDocumentId) {
-    await docService.update({ documentId: ukDocumentId, locale: 'uk', data: ukData });
-    await docService.publish({ documentId: ukDocumentId, locale: 'uk' });
-  } else {
-    const created = await docService.create({ locale: 'uk', data: ukData });
-    await docService.publish({ documentId: created.documentId, locale: 'uk' });
-  }
+	if (existingUk?.documentId) {
+		documentId = existingUk.documentId;
+		// Update uk locale
+		await svc.update({ documentId, locale: 'uk', data: ukData } as Parameters<typeof svc.update>[0]);
+	} else {
+		// Create uk locale — this is the "primary" locale that generates the documentId
+		const created = await svc.create({ locale: 'uk', data: ukData } as Parameters<typeof svc.create>[0]);
+		documentId = created.documentId;
+	}
 
-  if (enDocumentId) {
-    await docService.update({ documentId: enDocumentId, locale: 'en', data: enData });
-    await docService.publish({ documentId: enDocumentId, locale: 'en' });
-  } else {
-    const created = await docService.create({ locale: 'en', data: enData });
-    await docService.publish({ documentId: created.documentId, locale: 'en' });
-  }
+	// Link en to the same document. update() creates the locale if it's missing;
+	// create() would make a separate, unlinked entry.
+	try {
+		await svc.update({ documentId, locale: 'en', data: enData } as Parameters<typeof svc.update>[0]);
+	} catch (err) {
+		strapi.log.warn(`[seed] Failed to upsert en locale for ${uid}: ${String(err)}`);
+	}
 }
 
 export async function syncHomePage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::home-page.home-page', getHomeUk(), getHomeEn());
+	await upsertSingleType(strapi, 'api::home-page.home-page', getHomeUk(), getHomeEn());
 }
 
 export async function syncAboutPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::about-page.about-page', getAboutUk(), getAboutEn());
+	await upsertSingleType(strapi, 'api::about-page.about-page', getAboutUk(), getAboutEn());
 }
 
 export async function syncAlumniPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::alumni-page.alumni-page', getAlumniUk(), getAlumniEn());
+	await upsertSingleType(strapi, 'api::alumni-page.alumni-page', getAlumniUk(), getAlumniEn());
 }
 
 export async function syncQualificationPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::qualification-page.qualification-page', getQualificationUk(), getQualificationEn());
+	await upsertSingleType(strapi, 'api::qualification-page.qualification-page', getQualificationUk(), getQualificationEn());
 }
 
 export async function syncRetrainingPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::retraining-page.retraining-page', getRetrainingUk(), getRetrainingEn());
+	await upsertSingleType(strapi, 'api::retraining-page.retraining-page', getRetrainingUk(), getRetrainingEn());
 }
 
 export async function syncPartnersPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::partners-page.partners-page', getPartnersPageUk(), getPartnersPageEn());
+	await upsertSingleType(strapi, 'api::partners-page.partners-page', getPartnersPageUk(), getPartnersPageEn());
 }
 
 export async function syncPreUniversityPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::pre-university-page.pre-university-page', getPreUniversityPageUk(), getPreUniversityPageEn());
+	await upsertSingleType(strapi, 'api::pre-university-page.pre-university-page', getPreUniversityPageUk(), getPreUniversityPageEn());
 }
 
 export async function syncContactInfo(strapi: Core.Strapi) {
-  const MAP_URL = 'https://maps.google.com/maps?width=100%25&height=600&hl=uk&q=48.434606,35.034614+(ДНУ%20ім.%20Олеся%20Гончара)&t=&z=16&ie=UTF8&iwloc=&output=embed';
+	const MAP_URL = 'https://maps.google.com/maps?width=100%25&height=600&hl=uk&q=48.434606,35.034614+(ДНУ%20ім.%20Олеся%20Гончара)&t=&z=16&ie=UTF8&iwloc=&output=embed';
 
-  const query = strapi.db.query('api::contact-info.contact-info');
-  const ukRow = await query.findOne({ where: { locale: 'uk' } });
-  const enRow = await query.findOne({ where: { locale: 'en' } });
+	const baseUk = getContactUk();
+	const baseEn = getContactEn();
 
-  const baseUk = getContactUk();
-  const baseEn = getContactEn();
+	const ukData = { ...baseUk, map_embed_url: baseUk.map_embed_url || MAP_URL };
+	const enData = { ...baseEn, map_embed_url: baseEn.map_embed_url || MAP_URL };
 
-  const ukData = {
-    ...baseUk,
-    map_embed_url: baseUk.map_embed_url || MAP_URL,
-  };
-
-  const enData = {
-    ...baseEn,
-    map_embed_url: baseEn.map_embed_url || MAP_URL,
-  };
-
-  const cUID = 'api::contact-info.contact-info' as const;
-  const cDoc = strapi.documents(cUID);
-  // Strapi generates per-UID Input types from schemas; our seed data shape is correct
-  // at runtime but wider than the generated type, so a targeted cast is needed here.
-  type ContactData = Parameters<typeof cDoc.update>[0]['data'];
-  const ukDocId: string | undefined = ukRow?.document_id;
-  const enDocId: string | undefined = enRow?.document_id;
-
-  if (ukDocId) {
-    await cDoc.update({ documentId: ukDocId, locale: 'uk', data: ukData as unknown as ContactData });
-    await cDoc.publish({ documentId: ukDocId, locale: 'uk' });
-  } else {
-    const created = await cDoc.create({ locale: 'uk', data: ukData as unknown as ContactData });
-    await cDoc.publish({ documentId: created.documentId, locale: 'uk' });
-  }
-
-  if (enDocId) {
-    await cDoc.update({ documentId: enDocId, locale: 'en', data: enData as unknown as ContactData });
-    await cDoc.publish({ documentId: enDocId, locale: 'en' });
-  } else {
-    const created = await cDoc.create({ locale: 'en', data: enData as unknown as ContactData });
-    await cDoc.publish({ documentId: created.documentId, locale: 'en' });
-  }
+	await upsertSingleType(strapi, 'api::contact-info.contact-info', ukData, enData);
 }
 
 export async function syncApplyPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::apply-page.apply-page', getApplyUk(), getApplyEn());
+	await upsertSingleType(strapi, 'api::apply-page.apply-page', getApplyUk(), getApplyEn());
 }
 
 export async function syncProgramsPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::programs-page.programs-page', getProgramsPageUk(), getProgramsPageEn());
+	await upsertSingleType(strapi, 'api::programs-page.programs-page', getProgramsPageUk(), getProgramsPageEn());
 }
 
 export async function syncStaffPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::staff-page.staff-page', getStaffPageUk(), getStaffPageEn());
+	await upsertSingleType(strapi, 'api::staff-page.staff-page', getStaffPageUk(), getStaffPageEn());
 }
 
 export async function syncDocumentsPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::documents-page.documents-page', getDocumentsPageUk(), getDocumentsPageEn());
+	await upsertSingleType(strapi, 'api::documents-page.documents-page', getDocumentsPageUk(), getDocumentsPageEn());
 }
 
 export async function syncNotFoundPage(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::not-found-page.not-found-page', getNotFoundUk(), getNotFoundEn());
+	await upsertSingleType(strapi, 'api::not-found-page.not-found-page', getNotFoundUk(), getNotFoundEn());
 }
 
 export async function syncSiteSettings(strapi: Core.Strapi) {
-  await upsertSingleType(strapi, 'api::site-settings.site-settings', getSiteSettingsUk(), getSiteSettingsEn());
+	await upsertSingleType(strapi, 'api::site-settings.site-settings', getSiteSettingsUk(), getSiteSettingsEn());
 }

@@ -5,198 +5,234 @@ import { seedPartners, partnersEnTranslations } from '../content/partners';
 import { seedGraduates, graduatesEnTranslations } from '../content/graduates';
 import { seedDocuments, documentsEnTranslations } from '../content/documents';
 import { seedNews, newsEnTranslations } from '../content/news';
+import { seedPreUniversitySubjects, preUniversityEnTranslations } from '../content/preUniversitySubjects';
 import { programTranslations } from '../translate';
-import { localizeUk, localizeEn } from '../locale';
 
+/** Upsert a localized collection entry; `where` is the stable natural key (e.g. program_code). */
 async function upsertLocale(
-  strapi: Core.Strapi,
-  uid: string,
-  whereUk: Record<string, unknown>,
-  ukData: Record<string, unknown>,
-  enData: Record<string, unknown>
+	strapi: Core.Strapi,
+	uid: string,
+	where: Record<string, unknown>,
+	ukData: Record<string, unknown>,
+	enData: Record<string, unknown>
 ) {
-  const existingUk = await strapi.db.query(uid).findOne({ where: { ...whereUk, locale: 'uk' } });
-  if (existingUk) {
-    await strapi.db.query(uid).update({ where: { id: existingUk.id }, data: ukData });
-  } else {
-    await strapi.db.query(uid).create({ data: { ...ukData, ...whereUk, locale: 'uk', publishedAt: new Date() } });
-  }
-  const existingEn = await strapi.db.query(uid).findOne({ where: { ...whereUk, locale: 'en' } });
-  if (existingEn) {
-    await strapi.db.query(uid).update({ where: { id: existingEn.id }, data: enData });
-  } else {
-    await strapi.db.query(uid).create({ data: { ...enData, ...whereUk, locale: 'en', publishedAt: new Date() } });
-  }
+	const svc = strapi.documents(uid as Parameters<typeof strapi.documents>[0]);
+
+	// Find existing uk entry
+	const existingUk = await strapi.db.query(uid).findOne({ where: { ...where, locale: 'uk' } }) as { id: number; documentId?: string } | null;
+
+	let documentId: string;
+
+	if (existingUk?.documentId) {
+		documentId = existingUk.documentId;
+		await svc.update({ documentId, locale: 'uk', data: ukData as any } as any);
+	} else {
+		const created = await svc.create({ locale: 'uk', data: { ...ukData, ...where } as any } as any) as { documentId: string };
+		documentId = created.documentId;
+	}
+
+	// Link en to the same document. update() creates the locale if it's missing;
+	// non-localized fields are shared from the uk version.
+	try {
+		await svc.update({ documentId, locale: 'en', data: enData as any } as any);
+	} catch (err) {
+		strapi.log.warn(`[seed] Failed to upsert en locale for ${uid} where=${JSON.stringify(where)}: ${String(err)}`);
+	}
 }
 
 export async function syncPrograms(strapi: Core.Strapi) {
-  for (const prog of seedPrograms) {
-    const en = programTranslations[prog.program_code];
-    const ukData = {
-      title: localizeUk(prog.title),
-      description: localizeUk(prog.description),
-      target_audience: prog.target_audience ? localizeUk(prog.target_audience) : undefined,
-      certificate: prog.certificate ? localizeUk(prog.certificate) : undefined,
-      duration: prog.duration,
-      format: prog.format,
-      credits: prog.credits,
-      group_size: prog.group_size,
-      start_date: prog.start_date,
-      price: prog.price,
-      outcomes: prog.outcomes ? prog.outcomes.map(localizeUk) : [],
-      modules: prog.modules ? prog.modules.map((m) => ({ title: localizeUk(m.title), hours: m.hours })) : [],
-      faq: prog.faq ? prog.faq.map((f) => ({ q: localizeUk(f.q), a: localizeUk(f.a) })) : [],
-      category: prog.category,
-      status: prog.status,
-      is_featured: prog.is_featured ?? false,
-      icon_emoji: prog.icon_emoji,
-      price_hint: prog.price_hint ? localizeUk(prog.price_hint) : undefined,
-    };
-    const enData = {
-      title: en ? localizeEn(en.title) : localizeEn(prog.title),
-      description: en ? localizeEn(en.description) : localizeEn(prog.description),
-      target_audience: en ? localizeEn(en.targetAudience) : (prog.target_audience ? localizeEn(prog.target_audience) : undefined),
-      certificate: prog.certificate ? localizeEn(prog.certificate) : undefined,
-      duration: prog.duration,
-      format: prog.format,
-      credits: prog.credits,
-      group_size: prog.group_size,
-      start_date: prog.start_date,
-      price: prog.price,
-      outcomes: en ? en.outcomes.map(localizeEn) : (prog.outcomes ? prog.outcomes.map(localizeEn) : []),
-      modules: en
-        ? en.modules.map((m) => ({ title: localizeEn(m.title), hours: m.hours }))
-        : (prog.modules ? prog.modules.map((m) => ({ title: localizeEn(m.title), hours: m.hours })) : []),
-      faq: en
-        ? en.faq.map((f) => ({ q: localizeEn(f.q), a: localizeEn(f.a) }))
-        : (prog.faq ? prog.faq.map((f) => ({ q: localizeEn(f.q), a: localizeEn(f.a) })) : []),
-      category: prog.category,
-      status: prog.status,
-      is_featured: prog.is_featured ?? false,
-      icon_emoji: prog.icon_emoji,
-      price_hint: prog.price_hint ? localizeEn(prog.price_hint) : undefined,
-    };
-    await upsertLocale(strapi, 'api::program.program', { program_code: prog.program_code }, ukData, enData);
-  }
+	for (const prog of seedPrograms) {
+		const en = programTranslations[prog.program_code];
+		const ukData: Record<string, unknown> = {
+			title: prog.title,
+			description: prog.description,
+			target_audience: prog.target_audience,
+			certificate: prog.certificate,
+			duration: prog.duration,
+			duration_unit: prog.duration_unit,
+			format: prog.format,
+			credits: prog.credits,
+			group_size: prog.group_size,
+			start_date: prog.start_date,
+			price: prog.price,
+			outcomes: prog.outcomes ?? [],
+			modules: prog.modules ?? [],
+			faq: prog.faq ?? [],
+			category: prog.category,
+			status: prog.status,
+			is_featured: prog.is_featured ?? false,
+			icon_emoji: prog.icon_emoji,
+			price_hint: prog.price_hint,
+		};
+		const enData: Record<string, unknown> = {
+			title: en ? en.title : prog.title,
+			description: en ? en.description : prog.description,
+			target_audience: en ? en.targetAudience : prog.target_audience,
+			certificate: prog.certificate,
+			duration: prog.duration,
+			duration_unit: prog.duration_unit,
+			format: prog.format,
+			credits: prog.credits,
+			group_size: prog.group_size,
+			start_date: prog.start_date,
+			price: prog.price,
+			outcomes: en ? en.outcomes : (prog.outcomes ?? []),
+			modules: en ? en.modules : (prog.modules ?? []),
+			faq: en ? en.faq : (prog.faq ?? []),
+			category: prog.category,
+			status: prog.status,
+			is_featured: prog.is_featured ?? false,
+			icon_emoji: prog.icon_emoji,
+			price_hint: prog.price_hint,
+		};
+		await upsertLocale(strapi, 'api::program.program', { program_code: prog.program_code }, ukData, enData);
+	}
 }
 
 export async function syncStaff(strapi: Core.Strapi) {
-  for (const member of seedStaff) {
-    if (!member.email) continue;
-    const enTrans = staffEnTranslations[member.email] || {};
-    const ukData = {
-      name: localizeUk(member.name),
-      position: localizeUk(member.position),
-      degree: member.degree ? localizeUk(member.degree) : undefined,
-      department: member.department ? localizeUk(member.department) : undefined,
-      experience: member.experience,
-      programs_count: member.programs_count,
-      tags: member.tags ? member.tags.map(localizeUk) : [],
-      role: member.role,
-    };
-    const enData = {
-      name: localizeEn(member.name),
-      position: enTrans.position ? localizeEn(enTrans.position) : localizeEn(member.position),
-      degree: enTrans.degree ? localizeEn(enTrans.degree) : (member.degree ? localizeEn(member.degree) : undefined),
-      department: enTrans.department ? localizeEn(enTrans.department) : (member.department ? localizeEn(member.department) : undefined),
-      experience: member.experience,
-      programs_count: member.programs_count,
-      tags: enTrans.tags ? enTrans.tags.map(localizeEn) : (member.tags ? member.tags.map(localizeEn) : []),
-      role: member.role,
-      email: member.email,
-    };
-    await upsertLocale(strapi, 'api::staff-member.staff-member', { email: member.email }, ukData, enData);
-  }
+	for (const member of seedStaff) {
+		if (!member.email) continue;
+		const enTrans = staffEnTranslations[member.email] || {};
+		const ukData: Record<string, unknown> = {
+			name: member.name,
+			position: member.position,
+			degree: member.degree,
+			department: member.department,
+			experience: member.experience,
+			programs_count: member.programs_count,
+			tags: member.tags ?? [],
+			role: member.role,
+			email: member.email,
+		};
+		const enData: Record<string, unknown> = {
+			name: member.name,
+			position: enTrans.position ?? member.position,
+			degree: enTrans.degree ?? member.degree,
+			department: enTrans.department ?? member.department,
+			experience: member.experience,
+			programs_count: member.programs_count,
+			tags: enTrans.tags ?? member.tags ?? [],
+			role: member.role,
+			email: member.email,
+		};
+		await upsertLocale(strapi, 'api::staff-member.staff-member', { email: member.email }, ukData, enData);
+	}
 }
 
 export async function syncPartners(strapi: Core.Strapi) {
-  for (const partner of seedPartners) {
-    const enTrans = partnersEnTranslations[partner.name] || {};
-    const ukData = {
-      name: localizeUk(partner.name),
-      type: partner.type,
-      city: partner.city ? localizeUk(partner.city) : undefined,
-      agreement: partner.agreement ? localizeUk(partner.agreement) : undefined,
-      description: partner.description ? localizeUk(partner.description) : undefined,
-    };
-    const enData = {
-      name: enTrans.name ? localizeEn(enTrans.name) : localizeEn(partner.name),
-      type: partner.type,
-      city: enTrans.city ? localizeEn(enTrans.city) : (partner.city ? localizeEn(partner.city) : undefined),
-      agreement: enTrans.agreement ? localizeEn(enTrans.agreement) : (partner.agreement ? localizeEn(partner.agreement) : undefined),
-      description: enTrans.description ? localizeEn(enTrans.description) : (partner.description ? localizeEn(partner.description) : undefined),
-    };
-    await upsertLocale(strapi, 'api::partner.partner', { name: partner.name }, ukData, enData);
-  }
+	for (const partner of seedPartners) {
+		const enTrans = partnersEnTranslations[partner.name] || {};
+		const ukData: Record<string, unknown> = {
+			name: partner.name,
+			type: partner.type,
+			city: partner.city,
+			agreement: partner.agreement,
+			description: partner.description,
+		};
+		const enData: Record<string, unknown> = {
+			name: enTrans.name ?? partner.name,
+			type: partner.type,
+			city: enTrans.city ?? partner.city,
+			agreement: enTrans.agreement ?? partner.agreement,
+			description: enTrans.description ?? partner.description,
+		};
+		await upsertLocale(strapi, 'api::partner.partner', { name: partner.name }, ukData, enData);
+	}
 }
 
 export async function syncGraduates(strapi: Core.Strapi) {
-  for (const grad of seedGraduates) {
-    const enTrans = graduatesEnTranslations[grad.name] || {};
-    const ukData = {
-      name: localizeUk(grad.name),
-      program: grad.program ? localizeUk(grad.program) : undefined,
-      position: grad.position ? localizeUk(grad.position) : undefined,
-      organization: grad.organization ? localizeUk(grad.organization) : undefined,
-      year: grad.year,
-      rating: grad.rating,
-      story: localizeUk(grad.story),
-      is_featured: grad.is_featured,
-    };
-    const enData = {
-      name: localizeEn(grad.name),
-      program: enTrans.program ? localizeEn(enTrans.program) : (grad.program ? localizeEn(grad.program) : undefined),
-      position: enTrans.position ? localizeEn(enTrans.position) : (grad.position ? localizeEn(grad.position) : undefined),
-      organization: enTrans.organization ? localizeEn(enTrans.organization) : (grad.organization ? localizeEn(grad.organization) : undefined),
-      year: grad.year,
-      rating: grad.rating,
-      story: enTrans.story ? localizeEn(enTrans.story) : localizeEn(grad.story),
-      is_featured: grad.is_featured,
-    };
-    await upsertLocale(strapi, 'api::graduate.graduate', { name: grad.name }, ukData, enData);
-  }
+	for (const grad of seedGraduates) {
+		const enTrans = graduatesEnTranslations[grad.name] || {};
+		const ukData: Record<string, unknown> = {
+			name: grad.name,
+			program: grad.program,
+			position: grad.position,
+			organization: grad.organization,
+			year: grad.year,
+			rating: grad.rating,
+			story: grad.story,
+			is_featured: grad.is_featured,
+		};
+		const enData: Record<string, unknown> = {
+			name: grad.name,
+			program: enTrans.program ?? grad.program,
+			position: enTrans.position ?? grad.position,
+			organization: enTrans.organization ?? grad.organization,
+			year: grad.year,
+			rating: grad.rating,
+			story: enTrans.story ?? grad.story,
+			is_featured: grad.is_featured,
+		};
+		await upsertLocale(strapi, 'api::graduate.graduate', { name: grad.name }, ukData, enData);
+	}
 }
 
 export async function syncDocuments(strapi: Core.Strapi) {
-  for (const doc of seedDocuments) {
-    const enTrans = documentsEnTranslations[doc.document_code] || {};
-    const ukData = {
-      title: localizeUk(doc.title),
-      meta: doc.meta ? localizeUk(doc.meta) : undefined,
-      description: doc.description ? localizeUk(doc.description) : undefined,
-      type: doc.type,
-      doc_category: doc.doc_category,
-    };
-    const enData = {
-      title: enTrans.title ? localizeEn(enTrans.title) : localizeEn(doc.title),
-      meta: enTrans.meta ? localizeEn(enTrans.meta) : (doc.meta ? localizeEn(doc.meta) : undefined),
-      description: enTrans.description ? localizeEn(enTrans.description) : (doc.description ? localizeEn(doc.description) : undefined),
-      type: doc.type,
-      doc_category: doc.doc_category,
-    };
-    await upsertLocale(strapi, 'api::document.document', { document_code: doc.document_code }, ukData, enData);
-  }
+	for (const doc of seedDocuments) {
+		const enTrans = documentsEnTranslations[doc.document_code] || {};
+		const ukData: Record<string, unknown> = {
+			title: doc.title,
+			meta: doc.meta,
+			description: doc.description,
+			type: doc.type,
+			doc_category: doc.doc_category,
+		};
+		const enData: Record<string, unknown> = {
+			title: enTrans.title ?? doc.title,
+			meta: enTrans.meta ?? doc.meta,
+			description: enTrans.description ?? doc.description,
+			type: doc.type,
+			doc_category: doc.doc_category,
+		};
+		await upsertLocale(strapi, 'api::document.document', { document_code: doc.document_code }, ukData, enData);
+	}
+}
+
+export async function syncPreUniversityGroups(strapi: Core.Strapi) {
+	for (const subj of seedPreUniversitySubjects) {
+		const enTrans = preUniversityEnTranslations[subj.subject_key] || {};
+		const ukData: Record<string, unknown> = {
+			name: subj.name,
+			subject: subj.subject,
+			description: subj.description,
+			format: subj.format,
+			icon_emoji: subj.icon_emoji,
+			price_hint: subj.price_hint,
+			is_popular: subj.is_popular ?? false,
+		};
+		const enData: Record<string, unknown> = {
+			name: enTrans.name ?? subj.name,
+			subject: enTrans.subject ?? subj.subject,
+			description: enTrans.description ?? subj.description,
+			format: subj.format,
+			icon_emoji: subj.icon_emoji,
+			price_hint: subj.price_hint,
+			is_popular: subj.is_popular ?? false,
+		};
+		await upsertLocale(strapi, 'api::pre-university-group.pre-university-group', { subject_key: subj.subject_key }, ukData, enData);
+	}
 }
 
 export async function syncNews(strapi: Core.Strapi) {
-  for (const item of seedNews) {
-    const enTrans = (newsEnTranslations[item.news_key] || {}) as { title?: string; excerpt?: string; content?: string };
-    const ukData = {
-      title: localizeUk(item.title),
-      excerpt: localizeUk(item.excerpt),
-      content: localizeUk(item.content),
-      date: item.date,
-      category: item.category,
-      is_pinned: item.is_pinned,
-    };
-    const enData = {
-      title: enTrans.title ? localizeEn(enTrans.title) : localizeEn(item.title),
-      excerpt: enTrans.excerpt ? localizeEn(enTrans.excerpt) : localizeEn(item.excerpt),
-      content: enTrans.content ? localizeEn(enTrans.content) : localizeEn(item.content),
-      date: item.date,
-      category: item.category,
-      is_pinned: item.is_pinned,
-    };
-    await upsertLocale(strapi, 'api::news.news', { date: item.date, category: item.category }, ukData, enData);
-  }
+	for (const item of seedNews) {
+		const enTrans = (newsEnTranslations[item.news_key] || {}) as { title?: string; excerpt?: string; content?: string };
+		const ukData: Record<string, unknown> = {
+			title: item.title,
+			excerpt: item.excerpt,
+			content: item.content,
+			date: item.date,
+			category: item.category,
+			is_pinned: item.is_pinned,
+		};
+		const enData: Record<string, unknown> = {
+			title: enTrans.title ?? item.title,
+			excerpt: enTrans.excerpt ?? item.excerpt,
+			content: enTrans.content ?? item.content,
+			date: item.date,
+			category: item.category,
+			is_pinned: item.is_pinned,
+		};
+		// News unique key: news_key field (stable identifier)
+		await upsertLocale(strapi, 'api::news.news', { news_key: item.news_key }, ukData, enData);
+	}
 }
