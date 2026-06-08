@@ -8,7 +8,7 @@
     "description": "Graduate testimonials and stories"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {
     "i18n": {

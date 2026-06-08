@@ -8,7 +8,7 @@
     "description": "Internship opportunities"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "attributes": {
     "title": {

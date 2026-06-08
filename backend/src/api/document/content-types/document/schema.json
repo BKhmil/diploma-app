@@ -8,7 +8,7 @@
     "description": "Official documents and regulations"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {
     "i18n": {

@@ -8,7 +8,7 @@
     "description": "Academic and administrative staff"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {
     "i18n": {

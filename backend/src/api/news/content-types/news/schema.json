@@ -8,7 +8,7 @@
     "description": "News and announcements"
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {
     "i18n": {
@@ -16,6 +16,10 @@
     }
   },
   "attributes": {
+    "news_key": {
+      "type": "string",
+      "unique": true
+    },
     "title": {
       "type": "string",
       "required": true,
