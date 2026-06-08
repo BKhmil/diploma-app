@@ -20,7 +20,6 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
         },
         secure: false,
         requireTLS: true,
-        tls: { ciphers: 'SSLv3' },
       },
       settings: {
         defaultFrom: env('SMTP_FROM', env('SMTP_USER', 'no-reply@cno.dnu.edu.ua')),
