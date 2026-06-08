@@ -40,3 +40,6 @@ NUL
 
 # Misc
 *.tgz
+
+# Local implementation tracker (not for repo)
+IMPLEMENTATION.md
