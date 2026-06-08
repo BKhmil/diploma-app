@@ -189,9 +189,15 @@ export function Apply() {
         files
       );
     } catch (err: any) {
-      const msg = err?.message?.includes('409')
-        ? 'Ви вже подавали заявку на цю програму. Повторна заявка неможлива.'
-        : 'Не вдалося надіслати заявку. Спробуйте пізніше.';
+      // The backend throws a ValidationError with a Ukrainian message for duplicate apps.
+      // Surface it directly; fall back to a generic message for other errors.
+      const isDuplicateMsg =
+        err?.message?.includes('вже подавали') ||
+        err?.message?.includes('DUPLICATE') ||
+        err?.message?.includes('409');
+      const msg = isDuplicateMsg
+        ? (err.message.startsWith('Ви') ? err.message : 'Ви вже подавали заявку на цю програму. Повторна заявка неможлива.')
+        : (err?.message && !err.message.match(/^\d{3}$/) ? err.message : 'Не вдалося надіслати заявку. Спробуйте пізніше.');
       alert(msg);
       setSubmitting(false);
       return;

@@ -1,7 +1,10 @@
 import { Program } from '../types';
 import { AppLocale } from '../context/LanguageContext';
 
-const STRAPI_BASE_URL = (import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337').replace(/\/$/, '');
+// When VITE_STRAPI_URL is explicitly set to '' (empty string, server deploy with nginx proxy),
+// we use '' so all API calls become relative paths (/api/...) and nginx routes them.
+// Fall back to localhost only when the env var is truly absent (local dev without Docker).
+const STRAPI_BASE_URL = ((import.meta.env.VITE_STRAPI_URL ?? 'http://localhost:1337') as string).replace(/\/$/, '');
 const STRAPI_LOCALE = (import.meta.env.VITE_STRAPI_LOCALE || 'uk').toLowerCase();
 
 /** The locale used for all admin-dashboard write operations.
@@ -247,10 +250,16 @@ export const createApplication = async (
   }
 ) => {
   if (!files || (!files.diploma && !files.passport && !files.ipn && !files.photo)) {
-    return request('/applications', {
+    const res = await fetch(`${STRAPI_BASE_URL}/api/applications`, {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ data: payload }),
     });
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({})) as { error?: { message?: string } };
+      throw new Error(errBody?.error?.message || `${res.status}`);
+    }
+    return res.json();
   }
 
   const formData = new FormData();
@@ -264,7 +273,10 @@ export const createApplication = async (
     method: 'POST',
     body: formData,
   });
-  if (!res.ok) throw new Error(`${res.status}`);
+  if (!res.ok) {
+    const errBody = await res.json().catch(() => ({})) as { error?: { message?: string } };
+    throw new Error(errBody?.error?.message || `${res.status}`);
+  }
   return res.json();
 };
 
