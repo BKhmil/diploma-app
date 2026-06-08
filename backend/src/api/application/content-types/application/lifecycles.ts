@@ -101,6 +101,53 @@ async function handleApproval(applicationId: number) {
   strapi.log.info(`[enrollment] Created enrollment for student ${app.email} → program ${app.program_name ?? '—'}`);
 }
 
+/** Build and send the admin notification email for a new application/contact message. */
+async function sendApplicationNotification(result: ApplicationRecord): Promise<void> {
+  // Get notification email from contact-info or fall back to env
+  let notifyEmail: string = process.env.ADMIN_NOTIFY_EMAIL || 'admin@cno.dnu.edu.ua';
+  try {
+    const contactInfo = await strapi.db
+      .query('api::contact-info.contact-info')
+      .findOne({ where: { locale: 'uk' } }) as { email?: string } | null;
+    if (contactInfo?.email) notifyEmail = contactInfo.email;
+  } catch {
+    // ignore, use default
+  }
+
+  const isContact = result.app_type === 'contact';
+  const subject = isContact
+    ? `[ЦНО ДНУ] Нове повідомлення від ${result.full_name}`
+    : `[ЦНО ДНУ] Нова заявка #${result.id} — ${result.full_name}`;
+
+  const bodyLines: string[] = isContact
+    ? [
+        `<h2>Нове повідомлення з форми зворотного зв'язку</h2>`,
+        `<p><strong>Від:</strong> ${result.full_name}</p>`,
+        `<p><strong>Email:</strong> ${result.email}</p>`,
+        result.phone ? `<p><strong>Телефон:</strong> ${result.phone}</p>` : '',
+        result.message ? `<p><strong>Повідомлення:</strong><br/>${result.message}</p>` : '',
+      ]
+    : [
+        `<h2>Нова заявка на навчання</h2>`,
+        `<p><strong>Заявник:</strong> ${result.full_name}</p>`,
+        `<p><strong>Email:</strong> ${result.email}</p>`,
+        result.phone ? `<p><strong>Телефон:</strong> ${result.phone}</p>` : '',
+        result.program_name ? `<p><strong>Програма:</strong> ${result.program_name}</p>` : '',
+        result.organization ? `<p><strong>Місце роботи:</strong> ${result.organization}</p>` : '',
+        result.city ? `<p><strong>Місто:</strong> ${result.city}</p>` : '',
+        result.message ? `<p><strong>Побажання:</strong><br/>${result.message}</p>` : '',
+        `<hr/>`,
+        `<p style="color:#888;font-size:12px">Заявка #${result.id} · ${new Date().toLocaleString('uk-UA')}</p>`,
+      ];
+
+  await getEmailService().send({
+    to: notifyEmail,
+    replyTo: result.email,
+    subject,
+    html: bodyLines.filter(Boolean).join('\n'),
+  });
+}
+
 export default {
   async beforeCreate(event: BeforeCreateEvent) {
     const { data } = event.params;
@@ -112,6 +159,7 @@ export default {
           email:        data.email,
           program_name: data.program_name,
           app_type:     { $ne: 'contact' },
+          status:       { $ne: 'rejected' },
         },
       });
       if (existing) {
@@ -151,64 +199,18 @@ export default {
   async afterCreate(event: AfterCreateEvent) {
     const { result } = event;
 
-    // Guard: skip email entirely when SMTP is not configured.
-    // This prevents a ~30 s TCP-timeout hang in dev when credentials are absent.
-    // The application record is already saved at this point, so the user action
-    // is never blocked regardless of what happens below.
+    // No SMTP credentials configured: skip the notification.
     if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
       strapi.log.info(
-        '[email] SMTP_USER / SMTP_PASS not set — skipping admin notification (application saved OK)'
+        '[email] SMTP not configured — skipping admin notification (application saved OK)'
       );
       return;
     }
 
-    try {
-      // Get notification email from contact-info or fall back to env
-      let notifyEmail: string = process.env.ADMIN_NOTIFY_EMAIL || 'admin@cno.dnu.edu.ua';
-
-      try {
-        const contactInfo = await strapi.db
-          .query('api::contact-info.contact-info')
-          .findOne({ where: { locale: 'uk' } }) as { email?: string } | null;
-        if (contactInfo?.email) notifyEmail = contactInfo.email;
-      } catch {
-        // ignore, use default
-      }
-
-      const isContact = result.app_type === 'contact';
-      const subject = isContact
-        ? `[ЦНО ДНУ] Нове повідомлення від ${result.full_name}`
-        : `[ЦНО ДНУ] Нова заявка #${result.id} — ${result.full_name}`;
-
-      const bodyLines: string[] = isContact
-        ? [
-            `<h2>Нове повідомлення з форми зворотного зв'язку</h2>`,
-            `<p><strong>Від:</strong> ${result.full_name}</p>`,
-            `<p><strong>Email:</strong> ${result.email}</p>`,
-            result.phone ? `<p><strong>Телефон:</strong> ${result.phone}</p>` : '',
-            result.message ? `<p><strong>Повідомлення:</strong><br/>${result.message}</p>` : '',
-          ]
-        : [
-            `<h2>Нова заявка на навчання</h2>`,
-            `<p><strong>Заявник:</strong> ${result.full_name}</p>`,
-            `<p><strong>Email:</strong> ${result.email}</p>`,
-            result.phone ? `<p><strong>Телефон:</strong> ${result.phone}</p>` : '',
-            result.program_name ? `<p><strong>Програма:</strong> ${result.program_name}</p>` : '',
-            result.organization ? `<p><strong>Місце роботи:</strong> ${result.organization}</p>` : '',
-            result.city ? `<p><strong>Місто:</strong> ${result.city}</p>` : '',
-            result.message ? `<p><strong>Побажання:</strong><br/>${result.message}</p>` : '',
-            `<hr/>`,
-            `<p style="color:#888;font-size:12px">Заявка #${result.id} · ${new Date().toLocaleString('uk-UA')}</p>`,
-          ];
-
-      await getEmailService().send({
-        to: notifyEmail,
-        replyTo: result.email,
-        subject,
-        html: bodyLines.filter(Boolean).join('\n'),
-      });
-    } catch (err) {
+    // Send without awaiting so a slow or failing mail server doesn't delay the
+    // response. The record is already saved; on failure we just log it.
+    void sendApplicationNotification(result).catch((err) => {
       strapi.log.warn(`[email] Failed to send notification: ${String(err)}`);
-    }
+    });
   },
 };
